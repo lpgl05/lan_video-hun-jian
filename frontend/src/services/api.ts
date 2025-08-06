@@ -21,11 +21,7 @@ export const uploadVideo = async (file: File): Promise<VideoFile> => {
   const formData = new FormData()
   formData.append('video', file)
   
-  const response = await api.post<ApiResponse<VideoFile>>('/upload/video', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  })
+  const response = await api.post<ApiResponse<VideoFile>>('/upload/video', formData)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '上传失败')
@@ -38,11 +34,7 @@ export const uploadAudio = async (file: File): Promise<AudioFile> => {
   const formData = new FormData()
   formData.append('audio', file)
   
-  const response = await api.post<ApiResponse<AudioFile>>('/upload/audio', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  })
+  const response = await api.post<ApiResponse<AudioFile>>('/upload/audio', formData)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '上传失败')
@@ -125,4 +117,4 @@ export const deleteAudio = async (id: string): Promise<void> => {
   }
 }
 
-export default api 
+export default api

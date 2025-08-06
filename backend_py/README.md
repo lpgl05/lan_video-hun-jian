@@ -12,6 +12,12 @@
    ```bash
    uvicorn main:app --reload
    ```
+   # 或者指定端口（如8000）：
+   uvicorn main:app --reload --port 8000
+
+3. 访问接口：
+   - 默认地址：http://127.0.0.1:8000
+   - API文档：http://127.0.0.1:8000/docs
 
 ## 目录结构
 - main.py              # FastAPI 入口

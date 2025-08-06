@@ -7,7 +7,7 @@ from openai import OpenAI
 
 router = APIRouter()
 
-API_KEY = "sk-teurlaqtvixaxkydvulweavpjravqotkxnnltgxgluzpgrqz"
+API_KEY = "sk-AAA"
 model_name = "deepseek-ai/DeepSeek-V2.5"
 llm = OpenAI(
     base_url='https://api.siliconflow.cn/v1',
@@ -39,6 +39,9 @@ async def generate_scripts(req: GenerateScriptsRequest):
         f"基础文案：{base_script}\n\n"
         "请直接返回20个文案，每个文案一行，不要编号。"
     )
+
+    print(prompt)
+
     try:
 
         # 发送带有流式输出的请求

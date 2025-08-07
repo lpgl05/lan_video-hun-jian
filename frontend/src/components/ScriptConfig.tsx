@@ -1,17 +1,25 @@
 import React, { useState } from 'react'
 import { Input, Button, message, Checkbox, Space } from 'antd'
-import { EditOutlined, RobotOutlined, CheckOutlined } from '@ant-design/icons'
+import { EditOutlined, RobotOutlined } from '@ant-design/icons'
 import type { Script } from '../types'
 import { generateScripts } from '../services/api'
+import { v4 as uuidv4 } from 'uuid'
 
 const { TextArea } = Input
 
 interface ScriptConfigProps {
   scripts: Script[]
   onScriptsChange: (scripts: Script[]) => void
+  videoDuration: number
+  videoCount: number
 }
 
-const ScriptConfig: React.FC<ScriptConfigProps> = ({ scripts, onScriptsChange }) => {
+const ScriptConfig: React.FC<ScriptConfigProps> = ({
+  scripts,
+  onScriptsChange,
+  videoDuration,
+  videoCount,
+}) => {
   const [baseScript, setBaseScript] = useState('')
   const [generating, setGenerating] = useState(false)
 
@@ -23,7 +31,16 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({ scripts, onScriptsChange })
 
     setGenerating(true)
     try {
-      const generatedScripts = await generateScripts(baseScript)
+      const result = await generateScripts(baseScript, videoDuration, videoCount)
+      // 兼容后端返回字符串数组的情况
+      const generatedScripts = Array.isArray(result)
+        ? result.map((content: string) => ({
+            id: uuidv4(),
+            content,
+            selected: false,
+            generatedAt: new Date(),
+          }))
+        : result
       onScriptsChange(generatedScripts)
       message.success('文案生成成功')
     } catch (error) {
@@ -127,4 +144,4 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({ scripts, onScriptsChange })
   )
 }
 
-export default ScriptConfig 
+export default ScriptConfig

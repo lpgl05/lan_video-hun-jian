@@ -44,9 +44,15 @@ export const uploadAudio = async (file: File): Promise<AudioFile> => {
 }
 
 // AI文案生成
-export const generateScripts = async (baseScript: string): Promise<Script[]> => {
+export const generateScripts = async (
+  base_script: string,
+  video_duration: number,
+  video_count: number
+): Promise<Script[]> => {
   const response = await api.post<ApiResponse<Script[]>>('/ai/generate-scripts', {
-    baseScript,
+    base_script,
+    video_duration,
+    video_count,
   })
   
   if (!response.data.success) {

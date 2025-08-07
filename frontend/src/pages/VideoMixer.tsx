@@ -120,6 +120,17 @@ const VideoMixer: React.FC = () => {
     scripts.filter(s => s.selected).length > 0 && 
     !generating
 
+  const parseDuration = (duration: string) => {
+    if (duration.endsWith('s')) {
+      return parseInt(duration)
+    }
+    // 例如 '30-60s' 取最小值
+    if (duration.includes('-')) {
+      return parseInt(duration.split('-')[0])
+    }
+    return 30
+  }
+
   return (
     <div className="page-container">
       <div className="page-header">
@@ -162,6 +173,8 @@ const VideoMixer: React.FC = () => {
         <ScriptConfig 
           scripts={scripts}
           onScriptsChange={setScripts}
+          videoDuration={parseDuration(duration)}
+          videoCount={videoCount}
         />
 
         {/* 配置设置 */}
@@ -209,4 +222,4 @@ const VideoMixer: React.FC = () => {
   )
 }
 
-export default VideoMixer 
+export default VideoMixer

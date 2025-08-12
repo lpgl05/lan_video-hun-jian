@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, message, Input, Space } from 'antd'
+import { Button, message, Input, Space, Progress } from 'antd'
 import { PlayCircleOutlined, SaveOutlined } from '@ant-design/icons'
 import type { 
   VideoFile, 
@@ -86,12 +86,12 @@ const VideoMixer: React.FC = () => {
     setGenerating(true)
 
     try {
-      // 保存项目配置
+      // 1. 保存项目配置
       const project: Omit<ProjectConfig, 'id' | 'createdAt' | 'updatedAt'> = {
         name: projectName,
         videos,
         audios,
-        scripts: scripts.filter(s => s.selected), // 只保存选中的文案
+        scripts: scripts.filter(s => s.selected),
         duration,
         videoCount,
         voice,
@@ -100,10 +100,14 @@ const VideoMixer: React.FC = () => {
 
       const savedProject = await saveProject(project)
 
-      // 开始生成任务
+      // 2. 立即启动生成任务（不等待完成）
       const task = await startGeneration(savedProject.id)
       setCurrentTask(task)
-      message.success('开始生成视频，请稍候...')
+      
+      message.success('视频生成任务已启动，请稍候...')
+      
+      // 3. 开始轮询任务状态（前端会自动轮询）
+      
     } catch (error) {
       message.error('启动生成失败')
       console.error('Generation error:', error)
@@ -129,6 +133,26 @@ const VideoMixer: React.FC = () => {
       return parseInt(duration.split('-')[0])
     }
     return 30
+  }
+
+  const getProgressText = () => {
+    if (!currentTask) return ''
+    
+    switch (currentTask.status) {
+      case 'processing':
+        if (currentTask.progress <= 10) return '正在下载素材...'
+        if (currentTask.progress <= 30) return '正在剪辑视频...'
+        if (currentTask.progress <= 50) return '正在生成字幕...'
+        if (currentTask.progress <= 70) return '正在添加音频...'
+        if (currentTask.progress <= 90) return '正在上传视频...'
+        return '即将完成...'
+      case 'completed':
+        return '生成完成！'
+      case 'failed':
+        return '生成失败'
+      default:
+        return ''
+    }
   }
 
   return (
@@ -191,24 +215,48 @@ const VideoMixer: React.FC = () => {
 
         {/* 生成按钮 */}
         <div className="action-buttons">
-          <Space>
-            <Button
-              type="primary"
-              size="large"
-              icon={<PlayCircleOutlined />}
-              loading={generating}
-              disabled={!canGenerate}
-              onClick={handleStartGeneration}
-            >
-              {generating ? '生成中...' : '开始AI制作'}
-            </Button>
-            <Button
-              size="large"
-              icon={<SaveOutlined />}
-              disabled={!canGenerate}
-            >
-              保存配置
-            </Button>
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <Space>
+              <Button
+                type="primary"
+                size="large"
+                icon={<PlayCircleOutlined />}
+                loading={generating}
+                disabled={!canGenerate}
+                onClick={handleStartGeneration}
+              >
+                {generating ? '生成中...' : '开始AI制作'}
+              </Button>
+              <Button
+                size="large"
+                icon={<SaveOutlined />}
+                disabled={!canGenerate}
+              >
+                保存配置
+              </Button>
+            </Space>
+            
+            {/* 进度条显示 */}
+            {currentTask && generating && (
+              <div style={{ width: '100%', marginTop: '16px' }}>
+                <Progress
+                  percent={currentTask.progress || 0}
+                  status={currentTask.status === 'failed' ? 'exception' : 'active'}
+                  strokeColor={{
+                    '0%': '#108ee9',
+                    '100%': '#87d068',
+                  }}
+                />
+                <div style={{ 
+                  textAlign: 'center', 
+                  marginTop: '8px', 
+                  color: '#666',
+                  fontSize: '14px'
+                }}>
+                  {getProgressText()}
+                </div>
+              </div>
+            )}
           </Space>
         </div>
 

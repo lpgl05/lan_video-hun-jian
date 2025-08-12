@@ -1,16 +1,13 @@
 import os
 from uuid import uuid4
 from datetime import datetime
+from models.oss_client import OSSClient
 
-UPLOAD_DIR = "uploads/videos"
-AUDIO_DIR = "uploads/audios"
-USE_OSS = False  # 切换为 True 即可上传到 OSS
+UPLOAD_VIDEO_DIR = "uploads/videos"
+UPLOAD_AUDIO_DIR = "uploads/audios"
+USE_OSS = True  # 切换为 True 即可上传到 OSS
 
-# OSS 配置（仅当 USE_OSS=True 时生效）
-OSS_ACCESS_KEY_ID = "你的AccessKeyId"
-OSS_ACCESS_KEY_SECRET = "你的AccessKeySecret"
-OSS_BUCKET_NAME = "你的BucketName"
-OSS_ENDPOINT = "你的Endpoint"
+oss_client = OSSClient()
 
 async def handle_upload_video(video):
     if video is None:
@@ -22,18 +19,19 @@ async def handle_upload_video(video):
         if not content:
             return {"success": False, "error": "文件内容为空"}
         if USE_OSS:
-            import oss2
-            auth = oss2.Auth(OSS_ACCESS_KEY_ID, OSS_ACCESS_KEY_SECRET)
-            bucket = oss2.Bucket(auth, OSS_ENDPOINT, OSS_BUCKET_NAME)
-            oss_path = f"videos/{file_name}"
-            bucket.put_object(oss_path, content)
-            file_url = f"https://{OSS_BUCKET_NAME}.{OSS_ENDPOINT.replace('https://', '').replace('http://', '')}/{oss_path}"
+            # 上传到OSS
+            file_url = await oss_client.upload_to_oss(
+                file_buffer=content,
+                original_filename=file_name,
+                folder=UPLOAD_VIDEO_DIR
+            )
         else:
-            os.makedirs(UPLOAD_DIR, exist_ok=True)
-            save_path = os.path.join(UPLOAD_DIR, file_name)
+            os.makedirs(UPLOAD_VIDEO_DIR, exist_ok=True)
+            save_path = os.path.join(UPLOAD_VIDEO_DIR, file_name)
             with open(save_path, "wb") as f:
                 f.write(content)
             file_url = f"/uploads/videos/{file_name}"
+        # duration 字段可后续完善，这里先为 0
         video_file = {
             "id": file_id,
             "name": file_name,
@@ -44,8 +42,7 @@ async def handle_upload_video(video):
         }
         return {
             "success": True,
-            "data": video_file,
-            "message": "文件上传成功"
+            "data": video_file
         }
     except Exception as e:
         return {"success": False, "error": f"上传失败: {str(e)}"}
@@ -60,18 +57,18 @@ async def handle_upload_audio(audio):
         if not content:
             return {"success": False, "error": "文件内容为空"}
         if USE_OSS:
-            import oss2
-            auth = oss2.Auth(OSS_ACCESS_KEY_ID, OSS_ACCESS_KEY_SECRET)
-            bucket = oss2.Bucket(auth, OSS_ENDPOINT, OSS_BUCKET_NAME)
-            oss_path = f"audios/{file_name}"
-            bucket.put_object(oss_path, content)
-            file_url = f"https://{OSS_BUCKET_NAME}.{OSS_ENDPOINT.replace('https://', '').replace('http://', '')}/{oss_path}"
+            file_url = await oss_client.upload_to_oss(
+                file_buffer=content,
+                original_filename=file_name,
+                folder=UPLOAD_AUDIO_DIR
+            )
         else:
-            os.makedirs(AUDIO_DIR, exist_ok=True)
-            save_path = os.path.join(AUDIO_DIR, file_name)
+            os.makedirs(UPLOAD_AUDIO_DIR, exist_ok=True)
+            save_path = os.path.join(UPLOAD_AUDIO_DIR, file_name)
             with open(save_path, "wb") as f:
                 f.write(content)
             file_url = f"/uploads/audios/{file_name}"
+        # duration 字段可后续完善，这里先为 0
         audio_file = {
             "id": file_id,
             "name": file_name,
@@ -82,8 +79,7 @@ async def handle_upload_audio(audio):
         }
         return {
             "success": True,
-            "data": audio_file,
-            "message": "文件上传成功"
+            "data": audio_file
         }
     except Exception as e:
         return {"success": False, "error": f"上传失败: {str(e)}"}

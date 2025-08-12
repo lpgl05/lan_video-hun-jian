@@ -27,7 +27,12 @@ export const uploadVideo = async (file: File): Promise<VideoFile> => {
     throw new Error(response.data.error || '上传失败')
   }
   
-  return response.data.data!
+  const video = response.data.data!
+  // 修正 uploadedAt 字段类型
+  return {
+    ...video,
+    uploadedAt: new Date(video.uploadedAt)
+  };
 }
 
 export const uploadAudio = async (file: File): Promise<AudioFile> => {

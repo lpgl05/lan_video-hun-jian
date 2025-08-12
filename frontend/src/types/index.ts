@@ -78,6 +78,7 @@ export interface GenerationTask {
   error?: string;
   createdAt: Date;
   updatedAt: Date;
+  generatedVideos?: VideoFile[]; // 添加详细视频信息
 }
 
 // API响应格式
@@ -95,4 +96,4 @@ export interface UploadProgress {
   progress: number;
   status: 'uploading' | 'completed' | 'failed';
   error?: string;
-} 
+}

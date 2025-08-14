@@ -2,7 +2,7 @@ import asyncio
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
 from typing import List, Dict, Any
-from services.clip_service import process_clips
+from services.clip_service import process_clips, process_clips001
 from uuid import uuid4
 from datetime import datetime
 
@@ -127,7 +127,8 @@ async def process_video_generation(task_id: str, clip_req: ClipRequest):
         
         # 3. 执行视频剪辑处理
         _task_storage[task_id]["progress"] = 30
-        result = await process_clips(clip_req)
+        #result = await process_clips(clip_req)
+        result = await process_clips001(clip_req)
         
         # 4. 处理完成，上传中
         _task_storage[task_id]["progress"] = 90

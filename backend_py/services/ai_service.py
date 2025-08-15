@@ -1,9 +1,15 @@
 import requests
 from uuid import uuid4
 from datetime import datetime
+import os
+from dotenv import load_dotenv
 
-FASTGPT_API_URL = "https://api.fastgpt.in/api/v1/chat/completions"
-FASTGPT_API_KEY = "fastgpt-dIZ13SeCXJOp0eCvGvwVaqR71Kq6qRHtDUkH1CqMpxIQCWvwV0qvT3p"
+# 加载.env文件中的环境变量
+load_dotenv()
+
+FASTGPT_API_URL = os.getenv("FASTGPT_API_URL", "https://api.fastgpt.in/api/v1/chat/completions")
+FASTGPT_API_KEY = os.getenv("FASTGPT_API_KEY", "")
+
 style_prompts = {
     'professional': '请用专业正式的语气改写以下文案，保持内容的准确性和权威性：',
     'casual': '请用轻松活泼的语气改写以下文案，让内容更加亲切自然：',

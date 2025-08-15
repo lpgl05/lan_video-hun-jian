@@ -4,15 +4,19 @@ import os
 from pathlib import Path
 from typing import BinaryIO, Optional
 import mimetypes
+from dotenv import load_dotenv
+
+# 加载.env文件中的环境变量
+load_dotenv()
 
 class OSSClient:
     def __init__(self):
         """初始化OSS客户端"""
-        # OSS 客户端配置
-        self.access_key_id = ""
-        self.access_key_secret = ""
-        self.endpoint = "oss-cn-beijing.aliyuncs.com"
-        self.bucket_name = "tian-jiu-video"
+        # OSS 客户端配置，从环境变量读取
+        self.access_key_id = os.getenv("OSS_ACCESS_KEY_ID", "")
+        self.access_key_secret = os.getenv("OSS_ACCESS_KEY_SECRET", "")
+        self.endpoint = os.getenv("OSS_ENDPOINT", "oss-cn-beijing.aliyuncs.com")
+        self.bucket_name = os.getenv("OSS_BUCKET_NAME", "tian-jiu-video")
         
         # 创建认证对象
         auth = oss2.Auth(self.access_key_id, self.access_key_secret)

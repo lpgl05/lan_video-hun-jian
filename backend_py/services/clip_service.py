@@ -20,6 +20,10 @@ import numpy as np
 
 # 语音合成
 import edge_tts
+from dotenv import load_dotenv
+
+# 加载.env文件中的环境变量
+load_dotenv()
 
 DOWNLOAD_VIDEO_PATH = "outputs/download_videos"
 DOWNLOAD_AUDIO_PATH = "outputs/download_audios"
@@ -34,6 +38,11 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(tts_temp_dir, exist_ok=True)
 os.makedirs(SUBTITLE_TEMP_DIR, exist_ok=True)
 oss_client = OSSClient()
+
+# 先从.env中读取字体要求
+VIDEO_FONT = os.getenv("VIDEO_FONT", "msyh.ttc")
+FONT_PATH = os.path.join("fonts", VIDEO_FONT)
+print(f'指定的字体路径是: {FONT_PATH}')
 
 async def download_video(url):
     filename = url.split("/")[-1]
@@ -67,7 +76,7 @@ def random_cut(video_path, min_duration, max_duration, count):
         clips.append(clip)
     return clips
 
-def add_text(clip, text, style):
+def add_text(clip, text, style, font_path=None):
     # 使用 PIL 渲染文本，避免 TextClip 依赖 ImageMagick
     title_style = style.get("title", {}) if isinstance(style, dict) else {}
     fontsize = int(title_style.get("fontSize", 40))
@@ -78,26 +87,32 @@ def add_text(clip, text, style):
     img = Image.new("RGBA", (int(clip.w), banner_h), (0, 0, 0, 160))  # 半透明黑底
     draw = ImageDraw.Draw(img)
 
-    # 优先使用支持中文的字体
+    # 优先使用用户指定的字体
     font = None
-    chinese_fonts = [
-        "C:\\Windows\\Fonts\\msyh.ttc",      # 微软雅黑
-        "C:\\Windows\\Fonts\\simsun.ttc",   # 宋体
-        "C:\\Windows\\Fonts\\simhei.ttf",   # 黑体
-        "C:\\Windows\\Fonts\\simkai.ttf",   # 楷体
-        "/System/Library/Fonts/PingFang.ttc",  # macOS
-        "/System/Library/Fonts/Hiragino Sans GB.ttc",  # macOS
-        "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",  # Linux
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"  # Linux备选
-    ]
-    
-    for fp in chinese_fonts:
+    if font_path and os.path.exists(font_path):
         try:
-            font = ImageFont.truetype(fp, fontsize)
-            break
+            print('本地文件已经存在........')
+            font = ImageFont.truetype(font_path, fontsize)
         except Exception:
-            continue
-    
+            font = None
+    else:
+        chinese_fonts = [
+            "C:\\Windows\\Fonts\\msyh.ttc",      # 微软雅黑
+            "C:\\Windows\\Fonts\\simsun.ttc",   # 宋体
+            "C:\\Windows\\Fonts\\simhei.ttf",   # 黑体
+            "C:\\Windows\\Fonts\\simkai.ttf",   # 楷体
+            "/System/Library/Fonts/PingFang.ttc",  # macOS
+            "/System/Library/Fonts/Hiragino Sans GB.ttc",  # macOS
+            "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",  # Linux
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"  # Linux备选
+        ]
+        for fp in chinese_fonts:
+            try:
+                font = ImageFont.truetype(fp, fontsize)
+                break
+            except Exception:
+                continue
+
     if font is None:
         try:
             # 尝试使用系统默认字体，指定字体大小
@@ -278,7 +293,7 @@ async def process_clips(req):
 
             # 随机字幕
             script = random.choice(scripts).content if scripts else ""
-            clip = add_text(clip, script, style)
+            clip = add_text(clip, script, style, font_path=FONT_PATH)
 
             # 生成TTS语音文件
             tts_filename = f"tts_{clip_id}.wav"
@@ -429,6 +444,7 @@ def create_title_image(text, width=1080, height=1920, style=None):
     
     # 字体处理
     font = None
+
     chinese_fonts = [
         "C:\\Windows\\Fonts\\msyh.ttc",
         "C:\\Windows\\Fonts\\simsun.ttc",
@@ -617,7 +633,6 @@ async def process_clips001(req):
     local_audio_paths = [await download_audio(a.url) for a in audio_files]
 
     print("=======================================")
-    print("使用FFmpeg处理蒙太奇拼接视频 (1080p)")
     print("包含：Title + Subtitle + TTS语音 + 背景音乐")
     print(f"项目标题: {title}")
     print(f"Title位置: {title_position}")
@@ -701,7 +716,6 @@ async def process_clips001(req):
                     continue
             
             montage_time = time.time() - montage_start
-            print(f"蒙太奇拼接: {montage_time:.1f}秒")
 
             # 3. 生成Title图片
             title_start = time.time()
@@ -801,7 +815,6 @@ async def process_clips001(req):
                 total_time = time.time() - total_start_time
                 print(f'视频{i+1}完成，总耗时: {total_time:.1f}秒')
                 print(f"📊 各阶段耗时占比:")
-                print(f"   - 蒙太奇拼接: {(montage_time/total_time)*100:.1f}%")
                 print(f"   - Title生成: {(title_time/total_time)*100:.1f}%")
                 print(f"   - Subtitle生成: {(subtitle_time/total_time)*100:.1f}%")
                 print(f"   - TTS生成: {(tts_time/total_time)*100:.1f}%")
@@ -946,24 +959,39 @@ def create_subtitle_image(text, width=480, height=854, style=None):
     temp_img = Image.new("RGBA", (target_width, 500), (0, 0, 0, 0))
     temp_draw = ImageDraw.Draw(temp_img)
     
-    # 字体处理
+    # 优先使用用户指定的字体
     font = None
-    chinese_fonts = [
-        "C:\\Windows\\Fonts\\msyh.ttc",
-        "C:\\Windows\\Fonts\\simsun.ttc",
-        "/System/Library/Fonts/PingFang.ttc",
-        "/usr/share/fonts/winfonts/msyh.ttc"
-    ]
-    
-    for fp in chinese_fonts:
+    if FONT_PATH and os.path.exists(FONT_PATH):
         try:
-            font = ImageFont.truetype(fp, fontsize)
-            break
-        except:
-            continue
-    
+            print('本地文件已经存在........')
+            font = ImageFont.truetype(FONT_PATH, fontsize)
+        except Exception:
+            font = None
+    else:
+        chinese_fonts = [
+            "C:\\Windows\\Fonts\\msyh.ttc",      # 微软雅黑
+            "C:\\Windows\\Fonts\\simsun.ttc",   # 宋体
+            "C:\\Windows\\Fonts\\simhei.ttf",   # 黑体
+            "C:\\Windows\\Fonts\\simkai.ttf",   # 楷体
+            "/System/Library/Fonts/PingFang.ttc",  # macOS
+            "/System/Library/Fonts/Hiragino Sans GB.ttc",  # macOS
+            "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",  # Linux
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"  # Linux备选
+        ]
+        for fp in chinese_fonts:
+            try:
+                font = ImageFont.truetype(fp, fontsize)
+                break
+            except Exception:
+                continue
+
     if font is None:
-        font = ImageFont.load_default()
+        try:
+            # 尝试使用系统默认字体，指定字体大小
+            font = ImageFont.load_default()
+        except Exception:
+            # 如果都失败，创建一个简单的默认字体
+            font = ImageFont.load_default()
 
     # 文本换行
     max_width = target_width - 80  # 左右各留40像素边距

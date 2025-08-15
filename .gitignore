@@ -90,4 +90,6 @@ generated/
 # 密钥
 *.pem
 *.key
-*.crt 
+*.crt
+
+backend_py/outputs

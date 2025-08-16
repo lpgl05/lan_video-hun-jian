@@ -559,7 +559,7 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
     
     filter_complex = f"""
     [0:v]scale={target_width}:{target_height}:force_original_aspect_ratio=increase,crop={target_width}:{target_height}[bg];
-    [bg]boxblur=luma_radius=10:chroma_radius=10:luma_power=1[bg_blur];
+    [bg]boxblur=luma_radius=50:chroma_radius=50:luma_power=3[bg_blur];
     [0:v]scale={target_width}:-1[fg_scale];
     [fg_scale]scale={target_width}:{target_width*9//16}[fg];
     [bg_blur][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];
@@ -1109,7 +1109,7 @@ def create_9_16_video_ffmpeg(source_video, subtitle_image, tts_audio, bgm_audio,
     
     filter_complex = f"""
     [0:v]scale={target_width}:{target_height}:force_original_aspect_ratio=increase,crop={target_width}:{target_height}[bg];
-    [bg]boxblur=luma_radius=10:chroma_radius=10:luma_power=1[bg_blur];
+    [bg]boxblur=luma_radius=50:chroma_radius=50:luma_power=3[bg_blur];
     [0:v]scale={target_width}:-1[fg_scale];
     [fg_scale]scale={target_width}:{target_width*9//16}[fg];
     [bg_blur][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];

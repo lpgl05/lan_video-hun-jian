@@ -51,6 +51,8 @@ cd backend_py
 
 uv venv
 
+.venv\Scripts\activate
+
 uv sync
 ```
 

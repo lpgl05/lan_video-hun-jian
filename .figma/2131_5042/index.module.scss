@@ -1,0 +1,374 @@
+* {
+  box-sizing: border-box;
+}
+
+.icontFont {
+  width: 1288px;
+  height: 2689px;
+
+  .subtitle {
+    flex-shrink: 0;
+    line-height: 23px;
+    letter-spacing: 0;
+    color: var(--Colors-Neutrals-Neutral-800, #170f49);
+    font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 30px;
+    box-shadow: var(--Shadows-Neutrals-Neutral-03, 0px 2px 15px 0px #19213d1a);
+    background: var(--Colors-Neutrals-White, #ffffff);
+    padding: 34px 80px;
+    min-width: 1085px;
+
+    .leftContent {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      column-gap: 16px;
+
+      .rectangle1 {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        border: 1px solid var(--Colors-Primary-HUE-Purple-200, #eae8ff);
+        border-radius: 20px;
+        box-shadow: var(
+          --Shadows-Primary-HUE-Primary-03,
+          0px 2px 6px 0px #4a3aff1a
+        );
+        background: var(--Colors-Neutrals-White, #ffffff);
+        padding: 17px 15px 17px 19px;
+
+        .icon {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .headerIcon {
+        flex-shrink: 0;
+        line-height: 41px;
+        letter-spacing: 0;
+        color: var(--Colors-Neutrals-Neutral-800, #170f49);
+        font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 36px;
+        font-weight: 600;
+      }
+    }
+
+    .logo {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      column-gap: 11px;
+      width: 310px;
+
+      .elements {
+        display: flex;
+        flex-shrink: 0;
+        align-items: flex-start;
+        padding-top: 1px;
+
+        .element {
+          display: flex;
+          align-items: center;
+          margin-top: 24px;
+          padding-bottom: 1px;
+
+          .circle {
+            background: var(--Logo-Color-1, #4a3aff);
+            width: 10px;
+            height: 10px;
+          }
+        }
+
+        .element2 {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-top: 12px;
+          margin-left: 2px;
+          padding-bottom: 1px;
+          padding-left: 1px;
+
+          .circle2 {
+            background: var(--Logo-Color-4, #6045fd);
+            width: 10px;
+            height: 10px;
+          }
+
+          .circle3 {
+            margin-top: 2px;
+            background: var(--Logo-Color-3, #553ffe);
+            width: 10px;
+            height: 10px;
+          }
+        }
+
+        .element3 {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-left: 2px;
+          padding-left: 1px;
+
+          .circle4 {
+            background: var(--Logo-Color-7, #8055fa);
+            width: 10px;
+            height: 10px;
+          }
+
+          .circle5 {
+            margin-top: 2px;
+            background: var(--Logo-Color-6, #7550fb);
+            width: 10px;
+            height: 10px;
+          }
+
+          .circle6 {
+            margin-top: 2px;
+            background: var(--Logo-Color-5, #6a4afc);
+            width: 10px;
+            height: 10px;
+          }
+        }
+      }
+
+      .ohj3 {
+        flex-shrink: 0;
+        line-height: 38px;
+        letter-spacing: 0.28px;
+        color: #000000;
+        font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+
+        .ohj {
+          line-height: 38px;
+          letter-spacing: 0.28px;
+          color: var(--Colors-Neutrals-Neutral-800, #170f49);
+          font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+          font-size: 28px;
+          font-weight: 700;
+        }
+
+        .ohj2 {
+          line-height: 38px;
+          letter-spacing: 0.28px;
+          color: var(--Colors-Primary-HUE-Purple-700, #4a3aff);
+          font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+          font-size: 28px;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+
+  .iconFont {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border-radius: 32px;
+    box-shadow: var(--Shadows-Neutrals-Neutral-03, 0px 2px 15px 0px #19213d1a);
+    background: var(--Colors-Neutrals-White, #ffffff);
+    padding: 100px 94px 98px 101px;
+    overflow: hidden;
+
+    .lineRoundedArrowDown {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+    }
+
+    .grid2 {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+      margin-right: 7px;
+
+      .grid {
+        display: flex;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        align-items: flex-start;
+        align-self: stretch;
+        column-gap: 34px;
+        padding-top: 32px;
+        row-gap: 34px;
+
+        .containerArrow {
+          display: inline-flex;
+          flex-shrink: 0;
+          align-items: flex-start;
+          column-gap: 10px;
+          border: 1px solid var(--Colors-Neutrals-Neutral-500, #a0a3bd);
+          border-radius: 200px;
+          padding: 3px;
+          overflow: hidden;
+
+          .lineRoundedArrowRigt {
+            flex-shrink: 0;
+            width: 10px;
+            height: 10px;
+          }
+        }
+
+        .lineRoundedUserV2 {
+          flex-shrink: 0;
+          width: 18px;
+          height: 18px;
+          overflow: hidden;
+        }
+      }
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+      margin-top: 100px;
+      margin-left: 1px;
+
+      .iconsGrid {
+        display: flex;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        align-items: flex-start;
+        align-self: stretch;
+        column-gap: 34px;
+        padding-top: 32px;
+        row-gap: 34px;
+      }
+    }
+  }
+
+  .grid4 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border-radius: 32px;
+    box-shadow: var(--Shadows-Neutrals-Neutral-03, 0px 2px 15px 0px #19213d1a);
+    background: var(--Colors-Neutrals-White, #ffffff);
+    padding-right: 100px;
+    padding-left: 100px;
+    width: 1085px;
+    height: 575px;
+
+    .grid3 {
+      display: flex;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      align-items: flex-start;
+      align-self: stretch;
+      column-gap: 34px;
+      padding-top: 32px;
+      row-gap: 34px;
+
+      .socialMediaIconSquar {
+        display: flex;
+        flex-grow: 1;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        align-items: flex-start;
+        column-gap: 32px;
+        border: 1px dashed var(--Colors-Primary-HUE-Purple-500, #8c82ff);
+        padding: 39px;
+        overflow: hidden;
+        row-gap: 32px;
+
+        .icon2 {
+          flex-shrink: 0;
+          width: 16px;
+          height: 16px;
+        }
+
+        .socialMediaFacebookC {
+          display: flex;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: center;
+          column-gap: 8px;
+          border-radius: 4px;
+          background: var(--Social-Media-Colors-Facebook, #1877f2);
+          padding: 1px 2px;
+          width: 24px;
+          height: 24px;
+        }
+
+        .socialMediaTwitterXc {
+          display: flex;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: center;
+          column-gap: 8px;
+          border-radius: 4px;
+          background: var(--Social-Media-Colors-Twitter, #1da1f2);
+          padding: 1px 2px;
+          width: 24px;
+          height: 24px;
+        }
+
+        .socialMediaInstagram {
+          display: flex;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: center;
+          column-gap: 8px;
+          border-radius: 4px;
+          background: var(--Components-Social-Media-Instagram);
+          padding: 2px;
+          width: 24px;
+          height: 24px;
+          background-image: linear-gradient(
+            315deg,
+            #fbe18a 0%,
+            #fcbb45 21%,
+            #f75274 38%,
+            #d53692 52%,
+            #8f39ce 74%,
+            #5b4fe9 100%
+          );
+        }
+
+        .socialMediaLinkedInC {
+          display: flex;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: center;
+          column-gap: 8px;
+          border-radius: 4px;
+          background: var(--Social-Media-Colors-LinkedIn, #0a6ed2);
+          padding: 2px;
+          width: 24px;
+          height: 24px;
+        }
+
+        .socialMediaYouTubeCo {
+          flex-shrink: 0;
+          border-radius: 4px;
+          width: 24px;
+          height: 24px;
+        }
+
+        .aASocialMediaIconSqu {
+          flex-shrink: 0;
+          border-radius: 5px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+  }
+}

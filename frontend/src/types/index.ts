@@ -19,6 +19,17 @@ export interface AudioFile {
   uploadedAt: Date;
 }
 
+// 海报文件信息
+export interface PosterFile {
+  id: string;
+  name: string;
+  url: string;
+  size: number;
+  width: number;
+  height: number;
+  uploadedAt: Date;
+}
+
 // 文案信息
 export interface Script {
   id: string;
@@ -53,6 +64,8 @@ export interface ProjectConfig {
   name: string;
   videos: VideoFile[];
   audios: AudioFile[];
+  posters: PosterFile[];
+  usePoster: boolean;
   scripts: Script[];
   duration: DurationOption;
   videoCount: number;

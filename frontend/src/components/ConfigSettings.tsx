@@ -1,7 +1,8 @@
 import React from 'react'
-import { Select, InputNumber, Radio, ColorPicker, Space, Row, Col } from 'antd'
-import { SettingOutlined, FontSizeOutlined, BgColorsOutlined } from '@ant-design/icons'
+import { InputNumber, Radio, ColorPicker, Space, Row, Col } from 'antd'
+import { SettingOutlined, BgColorsOutlined } from '@ant-design/icons'
 import type { DurationOption, VoiceOption, StyleConfig } from '../types'
+import { Select } from './ui'
 
 interface ConfigSettingsProps {
   duration: DurationOption
@@ -49,6 +50,8 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
               <Select
                 value={duration}
                 onChange={onDurationChange}
+                variant="outlined"
+                selectSize="medium"
                 style={{ width: '100%' }}
                 options={[
                   { label: '15秒', value: '15s' },
@@ -64,7 +67,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
               <label className="form-label">生成视频数量</label>
               <InputNumber
                 value={videoCount}
-                onChange={onVideoCountChange}
+                onChange={(value) => onVideoCountChange(value || 1)}
                 min={1}
                 max={10}
                 style={{ width: '100%' }}
@@ -109,6 +112,8 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                     <Select
                       value={style.title.position}
                       onChange={(value) => handleStyleChange('title', 'position', value)}
+                      variant="outlined"
+                      selectSize="small"
                       style={{ width: '100%' }}
                       options={[
                         { label: '顶部', value: 'top' },
@@ -148,6 +153,8 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                     <Select
                       value={style.subtitle.position}
                       onChange={(value) => handleStyleChange('subtitle', 'position', value)}
+                      variant="outlined"
+                      selectSize="small"
                       style={{ width: '100%' }}
                       options={[
                         { label: '顶部', value: 'top' },
@@ -177,4 +184,4 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
   )
 }
 
-export default ConfigSettings 
+export default ConfigSettings

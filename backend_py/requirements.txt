@@ -1,0 +1,29 @@
+# Web框架
+fastapi==0.104.1
+uvicorn==0.24.0
+
+# 异步HTTP客户端和文件操作
+aiohttp==3.9.1
+aiofiles==24.1.0
+
+# 视频和音频处理
+moviepy==1.0.3
+Pillow==10.1.0
+
+# 阿里云OSS
+oss2==2.18.4
+
+# 环境变量管理
+python-dotenv==1.0.0
+
+# HTTP请求
+requests==2.31.0
+
+# 数据处理
+pydantic==2.5.0
+
+# CORS支持
+fastapi-cors==0.0.6
+
+# 其他工具
+python-multipart==0.0.6

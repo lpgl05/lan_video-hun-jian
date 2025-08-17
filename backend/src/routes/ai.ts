@@ -6,9 +6,9 @@ import type { Script } from '../types'
 const router = express.Router()
 
 // 初始化OpenAI客户端
-const openai = new OpenAI({
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-})
+}) : null
 
 // 生成文案
 router.post('/generate-scripts', async (req, res) => {
@@ -33,6 +33,10 @@ router.post('/generate-scripts', async (req, res) => {
 基础文案：${baseScript}
 
 请直接返回20个文案，每个文案一行，不要编号。`
+
+    if (!openai) {
+      throw new Error('OpenAI API key not configured')
+    }
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
@@ -96,4 +100,4 @@ router.post('/generate-scripts', async (req, res) => {
   }
 })
 
-export default router 
+export default router

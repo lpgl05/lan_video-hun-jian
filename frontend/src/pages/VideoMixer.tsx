@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { Button, message, Input, Space, Progress } from 'antd'
-import { PlayCircleOutlined, SaveOutlined } from '@ant-design/icons'
+import { Space, message } from 'antd'
+import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons'
+import { Button } from '../components/ui'
+import StepWizard from '../components/StepWizard'
+import BasicInfoStep from '../components/steps/BasicInfoStep'
+import ContentUploadStep from '../components/steps/ContentUploadStep'
+import ParameterConfigStep from '../components/steps/ParameterConfigStep'
+import PreviewStep from '../components/steps/PreviewStep'
 import type { 
   VideoFile, 
   AudioFile, 
+  PosterFile,
   Script, 
   ProjectConfig, 
   GenerationTask,
@@ -11,18 +18,18 @@ import type {
   VoiceOption,
   StyleConfig 
 } from '../types'
-import VideoUpload from '../components/VideoUpload'
-import AudioUpload from '../components/AudioUpload'
-import ScriptConfig from '../components/ScriptConfig'
-import ConfigSettings from '../components/ConfigSettings'
-import GenerationResult from '../components/GenerationResult'
 import { saveProject, startGeneration, getGenerationStatus } from '../services/api'
 
 const VideoMixer: React.FC = () => {
+  // 步骤状态
+  const [currentStep, setCurrentStep] = useState(0)
+  
   // 状态管理
   const [projectName, setProjectName] = useState('')
   const [videos, setVideos] = useState<VideoFile[]>([])
   const [audios, setAudios] = useState<AudioFile[]>([])
+  const [posters, setPosters] = useState<PosterFile[]>([])
+  const [usePoster, setUsePoster] = useState(false)
   const [scripts, setScripts] = useState<Script[]>([])
   const [duration, setDuration] = useState<DurationOption>('30s')
   const [videoCount, setVideoCount] = useState(3)
@@ -43,6 +50,14 @@ const VideoMixer: React.FC = () => {
   // 生成任务状态
   const [currentTask, setCurrentTask] = useState<GenerationTask | null>(null)
   const [generating, setGenerating] = useState(false)
+  
+  // 步骤配置
+  const steps = [
+    { title: '基础信息', description: '项目名称配置' },
+    { title: '内容上传', description: '视频、音频、海报素材' },
+    { title: '参数配置', description: 'AI文案和生成设置' },
+    { title: '预览确认', description: '确认配置并生成' }
+  ]
 
   // 轮询任务状态
   useEffect(() => {
@@ -91,6 +106,8 @@ const VideoMixer: React.FC = () => {
         name: projectName,
         videos,
         audios,
+        posters,
+        usePoster,
         scripts: scripts.filter(s => s.selected),
         duration,
         videoCount,
@@ -115,25 +132,9 @@ const VideoMixer: React.FC = () => {
     }
   }
 
-  const handleReset = () => {
-    setCurrentTask(null)
-    setGenerating(false)
-  }
-
   const canGenerate = videos.length > 0 && 
     scripts.filter(s => s.selected).length > 0 && 
     !generating
-
-  const parseDuration = (duration: string) => {
-    if (duration.endsWith('s')) {
-      return parseInt(duration)
-    }
-    // 例如 '30-60s' 取最小值
-    if (duration.includes('-')) {
-      return parseInt(duration.split('-')[0])
-    }
-    return 30
-  }
 
   const getProgressText = () => {
     if (!currentTask) return ''
@@ -155,6 +156,109 @@ const VideoMixer: React.FC = () => {
     }
   }
 
+  // 步骤验证
+  const validateStep = (step: number): boolean => {
+    switch (step) {
+      case 0: // 基础信息
+        return projectName.trim().length > 0
+      case 1: // 内容上传
+        return videos.length > 0
+      case 2: // 参数配置
+        return scripts.filter(s => s.selected).length > 0
+      case 3: // 预览确认
+        return canGenerate
+      default:
+        return true
+    }
+  }
+
+  // 步骤切换
+  const handleStepChange = (step: number) => {
+    if (step < currentStep || validateStep(currentStep)) {
+      setCurrentStep(step)
+    } else {
+      message.warning('请完成当前步骤的必填项')
+    }
+  }
+
+  // 下一步
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => Math.min(prev + 1, steps.length - 1))
+    } else {
+      message.warning('请完成当前步骤的必填项')
+    }
+  }
+
+  // 上一步
+  const handlePrev = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 0))
+  }
+
+  // 渲染当前步骤内容
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 0:
+        return (
+          <BasicInfoStep
+            projectName={projectName}
+            onProjectNameChange={setProjectName}
+          />
+        )
+      case 1:
+        return (
+          <ContentUploadStep
+            videos={videos}
+            onVideosChange={setVideos}
+            audios={audios}
+            onAudiosChange={setAudios}
+            posters={posters}
+            onPostersChange={setPosters}
+            usePoster={usePoster}
+            onUsePosterChange={setUsePoster}
+          />
+        )
+      case 2:
+        return (
+          <ParameterConfigStep
+            scripts={scripts}
+            selectedScripts={scripts.filter(s => s.selected).map(s => s.id)}
+            onScriptsChange={setScripts}
+            duration={duration}
+            onDurationChange={setDuration}
+            quantity={videoCount}
+            onQuantityChange={setVideoCount}
+            voice={voice}
+            onVoiceChange={setVoice}
+            style={style}
+            onStyleChange={setStyle}
+          />
+        )
+      case 3:
+        return (
+          <PreviewStep
+            projectName={projectName}
+            videos={videos}
+            audios={audios}
+            posters={posters}
+            usePoster={usePoster}
+            scripts={scripts}
+            selectedScripts={scripts.filter(s => s.selected).map(s => s.id)}
+            duration={duration}
+            videoCount={videoCount}
+            voice={voice}
+            style={style}
+            onGenerate={handleStartGeneration}
+            generating={generating}
+            currentTask={currentTask || undefined}
+            getProgressText={getProgressText}
+          />
+        )
+      default:
+        return null
+    }
+  }
+
   return (
     <div className="page-container">
       <div className="page-header">
@@ -165,106 +269,45 @@ const VideoMixer: React.FC = () => {
       </div>
 
       <div className="page-content">
-        {/* 项目名称 */}
-        <div className="section">
-          <div className="section-content">
-            <div className="form-item">
-              <label className="form-label">项目名称</label>
-              <Input
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                placeholder="请输入项目名称"
-                maxLength={50}
-              />
-            </div>
-          </div>
+        {/* 步骤导航 */}
+        <StepWizard
+          currentStep={currentStep}
+          onStepChange={handleStepChange}
+          steps={steps}
+          className="mb-6"
+        />
+
+        {/* 步骤内容 */}
+        <div className="step-container">
+          {renderStepContent()}
         </div>
 
-        {/* 视频上传 */}
-        <VideoUpload 
-          videos={videos}
-          onVideosChange={setVideos}
-          maxCount={20}
-        />
-
-        {/* 音频上传 */}
-        <AudioUpload 
-          audios={audios}
-          onAudiosChange={setAudios}
-        />
-
-        {/* 文案配置 */}
-        <ScriptConfig 
-          scripts={scripts}
-          onScriptsChange={setScripts}
-          videoDuration={parseDuration(duration)}
-          videoCount={videoCount}
-        />
-
-        {/* 配置设置 */}
-        <ConfigSettings
-          duration={duration}
-          onDurationChange={setDuration}
-          videoCount={videoCount}
-          onVideoCountChange={setVideoCount}
-          voice={voice}
-          onVoiceChange={setVoice}
-          style={style}
-          onStyleChange={setStyle}
-        />
-
-        {/* 生成按钮 */}
-        <div className="action-buttons">
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <Space>
+        {/* 步骤操作按钮 */}
+        {currentStep < 3 && (
+          <div className="step-actions mt-8 text-center">
+            <Space size="large">
+              {currentStep > 0 && (
+                <Button
+                  size="large"
+                  variant="outline"
+                  icon={<ArrowLeftOutlined />}
+                  onClick={handlePrev}
+                >
+                  上一步
+                </Button>
+              )}
               <Button
-                type="primary"
+                variant="primary"
                 size="large"
-                icon={<PlayCircleOutlined />}
-                loading={generating}
-                disabled={!canGenerate}
-                onClick={handleStartGeneration}
+                icon={<ArrowRightOutlined />}
+                onClick={handleNext}
+                disabled={!validateStep(currentStep)}
               >
-                {generating ? '生成中...' : '开始AI制作'}
-              </Button>
-              <Button
-                size="large"
-                icon={<SaveOutlined />}
-                disabled={!canGenerate}
-              >
-                保存配置
+                下一步
               </Button>
             </Space>
-            
-            {/* 进度条显示 */}
-            {currentTask && generating && (
-              <div style={{ width: '100%', marginTop: '16px' }}>
-                <Progress
-                  percent={currentTask.progress || 0}
-                  status={currentTask.status === 'failed' ? 'exception' : 'active'}
-                  strokeColor={{
-                    '0%': '#108ee9',
-                    '100%': '#87d068',
-                  }}
-                />
-                <div style={{ 
-                  textAlign: 'center', 
-                  marginTop: '8px', 
-                  color: '#666',
-                  fontSize: '14px'
-                }}>
-                  {getProgressText()}
-                </div>
-              </div>
-            )}
-          </Space>
-        </div>
-
-        {/* 生成结果 */}
-        <GenerationResult 
-          task={currentTask}
-          onReset={handleReset}
-        />
+          </div>
+        )}
       </div>
     </div>
   )

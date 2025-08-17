@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { Input, Button, message, Checkbox, Space } from 'antd'
+import { message, Checkbox, Space } from 'antd'
 import { EditOutlined, RobotOutlined } from '@ant-design/icons'
 import type { Script } from '../types'
 import { generateScripts } from '../services/api'
 import { v4 as uuidv4 } from 'uuid'
-
-const { TextArea } = Input
+import Button from './ui/Button'
+import Input, { TextArea } from './ui/Input'
 
 interface ScriptConfigProps {
   scripts: Script[]
@@ -34,9 +34,9 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({
       const result = await generateScripts(baseScript, videoDuration, videoCount)
       // 兼容后端返回字符串数组的情况
       const generatedScripts = Array.isArray(result)
-        ? result.map((content: string) => ({
+        ? result.map((content: any) => ({
             id: uuidv4(),
-            content,
+            content: typeof content === 'string' ? content : content.content || '',
             selected: false,
             generatedAt: new Date(),
           }))
@@ -84,17 +84,19 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({
           <label className="form-label">基础文案</label>
           <TextArea
             value={baseScript}
-            onChange={(e) => setBaseScript(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setBaseScript(e.target.value)}
             placeholder="请输入基础文案，AI将基于此生成多个变体..."
             rows={4}
-            style={{ marginBottom: '12px' }}
+            variant="default"
+            className="mb-3"
           />
           <Button
-            type="primary"
-            icon={<RobotOutlined />}
+            variant="primary"
+            size="middle"
             loading={generating}
             onClick={handleGenerate}
             disabled={!baseScript.trim()}
+            icon={<RobotOutlined />}
           >
             AI生成文案
           </Button>
@@ -105,10 +107,10 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <label className="form-label">生成的文案</label>
               <Space>
-                <Button size="small" onClick={handleSelectAll}>
+                <Button variant="outline" size="small" onClick={handleSelectAll}>
                   全选
                 </Button>
-                <Button size="small" onClick={handleDeselectAll}>
+                <Button variant="outline" size="small" onClick={handleDeselectAll}>
                   取消全选
                 </Button>
               </Space>
@@ -128,9 +130,9 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({
                       onClick={(e) => e.stopPropagation()}
                     />
                     <div style={{ flex: 1 }}>
-                      <div className="script-content">{script.content}</div>
+                      <div className="script-content">{typeof script.content === 'string' ? script.content : JSON.stringify(script.content)}</div>
                       <div className="script-meta">
-                        生成时间: {new Date(script.generatedAt).toLocaleString()}
+                        生成时间: {script.generatedAt instanceof Date ? script.generatedAt.toLocaleString() : new Date(script.generatedAt).toLocaleString()}
                       </div>
                     </div>
                   </div>

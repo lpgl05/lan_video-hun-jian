@@ -5,14 +5,17 @@ from uuid import uuid4
 from models.oss_client import OSSClient
 import subprocess
 
-# 视频相关
-from moviepy.video.io.VideoFileClip import VideoFileClip
-from moviepy.video.VideoClip import TextClip, ColorClip
-from moviepy.editor import CompositeVideoClip, concatenate_videoclips, ImageClip
-
-# 音频相关
-from moviepy.audio.io.AudioFileClip import AudioFileClip
-from moviepy.audio.AudioClip import AudioClip, CompositeAudioClip, concatenate_audioclips
+# 视频相关 - 使用统一的editor导入
+try:
+    from moviepy.editor import VideoFileClip, TextClip, ColorClip, CompositeVideoClip, concatenate_videoclips, ImageClip
+    from moviepy.editor import AudioFileClip, AudioClip, CompositeAudioClip, concatenate_audioclips
+except ImportError:
+    # 备选导入方式
+    from moviepy.video.io.VideoFileClip import VideoFileClip
+    from moviepy.video.VideoClip import TextClip, ColorClip
+    from moviepy.editor import CompositeVideoClip, concatenate_videoclips, ImageClip
+    from moviepy.audio.io.AudioFileClip import AudioFileClip
+    from moviepy.audio.AudioClip import AudioClip, CompositeAudioClip, concatenate_audioclips
 
 # 新增：使用 PIL 生成文字贴图，避免 ImageMagick 依赖
 from PIL import Image, ImageDraw, ImageFont
@@ -22,8 +25,15 @@ import numpy as np
 import edge_tts
 from dotenv import load_dotenv
 
+# 新增HTTP下载依赖
+import aiohttp
+import aiofiles
+
 # 加载.env文件中的环境变量
 load_dotenv()
+
+# 基础URL配置，用于将相对路径转换为完整URL
+BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
 
 DOWNLOAD_VIDEO_PATH = "outputs/download_videos"
 DOWNLOAD_AUDIO_PATH = "outputs/download_audios"
@@ -46,22 +56,71 @@ print(f'指定的字体路径是: {FONT_PATH}')
 
 async def download_video(url):
     filename = url.split("/")[-1]
-    print('---------------------------------------')
-    print(url)
-    print(filename)
+    print('======= 视频下载开始 =======')
+    print(f'下载URL: {url}')
+    print(f'文件名: {filename}')
 
     local_file = DOWNLOAD_VIDEO_PATH + "/" + filename
-    print(local_file)
-    await oss_client.download_video(url, local_file)
-    return local_file
+    print(f'本地保存路径: {local_file}')
+    
+    try:
+        # 使用HTTP直接下载，绕过OSS SDK权限问题
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    async with aiofiles.open(local_file, 'wb') as f:
+                        async for chunk in response.content.iter_chunked(8192):
+                            await f.write(chunk)
+                    
+                    if not os.path.exists(local_file):
+                        raise Exception('下载的文件不存在')
+                    
+                    print(f'✅ 视频下载成功: {local_file} (大小: {os.path.getsize(local_file)} bytes)')
+                    return local_file
+                else:
+                    raise Exception(f'HTTP下载失败，状态码: {response.status}')
+    except Exception as e:
+        print(f'❌ 视频下载失败: {str(e)}')
+        print('可能的原因:')
+        print('1. 文件URL无法访问')
+        print('2. 网络连接问题')
+        print('3. 文件不存在或已被删除')
+        print('4. 服务器返回错误状态码')
+        raise Exception(f'视频文件下载失败: {str(e)}')
 
 async def download_audio(url):
     filename = url.split("/")[-1]
+    print('======= 音频下载开始 =======')
+    print(f'下载URL: {url}')
+    print(f'文件名: {filename}')
 
     local_file = DOWNLOAD_AUDIO_PATH + "/" + filename
-    print(local_file)
-    await oss_client.download_video(url, local_file)
-    return local_file
+    print(f'本地保存路径: {local_file}')
+    
+    try:
+        # 使用HTTP直接下载，绕过OSS SDK权限问题
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    async with aiofiles.open(local_file, 'wb') as f:
+                        async for chunk in response.content.iter_chunked(8192):
+                            await f.write(chunk)
+                    
+                    if not os.path.exists(local_file):
+                        raise Exception('下载的文件不存在')
+                    
+                    print(f'✅ 音频下载成功: {local_file} (大小: {os.path.getsize(local_file)} bytes)')
+                    return local_file
+                else:
+                    raise Exception(f'HTTP下载失败，状态码: {response.status}')
+    except Exception as e:
+        print(f'❌ 音频下载失败: {str(e)}')
+        print('可能的原因:')
+        print('1. 文件URL无法访问')
+        print('2. 网络连接问题')
+        print('3. 文件不存在或已被删除')
+        print('4. 服务器返回错误状态码')
+        raise Exception(f'音频文件下载失败: {str(e)}')
 
 def random_cut(video_path, min_duration, max_duration, count):
     video = VideoFileClip(video_path)
@@ -78,7 +137,12 @@ def random_cut(video_path, min_duration, max_duration, count):
 
 def add_text(clip, text, style, font_path=None):
     # 使用 PIL 渲染文本，避免 TextClip 依赖 ImageMagick
-    title_style = style.get("title", {}) if isinstance(style, dict) else {}
+    # 修复style参数处理逻辑，确保只有字典类型才调用.get()方法
+    if isinstance(style, dict):
+        title_style = style.get("title", {})
+    else:
+        title_style = {}
+    
     fontsize = int(title_style.get("fontSize", 40))
     color = title_style.get("color", "#FFFFFF")
     position = title_style.get("position", "bottom")  # top | center | bottom
@@ -271,8 +335,29 @@ async def process_clips(req):
     style = req.style.dict() if hasattr(req.style, "dict") else req.style
 
     # 下载所有视频和音频到本地
-    local_video_paths = [await download_video(v.url) for v in video_files]
-    local_audio_paths = [await download_audio(a.url) for a in audio_files]
+    # 将相对路径转换为完整URL
+    video_urls = []
+    for v in video_files:
+        if v.url.startswith('/uploads/'):
+            # 相对路径，转换为完整URL
+            full_url = BASE_URL + v.url
+            video_urls.append(full_url)
+        else:
+            # 已经是完整URL
+            video_urls.append(v.url)
+    
+    audio_urls = []
+    for a in audio_files:
+        if a.url.startswith('/uploads/'):
+            # 相对路径，转换为完整URL
+            full_url = BASE_URL + a.url
+            audio_urls.append(full_url)
+        else:
+            # 已经是完整URL
+            audio_urls.append(a.url)
+    
+    local_video_paths = [await download_video(url) for url in video_urls]
+    local_audio_paths = [await download_audio(url) for url in audio_urls]
 
     print("=======================================")
     print(local_video_paths)
@@ -405,6 +490,15 @@ def parse_duration(duration_str):
     # 支持 '15s' | '30s' | '30-60s'
     if not duration_str:
         return 30
+    
+    # 类型检查：如果是int类型，直接返回
+    if isinstance(duration_str, int):
+        return duration_str
+    
+    # 如果不是字符串类型，转换为字符串
+    if not isinstance(duration_str, str):
+        duration_str = str(duration_str)
+    
     s = duration_str.strip().lower()
     if s.endswith('s'):
         s = s[:-1]
@@ -431,9 +525,15 @@ def create_title_image(text, width=1080, height=1920, style=None):
         img = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
         return img
     
-    title_style = style.get("title", {}) if style else {}
-    fontsize = int(title_style.get("fontSize", 64))  # Title字体更大
-    color = title_style.get("color", "#FFD700")  # Title默认金色
+    # 修复style参数处理逻辑，确保只有字典类型才调用.get()方法
+    if isinstance(style, dict) and style:
+        title_style = style.get("title", {})
+        fontsize = int(title_style.get("fontSize", 64))  # Title字体更大
+        color = title_style.get("color", "#FFD700")  # Title默认金色
+    else:
+        # 如果style不是字典或为空，使用默认值
+        fontsize = 64
+        color = "#FFD700"
     
     # 计算实际需要的横幅尺寸
     target_width = 1080  # 视频宽度
@@ -523,7 +623,7 @@ def create_title_image(text, width=1080, height=1920, style=None):
 
     return img
 
-def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_image, tts_audio, bgm_audio, output_path, duration, title_position="top", subtitle_position="bottom"):
+def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_image, tts_audio, bgm_audio, output_path, duration, title_position="top", subtitle_position="bottom", poster_image=None):
     """使用FFmpeg创建9:16视频，包含模糊背景、Title、Subtitle和音频混合"""
     ffmpeg = find_ffmpeg()
     
@@ -557,20 +657,37 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
     print(f"Title位置设置: {title_desc} (overlay_y={title_overlay_y})")
     print(f"Subtitle位置设置: {subtitle_desc} (overlay_y={subtitle_overlay_y})")
     
-    filter_complex = f"""
-    [0:v]scale={target_width}:{target_height}:force_original_aspect_ratio=increase,crop={target_width}:{target_height}[bg];
-    [bg]boxblur=luma_radius=10:chroma_radius=10:luma_power=1[bg_blur];
-    [0:v]scale={target_width}:-1[fg_scale];
-    [fg_scale]scale={target_width}:{target_width*9//16}[fg];
-    [bg_blur][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];
-    [1:v]format=rgba[title];
-    [2:v]format=rgba[subtitle];
-    [bg_with_fg][title]overlay=0:{title_overlay_y}:format=auto[bg_with_title];
-    [bg_with_title][subtitle]overlay=0:{subtitle_overlay_y}:format=auto,format=yuv420p[video_out];
-    [3:a]volume=0.8[tts];
-    [4:a]volume=0.15[bgm];
-    [tts][bgm]amix=inputs=2:duration=first:dropout_transition=0[audio_out]
-    """
+    if poster_image:
+        # 使用海报作为背景
+        filter_complex = f"""
+        [5:v]scale={target_width}:{target_height}:force_original_aspect_ratio=increase,crop={target_width}:{target_height}[bg];
+        [0:v]scale={target_width}:-1[fg_scale];
+        [fg_scale]scale={target_width}:{target_width*9//16}[fg];
+        [bg][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];
+        [1:v]format=rgba[title];
+        [2:v]format=rgba[subtitle];
+        [bg_with_fg][title]overlay=0:{title_overlay_y}:format=auto[bg_with_title];
+        [bg_with_title][subtitle]overlay=0:{subtitle_overlay_y}:format=auto,format=yuv420p[video_out];
+        [3:a]volume=0.8[tts];
+        [4:a]volume=0.15[bgm];
+        [tts][bgm]amix=inputs=2:duration=first:dropout_transition=0[audio_out]
+        """
+    else:
+        # 使用模糊视频背景
+        filter_complex = f"""
+        [0:v]scale={target_width}:{target_height}:force_original_aspect_ratio=increase,crop={target_width}:{target_height}[bg];
+        [bg]boxblur=luma_radius=10:chroma_radius=10:luma_power=1[bg_blur];
+        [0:v]scale={target_width}:-1[fg_scale];
+        [fg_scale]scale={target_width}:{target_width*9//16}[fg];
+        [bg_blur][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];
+        [1:v]format=rgba[title];
+        [2:v]format=rgba[subtitle];
+        [bg_with_fg][title]overlay=0:{title_overlay_y}:format=auto[bg_with_title];
+        [bg_with_title][subtitle]overlay=0:{subtitle_overlay_y}:format=auto,format=yuv420p[video_out];
+        [3:a]volume=0.8[tts];
+        [4:a]volume=0.15[bgm];
+        [tts][bgm]amix=inputs=2:duration=first:dropout_transition=0[audio_out]
+        """
     
     cmd = [
         ffmpeg, '-y',
@@ -579,6 +696,12 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
         '-i', subtitle_image,    # 输入2: Subtitle图片
         '-i', tts_audio,         # 输入3: TTS音频
         '-i', bgm_audio,         # 输入4: BGM音频
+    ]
+    
+    if poster_image:
+        cmd.extend(['-i', poster_image])  # 输入5: 海报图片
+    
+    cmd.extend([
         '-filter_complex', filter_complex,
         '-map', '[video_out]',   # 映射视频流
         '-map', '[audio_out]',   # 映射音频流
@@ -591,7 +714,7 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
         '-threads', str(os.cpu_count()),
         '-movflags', '+faststart',
         output_path
-    ]
+    ])
     
     try:
         print("开始FFmpeg处理...")
@@ -621,16 +744,43 @@ async def process_clips001(req):
 
     # 项目的标题和样式
     title = req.name
-    title_fontsize = style.get("title", {}).get("fontSize", 64)
-    title_color = style.get("title", {}).get("color", "#FFD700")
-    title_position = style.get("title", {}).get("position", "top")
-    
-    # 字幕样式
-    subtitle_position = style.get("subtitle", {}).get("position", "bottom")
+    # 修复style参数处理逻辑，确保只有字典类型才调用.get()方法
+    if isinstance(style, dict):
+        title_fontsize = style.get("title", {}).get("fontSize", 64)
+        title_color = style.get("title", {}).get("color", "#FFD700")
+        title_position = style.get("title", {}).get("position", "top")
+        subtitle_position = style.get("subtitle", {}).get("position", "bottom")
+    else:
+        # 如果style不是字典，使用默认值
+        title_fontsize = 64
+        title_color = "#FFD700"
+        title_position = "top"
+        subtitle_position = "bottom"
 
     # 下载所有视频和音频到本地
-    local_video_paths = [await download_video(v.url) for v in video_files]
-    local_audio_paths = [await download_audio(a.url) for a in audio_files]
+    # 将相对路径转换为完整URL
+    video_urls = []
+    for v in video_files:
+        if v.url.startswith('/uploads/'):
+            # 相对路径，转换为完整URL
+            full_url = BASE_URL + v.url
+            video_urls.append(full_url)
+        else:
+            # 已经是完整URL
+            video_urls.append(v.url)
+    
+    audio_urls = []
+    for a in audio_files:
+        if a.url.startswith('/uploads/'):
+            # 相对路径，转换为完整URL
+            full_url = BASE_URL + a.url
+            audio_urls.append(full_url)
+        else:
+            # 已经是完整URL
+            audio_urls.append(a.url)
+    
+    local_video_paths = [await download_video(url) for url in video_urls]
+    local_audio_paths = [await download_audio(url) for url in audio_urls]
 
     print("=======================================")
     print("包含：Title + Subtitle + TTS语音 + 背景音乐")
@@ -759,6 +909,20 @@ async def process_clips001(req):
                 create_silence_audio(duration_sec, silence_path)
                 bgm_audio = silence_path
             
+            # 准备海报路径
+            poster_path = None
+            if hasattr(req, 'usePoster') and req.usePoster and hasattr(req, 'posters') and req.posters:
+                # 使用第一个海报作为背景
+                poster_url = req.posters[0].url
+                if poster_url.startswith('/'):
+                    # 相对路径，转换为绝对路径
+                    poster_path = os.path.join(os.getcwd(), poster_url.lstrip('/'))
+                else:
+                    # 完整URL，需要下载
+                    poster_filename = f"poster_{req.posters[0].id}.jpg"
+                    poster_path = os.path.join(OUTPUT_DIR, poster_filename)
+                    await download_video(poster_url)  # 使用现有的下载函数
+            
             success = create_9_16_video_with_title_ffmpeg(
                 montage_clip_path,
                 title_image_path,
@@ -768,7 +932,8 @@ async def process_clips001(req):
                 final_output,
                 duration_sec,
                 title_position,
-                subtitle_position
+                subtitle_position,
+                poster_image=poster_path
             )
             
             compose_time = time.time() - compose_start
@@ -948,9 +1113,15 @@ def create_subtitle_image(text, width=480, height=854, style=None):
         img = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
         return img
     
-    subtitle_style = style.get("subtitle", {}) if style else {}
-    fontsize = int(subtitle_style.get("fontSize", 48))
-    color = subtitle_style.get("color", "#FFFFFF")
+    # 修复style参数处理逻辑，确保只有字典类型才调用.get()方法
+    if isinstance(style, dict) and style:
+        subtitle_style = style.get("subtitle", {})
+        fontsize = int(subtitle_style.get("fontSize", 48))
+        color = subtitle_style.get("color", "#FFFFFF")
+    else:
+        # 如果style不是字典或为空，使用默认值
+        fontsize = 48
+        color = "#FFFFFF"
     
     # 计算实际需要的横幅尺寸
     target_width = 1080  # 视频宽度

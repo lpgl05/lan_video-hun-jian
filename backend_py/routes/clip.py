@@ -1,7 +1,7 @@
 import asyncio
 from fastapi import APIRouter, BackgroundTasks
-from pydantic import BaseModel
-from typing import List, Dict, Any
+from pydantic import BaseModel, validator
+from typing import List, Dict, Any, Union
 from services.clip_service import process_clips, process_clips001
 from uuid import uuid4
 from datetime import datetime
@@ -14,6 +14,7 @@ class VideoFile(BaseModel):
     url: str
     size: int
     duration: int
+    thumbnail: str = None
     uploadedAt: str
 
 class AudioFile(BaseModel):
@@ -24,10 +25,19 @@ class AudioFile(BaseModel):
     duration: int
     uploadedAt: str
 
+class PosterFile(BaseModel):
+    id: str
+    name: str
+    url: str
+    size: int
+    width: int
+    height: int
+    uploadedAt: str
+
 class Script(BaseModel):
     id: str
     content: str
-    selected: bool
+    selected: bool = True
     generatedAt: str
 
 class StyleConfig(BaseModel):
@@ -39,10 +49,32 @@ class ClipRequest(BaseModel):
     videos: List[VideoFile]
     audios: List[AudioFile]
     scripts: List[Script]
-    duration: str
+    duration: Union[int, str]  # 支持'15s'格式或数字
     videoCount: int
     voice: str
-    style: StyleConfig
+    style: Union[str, Dict[str, Any]]  # 支持字符串或StyleConfig对象
+    posters: List[PosterFile] = []
+    usePoster: bool = False
+    # 添加可选的前端字段
+    id: str = None
+    createdAt: Union[str, datetime] = None
+    updatedAt: Union[str, datetime] = None
+    
+    @validator('duration', pre=True)
+    def parse_duration(cls, v):
+        if isinstance(v, str):
+            # 解析'15s', '30s'等格式
+            if v.endswith('s'):
+                return int(v[:-1])
+            return int(v)
+        return v
+    
+    @validator('style', pre=True)
+    def parse_style(cls, v):
+        if isinstance(v, dict):
+            # 如果是StyleConfig对象，转换为字符串描述
+            return "custom_style"
+        return v
 
 class StartGenerationRequest(BaseModel):
     projectId: str
@@ -57,7 +89,7 @@ _task_storage = {}
 # 添加项目存储
 _project_storage = {}
 
-@router.post("/api/projects")
+@router.post("/projects")
 async def save_project_and_generate(req: ClipRequest, background_tasks: BackgroundTasks):
     # 保存项目配置到内存存储
     project_id = str(uuid4())
@@ -74,13 +106,13 @@ async def save_project_and_generate(req: ClipRequest, background_tasks: Backgrou
             "duration": req.duration,
             "videoCount": req.videoCount,
             "voice": req.voice,
-            "style": req.style.dict(),
+            "style": req.style,
             "createdAt": datetime.now().isoformat(),
             "updatedAt": datetime.now().isoformat()
         }
     }
 
-@router.post("/api/generation/start")
+@router.post("/generation/start")
 async def start_generation(req: StartGenerationRequest, background_tasks: BackgroundTasks):
     # 创建任务ID，立即返回processing状态
     task_id = str(uuid4())
@@ -162,7 +194,7 @@ async def process_video_generation(task_id: str, clip_req: ClipRequest):
             "updatedAt": datetime.now().isoformat()
         })
 
-@router.get("/api/generation/status/{task_id}")
+@router.get("/generation/status/{task_id}")
 async def get_generation_status(task_id: str):
     # 从存储中获取任务状态
     if task_id not in _task_storage:

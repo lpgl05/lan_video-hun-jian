@@ -1,14 +1,12 @@
 import axios from 'axios'
-import type { 
-  VideoFile, 
-  AudioFile, 
-  Script, 
-  ProjectConfig, 
+import type {
+  VideoFile,
+  AudioFile,
+  PosterFile,
+  Script,
+  ProjectConfig,
   GenerationTask,
-  ApiResponse,
-  DurationOption,
-  VoiceOption,
-  StyleConfig 
+  ApiResponse
 } from '../types'
 
 const api = axios.create({
@@ -40,6 +38,19 @@ export const uploadAudio = async (file: File): Promise<AudioFile> => {
   formData.append('audio', file)
   
   const response = await api.post<ApiResponse<AudioFile>>('/upload/audio', formData)
+  
+  if (!response.data.success) {
+    throw new Error(response.data.error || '上传失败')
+  }
+  
+  return response.data.data!
+}
+
+export const uploadPoster = async (file: File): Promise<PosterFile> => {
+  const formData = new FormData()
+  formData.append('poster', file)
+  
+  const response = await api.post<ApiResponse<PosterFile>>('/upload/poster', formData)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '上传失败')

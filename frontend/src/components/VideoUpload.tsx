@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Upload, Button, List, Progress, message, Modal } from 'antd'
+import { Upload, Button, message, Modal } from 'antd'
 import { UploadOutlined, DeleteOutlined, PlayCircleOutlined } from '@ant-design/icons'
-import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
+import type { UploadProps } from 'antd/es/upload/interface'
 import type { VideoFile } from '../types'
 import { uploadVideo, deleteVideo } from '../services/api'
 import ReactPlayer from 'react-player'
@@ -166,4 +166,4 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
   )
 }
 
-export default VideoUpload 
+export default VideoUpload

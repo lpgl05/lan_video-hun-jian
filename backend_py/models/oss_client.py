@@ -266,3 +266,19 @@ class OSSClient:
         except Exception as error:
             print(f'OSS下载失败: {error}')
             raise Exception('文件下载失败')
+    
+    async def delete_from_oss(self, object_path: str) -> bool:
+        """
+        从OSS删除文件
+        Args:
+            object_path: 文件在OSS中的路径
+        Returns:
+            bool: 删除是否成功
+        """
+        try:
+            result = self.bucket.delete_object(object_path)
+            print(f'成功从OSS删除文件: {object_path}')
+            return True
+        except Exception as error:
+            print(f'OSS删除失败: {error}')
+            return False

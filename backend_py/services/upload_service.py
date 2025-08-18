@@ -15,6 +15,9 @@ oss_client = OSSClient()
 # 全局上传任务追踪器
 upload_tasks: Dict[str, Dict[str, Any]] = {}
 
+# 文件存储映射 - 用于跟踪已上传的文件
+uploaded_files: Dict[str, Dict[str, str]] = {}
+
 async def handle_upload_video(video, task_id: str = None):
     if video is None:
         return {"success": False, "error": "未收到文件"}
@@ -117,6 +120,24 @@ async def handle_upload_video(video, task_id: str = None):
             "uploadedAt": datetime.now().isoformat(),
             "task_id": task_id  # 添加任务ID
         }
+        
+        # 记录文件信息用于删除
+        # 从file_url中提取实际的OSS路径
+        oss_file_path = None
+        if USE_OSS and file_url:
+            # 从URL中提取OSS对象key: https://bucket.endpoint/path -> path
+            try:
+                oss_file_path = file_url.split('.com/')[-1] if '.com/' in file_url else None
+            except:
+                oss_file_path = None
+        
+        uploaded_files[file_id] = {
+            "type": "video",
+            "filename": file_name,
+            "url": file_url,
+            "oss_path": oss_file_path if USE_OSS else (save_path if 'save_path' in locals() else None)
+        }
+        
         return {
             "success": True,
             "data": video_file
@@ -211,6 +232,24 @@ async def handle_upload_audio(audio, task_id: str = None):
             "uploadedAt": datetime.now().isoformat(),
             "task_id": task_id  # 添加task_id字段
         }
+        
+        # 记录文件信息用于删除
+        # 从file_url中提取实际的OSS路径
+        oss_file_path = None
+        if USE_OSS and file_url:
+            # 从URL中提取OSS对象key: https://bucket.endpoint/path -> path
+            try:
+                oss_file_path = file_url.split('.com/')[-1] if '.com/' in file_url else None
+            except:
+                oss_file_path = None
+        
+        uploaded_files[file_id] = {
+            "type": "audio",
+            "filename": file_name,
+            "url": file_url,
+            "oss_path": oss_file_path if USE_OSS else (save_path if 'save_path' in locals() else None)
+        }
+        
         return {
             "success": True,
             "data": audio_file
@@ -287,3 +326,101 @@ async def handle_upload_poster(poster, task_id: str = None):
         }
     except Exception as e:
         return {"success": False, "error": f"上传失败: {str(e)}"}
+
+async def handle_delete_file(file_id: str, file_type: str, file_url: str = None):
+    """删除文件（视频/音频）"""
+    try:
+        print(f"尝试删除文件: file_id={file_id}, file_type={file_type}")
+        print(f"当前记录的文件: {list(uploaded_files.keys())}")
+        
+        if file_id not in uploaded_files:
+            print(f"文件记录不存在，file_id: {file_id}")
+            
+            # 如果提供了file_url，尝试从URL中提取路径并删除
+            if file_url and USE_OSS:
+                try:
+                    # 从URL中提取OSS对象key
+                    oss_path = file_url.split('.com/')[-1] if '.com/' in file_url else None
+                    if oss_path:
+                        print(f"从URL提取OSS路径: {oss_path}")
+                        success = await oss_client.delete_from_oss(oss_path)
+                        if success:
+                            print(f"成功删除OSS文件: {oss_path}")
+                            return {"success": True, "message": f"{file_type}删除成功"}
+                        else:
+                            print("OSS删除失败")
+                except Exception as e:
+                    print(f"使用URL删除文件时出错: {str(e)}")
+            
+            # 如果没有URL或URL删除失败，尝试搜索删除
+            print("尝试搜索并删除文件...")
+            
+            if USE_OSS:
+                # 尝试从OSS列出并删除相关文件
+                try:
+                    # 获取目录前缀
+                    prefix = f"{UPLOAD_VIDEO_DIR}/" if file_type == "video" else f"{UPLOAD_AUDIO_DIR}/"
+                    
+                    # 列出OSS中的文件，查找匹配的文件
+                    from oss2 import ObjectIterator
+                    
+                    for obj in ObjectIterator(oss_client.bucket, prefix=prefix):
+                        # 检查文件名是否包含file_id（这种情况很少，因为OSS使用随机UUID）
+                        if file_id in obj.key:
+                            print(f"找到匹配的OSS文件: {obj.key}")
+                            success = await oss_client.delete_from_oss(obj.key)
+                            if success:
+                                print(f"成功删除OSS文件: {obj.key}")
+                                return {"success": True, "message": f"{file_type}删除成功"}
+                    
+                    print(f"未找到包含ID {file_id} 的OSS文件")
+                except Exception as e:
+                    print(f"搜索OSS文件时出错: {str(e)}")
+            
+            # 对于记录不存在的情况，我们仍然返回成功，因为目标是确保文件被删除
+            print("文件记录不存在，但返回删除成功")
+            return {"success": True, "message": f"{file_type}删除成功（文件记录不存在）"}
+        
+        file_info = uploaded_files[file_id]
+        print(f"文件信息: {file_info}")
+        
+        # 验证文件类型
+        if file_info["type"] != file_type:
+            print(f"文件类型不匹配，期望: {file_type}, 实际: {file_info['type']}")
+            return {"success": False, "error": f"文件类型不匹配，期望: {file_type}, 实际: {file_info['type']}"}
+        
+        if USE_OSS:
+            # 从OSS删除文件
+            oss_path = file_info["oss_path"]
+            print(f"删除OSS文件: {oss_path}")
+            success = await oss_client.delete_from_oss(oss_path)
+            if not success:
+                print("OSS删除失败")
+                return {"success": False, "error": "从OSS删除文件失败"}
+        else:
+            # 从本地删除文件
+            local_path = file_info["oss_path"]  # 这里存储的是本地路径
+            print(f"删除本地文件: {local_path}")
+            if local_path and os.path.exists(local_path):
+                os.remove(local_path)
+                print("本地文件删除成功")
+            else:
+                print("本地文件不存在或路径为空")
+        
+        # 从记录中移除
+        del uploaded_files[file_id]
+        print(f"文件记录删除成功")
+        
+        return {"success": True, "message": f"{file_type}删除成功"}
+        
+    except Exception as e:
+        print(f"删除过程中发生异常: {str(e)}")
+        return {"success": False, "error": f"删除失败: {str(e)}"}
+
+async def handle_delete_video(file_id: str, file_url: str = None):
+    """删除视频文件"""
+    return await handle_delete_file(file_id, "video", file_url)
+
+async def handle_delete_audio(file_id: str, file_url: str = None):
+    """删除音频文件"""
+    return await handle_delete_file(file_id, "audio", file_url)

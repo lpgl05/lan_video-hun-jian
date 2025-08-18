@@ -3,7 +3,7 @@ import { Upload, Button, List, Progress, message, Modal } from 'antd'
 import { UploadOutlined, DeleteOutlined, PlayCircleOutlined } from '@ant-design/icons'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { VideoFile } from '../types'
-import { uploadVideo, uploadVideoWithProgress, deleteVideo } from '../services/api'
+import { uploadVideo, uploadVideoWithProgress, deleteVideo, testDelete } from '../services/api'
 import ReactPlayer from 'react-player'
 
 interface VideoUploadProps {
@@ -118,7 +118,21 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
 
   const handleDelete = async (videoId: string) => {
     try {
-      await deleteVideo(videoId)
+      console.log('开始删除视频:', videoId)
+      
+      // 先尝试测试删除接口
+      console.log('测试删除接口...')
+      await testDelete(videoId)
+      console.log('测试删除成功')
+      
+      // 找到要删除的视频，传递URL给后端
+      const videoToDelete = videos.find(v => v.id === videoId)
+      console.log('要删除的视频:', videoToDelete)
+      
+      console.log('调用正式删除接口...')
+      await deleteVideo(videoId, videoToDelete?.url)
+      console.log('正式删除成功')
+      
       onVideosChange(videos.filter(v => v.id !== videoId))
       message.success('视频删除成功')
     } catch (error) {

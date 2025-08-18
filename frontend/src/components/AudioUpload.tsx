@@ -106,7 +106,9 @@ const AudioUpload: React.FC<AudioUploadProps> = ({ audios, onAudiosChange }) => 
 
   const handleDelete = async (audioId: string) => {
     try {
-      await deleteAudio(audioId)
+      // 找到要删除的音频，传递URL给后端
+      const audioToDelete = audios.find(a => a.id === audioId)
+      await deleteAudio(audioId, audioToDelete?.url)
       onAudiosChange(audios.filter(a => a.id !== audioId))
       message.success('音频删除成功')
     } catch (error) {

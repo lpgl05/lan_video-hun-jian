@@ -34,6 +34,8 @@ interface StepWizardProps {
   setPosters: (posters: PosterFile[]) => void
   scripts: Script[]
   setScripts: (scripts: Script[]) => void
+  baseScript: string
+  setBaseScript: (script: string) => void
   duration: DurationOption
   setDuration: (duration: DurationOption) => void
   videoCount: number
@@ -57,6 +59,8 @@ const StepWizard: React.FC<StepWizardProps> = ({
   setPosters,
   scripts,
   setScripts,
+  baseScript,
+  setBaseScript,
   duration,
   setDuration,
   videoCount,
@@ -206,6 +210,8 @@ const StepWizard: React.FC<StepWizardProps> = ({
                 <ScriptConfig 
                   scripts={scripts}
                   onScriptsChange={setScripts}
+                  baseScript={baseScript}
+                  onBaseScriptChange={setBaseScript}
                   videoDuration={duration === '30s' ? 30 : duration === '60s' ? 60 : 90}
                   videoCount={videoCount}
                 />

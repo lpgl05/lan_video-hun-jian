@@ -36,6 +36,7 @@ const VideoMixer: React.FC = () => {
   const [audios, setAudios] = useState<AudioFile[]>([])
   const [posters, setPosters] = useState<PosterFile[]>([])
   const [scripts, setScripts] = useState<Script[]>([])
+  const [baseScript, setBaseScript] = useState('')
   const [duration, setDuration] = useState<DurationOption>('30s')
   const [videoCount, setVideoCount] = useState(3)
   const [voice, setVoice] = useState<VoiceOption>('female')
@@ -161,10 +162,22 @@ const VideoMixer: React.FC = () => {
     setAudios([])
     setPosters([])
     setScripts([])
-    setDuration(30)
+    setBaseScript('')
+    setDuration('30s')
     setVideoCount(3)
-    setVoice('女声')
-    setStyle('自然')
+    setVoice('female')
+    setStyle({
+      title: {
+        color: '#ffffff',
+        position: 'top',
+        fontSize: 24,
+      },
+      subtitle: {
+        color: '#ffffff',
+        position: 'bottom',
+        fontSize: 18,
+      }
+    })
     message.success('已清空所有数据，可以开始新的创作！')
   }
 
@@ -252,6 +265,8 @@ const VideoMixer: React.FC = () => {
         setPosters={setPosters}
         scripts={scripts}
         setScripts={setScripts}
+        baseScript={baseScript}
+        setBaseScript={setBaseScript}
         duration={duration}
         setDuration={setDuration}
         videoCount={videoCount}

@@ -172,49 +172,96 @@
 
 .custom-input {
   height: 48px;
-  border-radius: 8px;
-  border: 1px solid #e8e8e8;
-  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: transparent !important;
+  backdrop-filter: none;
   transition: all 0.3s ease;
-}
-
-.custom-input:hover,
-.custom-input:focus {
-  border-color: #1890ff;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
-  background: rgba(255, 255, 255, 0.95);
-}
-
-.custom-input .ant-input {
-  background: transparent;
-  border: none;
   box-shadow: none;
 }
 
+.custom-input:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: transparent !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.custom-input:focus,
+.custom-input.ant-input-affix-wrapper-focused {
+  border-color: rgba(24, 144, 255, 1);
+  background: transparent !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.custom-input .ant-input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+.custom-input .ant-input::placeholder {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-weight: 400;
+}
+
+/* 确保密码输入框也是透明的 */
+.custom-input.ant-input-affix-wrapper {
+  background: transparent !important;
+}
+
+.custom-input.ant-input-affix-wrapper .ant-input {
+  background: transparent !important;
+}
+
 .custom-input .anticon {
-  color: #8c8c8c;
+  color: rgba(255, 255, 255, 0.8) !important;
+  transition: color 0.3s ease;
+}
+
+.custom-input:hover .anticon,
+.custom-input:focus .anticon {
+  color: rgba(255, 255, 255, 1) !important;
 }
 
 /* 登录按钮 */
 .login-button {
   height: 48px;
-  border-radius: 8px;
-  border: none;
-  background: linear-gradient(135deg, #1890ff 0%, #722ed1 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, 
+    rgba(24, 144, 255, 0.9) 0%, 
+    rgba(114, 46, 209, 0.9) 100%);
+  backdrop-filter: blur(10px);
   font-weight: 600;
   font-size: 16px;
+  color: #ffffff !important;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(24, 144, 255, 0.4);
 }
 
 .login-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
-  background: linear-gradient(135deg, #40a9ff 0%, #9254de 100%);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, 
+    rgba(64, 169, 255, 0.95) 0%, 
+    rgba(146, 84, 222, 0.95) 100%);
+  box-shadow: 0 8px 28px rgba(24, 144, 255, 0.5);
+  color: #ffffff !important;
 }
 
 .login-button:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
+}
+
+.login-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.3), 
+              0 6px 20px rgba(24, 144, 255, 0.4);
 }
 
 /* 登录底部 */

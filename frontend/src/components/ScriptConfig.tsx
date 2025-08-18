@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Input, Button, message, Checkbox, Space, Progress } from 'antd'
+import { Input, Button, message, Checkbox, Space, Progress, Row, Col, Slider } from 'antd'
 import { EditOutlined, RobotOutlined } from '@ant-design/icons'
 import type { Script } from '../types'
 import { generateScripts } from '../services/api'
@@ -12,6 +12,9 @@ interface ScriptConfigProps {
   onScriptsChange: (scripts: Script[]) => void
   videoDuration: number
   videoCount: number
+  onVideoCountChange: (count: number) => void
+  projectName: string
+  onProjectNameChange: (name: string) => void
   baseScript?: string
   onBaseScriptChange?: (script: string) => void
 }
@@ -21,6 +24,9 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({
   onScriptsChange,
   videoDuration,
   videoCount,
+  onVideoCountChange,
+  projectName,
+  onProjectNameChange,
   baseScript = '',
   onBaseScriptChange,
 }) => {
@@ -40,18 +46,20 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({
     }
 
     setGenerating(true)
-    setGenerateProgress(50) // 从50%开始
+    setGenerateProgress(0) // 从0%开始
     
-    // 模拟进度条
+    // 模拟进度条 - 线性增长
+    let currentProgress = 0
     const progressInterval = setInterval(() => {
       setGenerateProgress(prev => {
-        if (prev >= 85) {
-          return Math.min(prev + 0.5, 95) // 85%后缓慢增长，最大到95%
+        currentProgress = prev
+        if (currentProgress >= 90) {
+          return Math.min(currentProgress + 0.5, 95) // 90%后缓慢增长，最大到95%
         }
-        const increment = Math.random() * 8 + 2 // 2-10%的随机增长
-        return Math.min(prev + increment, 85) // 确保不超过85%
+        const increment = Math.random() * 3 + 1 // 1-4%的随机增长
+        return Math.min(currentProgress + increment, 90) // 确保线性增长到90%
       })
-    }, 300)
+    }, 200)
 
     try {
       const result = await generateScripts(localBaseScript, videoDuration, videoCount)
@@ -118,6 +126,41 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({
       </div>
       
       <div className="section-content">
+        {/* 基础配置 */}
+        <div className="form-item" style={{ marginBottom: '24px' }}>
+          <Row gutter={[16, 16]}>
+            <Col span={12}>
+              <div>
+                <label className="form-label">项目名称</label>
+                <Input
+                  value={projectName}
+                  onChange={(e) => onProjectNameChange(e.target.value)}
+                  placeholder="请输入项目名称"
+                  maxLength={50}
+                  style={{ marginBottom: '12px' }}
+                />
+              </div>
+            </Col>
+            <Col span={12}>
+              <div>
+                <label className="form-label">视频数量: {videoCount}</label>
+                <Slider
+                  min={1}
+                  max={10}
+                  value={videoCount}
+                  onChange={onVideoCountChange}
+                  marks={{
+                    1: '1',
+                    5: '5',
+                    10: '10'
+                  }}
+                  style={{ marginTop: '8px' }}
+                />
+              </div>
+            </Col>
+          </Row>
+        </div>
+
         <div className="form-item">
           <label className="form-label">基础文案</label>
           <TextArea

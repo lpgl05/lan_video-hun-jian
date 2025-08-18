@@ -568,6 +568,11 @@
   border: none !important;
 }
 
+/* 隐藏个人中心菜单项 */
+.hidden-menu-item {
+  display: none !important;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .main-content {

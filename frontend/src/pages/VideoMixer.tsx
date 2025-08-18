@@ -31,7 +31,13 @@ const VideoMixer: React.FC = () => {
   const [showGenerationModal, setShowGenerationModal] = useState(false)
   
   // 数据状态管理
-  const [projectName, setProjectName] = useState('')
+  const [projectName, setProjectName] = useState(() => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}${month}${day}项目`
+  })
   const [videos, setVideos] = useState<VideoFile[]>([])
   const [audios, setAudios] = useState<AudioFile[]>([])
   const [posters, setPosters] = useState<PosterFile[]>([])
@@ -157,7 +163,11 @@ const VideoMixer: React.FC = () => {
   // 新创作 - 清空所有数据
   const handleNewCreation = () => {
     setCurrentTask(null)
-    setProjectName('')
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    setProjectName(`${year}${month}${day}项目`)
     setVideos([])
     setAudios([])
     setPosters([])

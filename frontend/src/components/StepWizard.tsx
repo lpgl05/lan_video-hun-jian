@@ -214,6 +214,9 @@ const StepWizard: React.FC<StepWizardProps> = ({
                   onBaseScriptChange={setBaseScript}
                   videoDuration={duration === '30s' ? 30 : duration === '60s' ? 60 : 90}
                   videoCount={videoCount}
+                  onVideoCountChange={setVideoCount}
+                  projectName={projectName}
+                  onProjectNameChange={setProjectName}
                 />
               </Card>
             </div>
@@ -239,12 +242,8 @@ const StepWizard: React.FC<StepWizardProps> = ({
                 className="upload-card"
               >
                 <ConfigSettings
-                  projectName={projectName}
-                  setProjectName={setProjectName}
                   duration={duration}
                   setDuration={setDuration}
-                  videoCount={videoCount}
-                  setVideoCount={setVideoCount}
                   voice={voice}
                   setVoice={setVoice}
                   style={style}

@@ -25,33 +25,11 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
   onClose,
   onComplete
 }) => {
-  const [currentStage, setCurrentStage] = useState(0)
-  const [estimatedTime, setEstimatedTime] = useState(300) // 5分钟
+  const [estimatedTime] = useState(300) // 5分钟
   const [elapsedTime, setElapsedTime] = useState(0)
+  const [simulatedProgress, setSimulatedProgress] = useState(0)
 
-  const stages = [
-    { name: '准备素材', icon: '📁', description: '分析上传的视频和音频文件' },
-    { name: '生成文案', icon: '✍️', description: 'AI智能生成视频文案内容' },
-    { name: '视频剪辑', icon: '✂️', description: '根据文案智能剪辑视频片段' },
-    { name: '添加特效', icon: '✨', description: '添加标题、字幕和转场效果' },
-    { name: '合成输出', icon: '🎬', description: '最终合成并输出视频文件' }
-  ]
 
-  // 根据任务进度更新当前阶段
-  useEffect(() => {
-    if (!task) return
-
-    const progress = task.progress || 0
-    let stage = 0
-    
-    if (progress >= 80) stage = 4
-    else if (progress >= 60) stage = 3
-    else if (progress >= 40) stage = 2
-    else if (progress >= 20) stage = 1
-    else if (progress >= 10) stage = 0
-
-    setCurrentStage(stage)
-  }, [task?.progress])
 
   // 计算估算时间
   useEffect(() => {
@@ -62,6 +40,36 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
     }, 1000)
 
     return () => clearInterval(timer)
+  }, [task?.status])
+
+  // 模拟进度条
+  useEffect(() => {
+    if (!task || task.status !== 'processing') {
+      setSimulatedProgress(0)
+      return
+    }
+
+    // 重置进度
+    setSimulatedProgress(0)
+    
+    const progressInterval = setInterval(() => {
+      setSimulatedProgress(prev => {
+        if (prev >= 90) {
+          return Math.min(prev + 0.3, 95) // 90%后缓慢增长，最大到95%
+        }
+        const increment = Math.random() * 2 + 0.5 // 0.5-2.5%的随机增长
+        return Math.min(prev + increment, 90) // 确保线性增长到90%
+      })
+    }, 500)
+
+    return () => clearInterval(progressInterval)
+  }, [task?.status])
+
+  // 任务完成时设置进度为100%
+  useEffect(() => {
+    if (task?.status === 'completed') {
+      setSimulatedProgress(100)
+    }
   }, [task?.status])
 
   const formatTime = (seconds: number) => {
@@ -75,10 +83,9 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
 
     switch (task.status) {
       case 'processing':
-        const stage = stages[currentStage]
         return {
-          title: `${stage.name}中...`,
-          description: stage.description,
+          title: 'AI正在合成中',
+          description: '预计5分钟，请耐心等待...',
           icon: <LoadingOutlined spin style={{ color: '#1890ff' }} />
         }
       case 'completed':
@@ -103,7 +110,7 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
   }
 
   const statusInfo = getStatusInfo()
-  const progress = task?.progress || 0
+  const progress = task?.status === 'completed' ? 100 : simulatedProgress
   const remainingTime = Math.max(0, estimatedTime - elapsedTime)
 
   return (
@@ -173,25 +180,7 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
           </div>
         )}
 
-        {/* 阶段指示器 */}
-        {task?.status === 'processing' && (
-          <div className="stages-section">
-            <div className="stages-list">
-              {stages.map((stage, index) => (
-                <div
-                  key={index}
-                  className={`stage-item ${
-                    index < currentStage ? 'completed' : 
-                    index === currentStage ? 'active' : 'pending'
-                  }`}
-                >
-                  <div className="stage-icon">{stage.icon}</div>
-                  <div className="stage-name">{stage.name}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+
 
         {/* 底部按钮 */}
         <div className="modal-footer">

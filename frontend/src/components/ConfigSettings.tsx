@@ -3,12 +3,8 @@ import { Card, Input, Select, Slider, Row, Col, Space, ColorPicker } from 'antd'
 import type { DurationOption, VoiceOption, StyleConfig } from '../types'
 
 interface ConfigSettingsProps {
-  projectName: string
-  setProjectName: (name: string) => void
   duration: DurationOption
   setDuration: (duration: DurationOption) => void
-  videoCount: number
-  setVideoCount: (count: number) => void
   voice: VoiceOption
   setVoice: (voice: VoiceOption) => void
   style: StyleConfig
@@ -16,12 +12,8 @@ interface ConfigSettingsProps {
 }
 
 const ConfigSettings: React.FC<ConfigSettingsProps> = ({
-  projectName,
-  setProjectName,
   duration,
   setDuration,
-  videoCount,
-  setVideoCount,
   voice,
   setVoice,
   style,
@@ -34,17 +26,6 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
         <Row gutter={[16, 16]}>
           <Col span={12}>
             <div>
-              <label style={{ display: 'block', marginBottom: 8 }}>项目名称</label>
-              <Input
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                placeholder="请输入项目名称"
-                maxLength={50}
-              />
-            </div>
-          </Col>
-          <Col span={12}>
-            <div>
               <label style={{ display: 'block', marginBottom: 8 }}>视频时长</label>
               <Select
                 value={duration}
@@ -55,25 +36,6 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                 <Select.Option value="60s">60秒</Select.Option>
                 <Select.Option value="90s">90秒</Select.Option>
               </Select>
-            </div>
-          </Col>
-        </Row>
-        
-        <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-          <Col span={12}>
-            <div>
-              <label style={{ display: 'block', marginBottom: 8 }}>视频数量: {videoCount}</label>
-              <Slider
-                min={1}
-                max={10}
-                value={videoCount}
-                onChange={setVideoCount}
-                marks={{
-                  1: '1',
-                  5: '5',
-                  10: '10'
-                }}
-              />
             </div>
           </Col>
           <Col span={12}>

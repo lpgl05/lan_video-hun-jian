@@ -41,7 +41,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       key: 'user-center',
       icon: <UserOutlined />,
       label: '个人中心',
-      onClick: () => onPageChange('user-center')
+      onClick: () => onPageChange('user-center'),
+      className: 'hidden-menu-item'
     }
   ]
 

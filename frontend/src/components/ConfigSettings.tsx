@@ -58,7 +58,8 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
       <Card title="样式设置" size="small">
         <Row gutter={[16, 16]}>
           <Col span={12}>
-            <Card title="标题样式" size="small" type="inner">
+            <div style={{ marginBottom: '16px' }}>
+              <h4 style={{ marginBottom: '12px', color: '#262626' }}>主标题样式</h4>
               <Space direction="vertical" style={{ width: '100%' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8 }}>颜色</label>
@@ -94,8 +95,8 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                     字体大小: {style.title.fontSize}px
                   </label>
                   <Slider
-                    min={16}
-                    max={48}
+                    min={10}
+                    max={120}
                     value={style.title.fontSize}
                     onChange={(fontSize) =>
                       setStyle({
@@ -106,11 +107,12 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                   />
                 </div>
               </Space>
-            </Card>
+            </div>
           </Col>
           
           <Col span={12}>
-            <Card title="副标题样式" size="small" type="inner">
+            <div style={{ marginBottom: '16px' }}>
+              <h4 style={{ marginBottom: '12px', color: '#262626' }}>字幕样式</h4>
               <Space direction="vertical" style={{ width: '100%' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8 }}>颜色</label>
@@ -146,8 +148,8 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                     字体大小: {style.subtitle.fontSize}px
                   </label>
                   <Slider
-                    min={12}
-                    max={32}
+                    min={10}
+                    max={120}
                     value={style.subtitle.fontSize}
                     onChange={(fontSize) =>
                       setStyle({
@@ -158,7 +160,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                   />
                 </div>
               </Space>
-            </Card>
+            </div>
           </Col>
         </Row>
       </Card>

@@ -29,7 +29,7 @@ const getApiBaseUrl = () => {
 
 const api = axios.create({
   baseURL: getApiBaseUrl() + '/api',
-  timeout: 120000,
+  timeout: 1200000,
 })
 
 // 文件上传

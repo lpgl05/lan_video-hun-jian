@@ -48,14 +48,14 @@ const VideoMixer: React.FC = () => {
   const [voice, setVoice] = useState<VoiceOption>('female')
   const [style, setStyle] = useState<StyleConfig>({
     title: {
-      color: '#ffffff',
+      color: '#1890ff',
       position: 'top',
-      fontSize: 24,
+      fontSize: 40,
     },
     subtitle: {
-      color: '#ffffff',
+      color: '#1890ff',
       position: 'bottom',
-      fontSize: 18,
+      fontSize: 40,
     },
   })
 
@@ -178,14 +178,14 @@ const VideoMixer: React.FC = () => {
     setVoice('female')
     setStyle({
       title: {
-        color: '#ffffff',
+        color: '#1890ff',
         position: 'top',
-        fontSize: 24,
+        fontSize: 40,
       },
       subtitle: {
-        color: '#ffffff',
+        color: '#1890ff',
         position: 'bottom',
-        fontSize: 18,
+        fontSize: 40,
       }
     })
     message.success('已清空所有数据，可以开始新的创作！')

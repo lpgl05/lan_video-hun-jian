@@ -18,47 +18,90 @@ const AudioUpload: React.FC<AudioUploadProps> = ({ audios, onAudiosChange }) => 
   const [previewVisible, setPreviewVisible] = useState(false)
   const [previewAudio, setPreviewAudio] = useState<string>('')
 
-  const handleUpload = async (file: File) => {
-    if (!file.type.startsWith('audio/')) {
-      message.error('只能上传音频文件')
+  const handleUpload = async (file: File, fileList: File[]) => {
+    // 验证所有文件
+    for (const f of fileList) {
+      if (!f.type.startsWith('audio/')) {
+        message.error(`文件"${f.name}"不是音频文件`)
+        return false
+      }
+      if (f.size > 100 * 1024 * 1024) { // 100MB
+        message.error(`文件"${f.name}"大小不能超过100MB`)
+        return false
+      }
+    }
+
+    // 只处理第一个文件，其他文件会在后续调用中处理
+    if (file !== fileList[0]) {
       return false
     }
 
-    if (file.size > 100 * 1024 * 1024) { // 100MB
-      message.error('音频文件大小不能超过100MB')
-      return false
-    }
+    // 开始批量上传处理
+    await handleBatchUpload(fileList)
+    return false
+  }
 
+  const handleBatchUpload = async (fileList: File[]) => {
     setUploading(true)
     setUploadProgress(0)
-    setUploadingFileName(file.name)
+    setUploadingFileName(`批量上传 (0/${fileList.length})`)
     setUploadSpeed('')
     
     try {
-      const audioFile = await uploadAudioWithProgress(file, (progress, loaded, total, speed) => {
-        setUploadProgress(progress)
+      const uploadedAudios: AudioFile[] = []
+      let successCount = 0
+      let failedCount = 0
+
+      for (let i = 0; i < fileList.length; i++) {
+        const currentFile = fileList[i]
+        setUploadingFileName(`正在上传: ${currentFile.name} (${i + 1}/${fileList.length})`)
         
-        // 使用后端提供的速度信息，或者显示状态信息
-        if (typeof speed === 'string') {
-          setUploadSpeed(speed)
-        } else if (speed) {
-          setUploadSpeed(`${speed} MB/s`)
+        try {
+          const audioFile = await uploadAudioWithProgress(currentFile, (progress, loaded, total, speed) => {
+            // 计算总体进度：已完成文件 + 当前文件进度
+            const totalProgress = ((i * 100) + progress) / fileList.length
+            setUploadProgress(totalProgress)
+            
+            // 使用后端提供的速度信息
+            if (typeof speed === 'string') {
+              setUploadSpeed(speed)
+            } else if (speed) {
+              setUploadSpeed(`${speed} MB/s`)
+            }
+          })
+          
+          uploadedAudios.push(audioFile)
+          successCount++
+          
+        } catch (error) {
+          console.error(`Upload error for ${currentFile.name}:`, error)
+          failedCount++
         }
-      })
+      }
+
+      // 更新音频列表
+      if (uploadedAudios.length > 0) {
+        onAudiosChange([...audios, ...uploadedAudios])
+      }
+
+      // 显示结果消息
+      if (failedCount === 0) {
+        message.success(`成功上传 ${successCount} 个音频文件`)
+      } else if (successCount === 0) {
+        message.error(`上传失败，${failedCount} 个文件上传失败`)
+      } else {
+        message.warning(`上传完成：${successCount} 个成功，${failedCount} 个失败`)
+      }
       
-      onAudiosChange([...audios, audioFile])
-      message.success('音频上传成功')
     } catch (error) {
-      message.error('音频上传失败')
-      console.error('Upload error:', error)
+      message.error('批量上传失败')
+      console.error('Batch upload error:', error)
     } finally {
       setUploading(false)
       setUploadProgress(0)
       setUploadingFileName('')
       setUploadSpeed('')
     }
-
-    return false // 阻止默认上传行为
   }
 
   const handleDelete = async (audioId: string) => {
@@ -81,6 +124,7 @@ const AudioUpload: React.FC<AudioUploadProps> = ({ audios, onAudiosChange }) => 
     beforeUpload: handleUpload,
     showUploadList: false,
     accept: 'audio/*',
+    multiple: true,
   }
 
   const formatFileSize = (bytes: number) => {
@@ -107,7 +151,7 @@ const AudioUpload: React.FC<AudioUploadProps> = ({ audios, onAudiosChange }) => 
       <div className="section-content">
         <Upload {...uploadProps}>
           <Button icon={<UploadOutlined />} loading={uploading}>
-            选择音频文件
+            选择音频文件（支持多选）
           </Button>
         </Upload>
         

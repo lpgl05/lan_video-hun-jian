@@ -24,54 +24,96 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
   const [previewVisible, setPreviewVisible] = useState(false)
   const [previewVideo, setPreviewVideo] = useState<string>('')
 
-  const handleUpload = async (file: File) => {
-    if (videos.length >= maxCount) {
-      message.error(`最多只能上传${maxCount}个视频`)
+  const handleUpload = async (file: File, fileList: File[]) => {
+    // 检查总文件数量限制
+    if (videos.length + fileList.length > maxCount) {
+      message.error(`最多只能上传${maxCount}个视频，当前已有${videos.length}个，本次选择${fileList.length}个`)
       return false
     }
 
-    if (!file.type.startsWith('video/')) {
-      message.error('只能上传视频文件')
-      return false
+    // 验证所有文件
+    for (const f of fileList) {
+      if (!f.type.startsWith('video/')) {
+        message.error(`文件"${f.name}"不是视频文件`)
+        return false
+      }
+      if (f.size > 500 * 1024 * 1024) { // 500MB
+        message.error(`文件"${f.name}"大小不能超过500MB`)
+        return false
+      }
     }
 
-    if (file.size > 500 * 1024 * 1024) { // 500MB
-      message.error('视频文件大小不能超过500MB')
-      return false
+    // 只处理第一个文件（当前文件），其他文件会在后续调用中处理
+    if (file !== fileList[0]) {
+      return false // 非第一个文件，跳过处理
     }
 
+    // 开始批量上传处理
+    await handleBatchUpload(fileList)
+    return false
+  }
+
+  const handleBatchUpload = async (fileList: File[]) => {
     setUploading(true)
     setUploadProgress(0)
-    setUploadingFileName(file.name)
+    setUploadingFileName(`批量上传 (0/${fileList.length})`)
     setUploadSpeed('')
     
-    const startTime = Date.now()
-    
     try {
-      const videoFile = await uploadVideoWithProgress(file, (progress, loaded, total, speed) => {
-        setUploadProgress(progress)
+      const uploadedVideos: VideoFile[] = []
+      let successCount = 0
+      let failedCount = 0
+
+      for (let i = 0; i < fileList.length; i++) {
+        const currentFile = fileList[i]
+        setUploadingFileName(`正在上传: ${currentFile.name} (${i + 1}/${fileList.length})`)
         
-        // 使用后端提供的速度信息，或者显示状态信息
-        if (typeof speed === 'string') {
-          setUploadSpeed(speed)
-        } else if (speed) {
-          setUploadSpeed(`${speed} MB/s`)
+        try {
+          const videoFile = await uploadVideoWithProgress(currentFile, (progress, loaded, total, speed) => {
+            // 计算总体进度：已完成文件 + 当前文件进度
+            const totalProgress = ((i * 100) + progress) / fileList.length
+            setUploadProgress(totalProgress)
+            
+            // 使用后端提供的速度信息
+            if (typeof speed === 'string') {
+              setUploadSpeed(speed)
+            } else if (speed) {
+              setUploadSpeed(`${speed} MB/s`)
+            }
+          })
+          
+          uploadedVideos.push(videoFile)
+          successCount++
+          
+        } catch (error) {
+          console.error(`Upload error for ${currentFile.name}:`, error)
+          failedCount++
         }
-      })
+      }
+
+      // 更新视频列表
+      if (uploadedVideos.length > 0) {
+        onVideosChange([...videos, ...uploadedVideos])
+      }
+
+      // 显示结果消息
+      if (failedCount === 0) {
+        message.success(`成功上传 ${successCount} 个视频文件`)
+      } else if (successCount === 0) {
+        message.error(`上传失败，${failedCount} 个文件上传失败`)
+      } else {
+        message.warning(`上传完成：${successCount} 个成功，${failedCount} 个失败`)
+      }
       
-      onVideosChange([...videos, videoFile])
-      message.success('视频上传成功')
     } catch (error) {
-      message.error('视频上传失败')
-      console.error('Upload error:', error)
+      message.error('批量上传失败')
+      console.error('Batch upload error:', error)
     } finally {
       setUploading(false)
       setUploadProgress(0)
       setUploadingFileName('')
       setUploadSpeed('')
     }
-
-    return false // 阻止默认上传行为
   }
 
   const handleDelete = async (videoId: string) => {
@@ -94,6 +136,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
     beforeUpload: handleUpload,
     showUploadList: false,
     accept: 'video/*',
+    multiple: true,
   }
 
   const formatFileSize = (bytes: number) => {
@@ -124,7 +167,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
             loading={uploading}
             disabled={videos.length >= maxCount}
           >
-            选择视频文件
+            选择视频文件（支持多选）
           </Button>
         </Upload>
         

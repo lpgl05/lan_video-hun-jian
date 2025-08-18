@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, message, Input, Space, Progress } from 'antd'
-import { PlayCircleOutlined, SaveOutlined } from '@ant-design/icons'
+import { message } from 'antd'
 import type { 
   VideoFile, 
   AudioFile, 
@@ -12,16 +11,26 @@ import type {
   VoiceOption,
   StyleConfig 
 } from '../types'
-import VideoUpload from '../components/VideoUpload'
-import AudioUpload from '../components/AudioUpload'
-import PosterUpload from '../components/PosterUpload'
-import ScriptConfig from '../components/ScriptConfig'
-import ConfigSettings from '../components/ConfigSettings'
+import MainLayout from '../components/MainLayout'
+import LoginPage from '../components/LoginPage'
+import StepWizard from '../components/StepWizard'
+import UserCenter from '../components/UserCenter'
 import GenerationResult from '../components/GenerationResult'
+import GenerationModal from '../components/GenerationModal'
 import { saveProject, startGeneration, getGenerationStatus } from '../services/api'
 
 const VideoMixer: React.FC = () => {
-  // 状态管理
+  // 登录状态
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userInfo, setUserInfo] = useState<{ phone: string; username: string } | null>(null)
+  
+  // 页面状态
+  const [currentPage, setCurrentPage] = useState<'home' | 'user-center'>('home')
+  
+  // 弹窗状态
+  const [showGenerationModal, setShowGenerationModal] = useState(false)
+  
+  // 数据状态管理
   const [projectName, setProjectName] = useState('')
   const [videos, setVideos] = useState<VideoFile[]>([])
   const [audios, setAudios] = useState<AudioFile[]>([])
@@ -46,6 +55,9 @@ const VideoMixer: React.FC = () => {
   // 生成任务状态
   const [currentTask, setCurrentTask] = useState<GenerationTask | null>(null)
   const [generating, setGenerating] = useState(false)
+  
+  // 模拟未读通知数量
+  const [unreadNotifications] = useState(2)
 
   // 轮询任务状态
   useEffect(() => {
@@ -87,6 +99,7 @@ const VideoMixer: React.FC = () => {
     }
 
     setGenerating(true)
+    setShowGenerationModal(true) // 显示生成弹窗
 
     try {
       // 1. 保存项目配置
@@ -116,6 +129,38 @@ const VideoMixer: React.FC = () => {
       message.error('启动生成失败')
       console.error('Generation error:', error)
       setGenerating(false)
+      setShowGenerationModal(false) // 失败时关闭弹窗
+    }
+  }
+
+  // 处理登录
+  const handleLogin = (userInfo: { phone: string; username: string }) => {
+    setIsLoggedIn(true)
+    setUserInfo(userInfo)
+  }
+
+  // 处理退出登录
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+    setUserInfo(null)
+    setCurrentPage('home')
+    message.success('已退出登录')
+  }
+
+  // 处理生成完成
+  const handleGenerationComplete = () => {
+    setShowGenerationModal(false)
+    setCurrentPage('home') // 返回主页面查看结果
+  }
+
+  // 处理弹窗关闭
+  const handleModalClose = () => {
+    if (currentTask?.status === 'completed' || currentTask?.status === 'failed') {
+      setShowGenerationModal(false)
+    } else {
+      // 如果任务还在进行中，允许后台运行
+      setShowGenerationModal(false)
+      message.info('任务将在后台继续运行')
     }
   }
 
@@ -159,124 +204,76 @@ const VideoMixer: React.FC = () => {
     }
   }
 
-  return (
-    <div className="page-container">
-      <div className="page-header">
-        <h1 className="page-title">AI视频混剪</h1>
-        <p className="page-subtitle">
-          上传视频素材，配置文案和样式，一键生成专业混剪视频
-        </p>
-      </div>
-
-      <div className="page-content">
-        {/* 项目名称 */}
-        <div className="section">
-          <div className="section-content">
-            <div className="form-item">
-              <label className="form-label">项目名称</label>
-              <Input
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                placeholder="请输入项目名称"
-                maxLength={50}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 视频上传 */}
-        <VideoUpload 
-          videos={videos}
-          onVideosChange={setVideos}
-          maxCount={20}
+  const renderPageContent = () => {
+    if (currentPage === 'user-center') {
+      return (
+        <UserCenter 
+          onBack={() => setCurrentPage('home')}
         />
+      )
+    }
 
-        {/* 音频上传 */}
-        <AudioUpload 
-          audios={audios}
-          onAudiosChange={setAudios}
-        />
-
-        {/* 海报上传 */}
-        <PosterUpload 
-          posters={posters}
-          onPostersChange={setPosters}
-        />
-
-        {/* 文案配置 */}
-        <ScriptConfig 
-          scripts={scripts}
-          onScriptsChange={setScripts}
-          videoDuration={parseDuration(duration)}
-          videoCount={videoCount}
-        />
-
-        {/* 配置设置 */}
-        <ConfigSettings
-          duration={duration}
-          onDurationChange={setDuration}
-          videoCount={videoCount}
-          onVideoCountChange={setVideoCount}
-          voice={voice}
-          onVoiceChange={setVoice}
-          style={style}
-          onStyleChange={setStyle}
-        />
-
-        {/* 生成按钮 */}
-        <div className="action-buttons">
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <Space>
-              <Button
-                type="primary"
-                size="large"
-                icon={<PlayCircleOutlined />}
-                loading={generating}
-                disabled={!canGenerate}
-                onClick={handleStartGeneration}
-              >
-                {generating ? '生成中...' : '开始AI制作'}
-              </Button>
-              <Button
-                size="large"
-                icon={<SaveOutlined />}
-                disabled={!canGenerate}
-              >
-                保存配置
-              </Button>
-            </Space>
-            
-            {/* 进度条显示 */}
-            {currentTask && generating && (
-              <div style={{ width: '100%', marginTop: '16px' }}>
-                <Progress
-                  percent={currentTask.progress || 0}
-                  status={currentTask.status === 'failed' ? 'exception' : 'active'}
-                  strokeColor={{
-                    '0%': '#108ee9',
-                    '100%': '#87d068',
-                  }}
-                />
-                <div style={{ 
-                  textAlign: 'center', 
-                  marginTop: '8px', 
-                  color: '#666',
-                  fontSize: '14px'
-                }}>
-                  {getProgressText()}
-                </div>
-              </div>
-            )}
-          </Space>
-        </div>
-
-        {/* 生成结果 */}
+    // 如果有正在进行的任务或已完成的任务，显示结果
+    if (currentTask && (currentTask.status === 'processing' || currentTask.status === 'completed')) {
+      return (
         <GenerationResult 
           task={currentTask}
-          onReset={handleReset}
+          onReset={() => setCurrentTask(null)}
         />
-      </div>
-    </div>
+      )
+    }
+
+    // 默认显示分步向导
+    return (
+      <StepWizard
+        projectName={projectName}
+        setProjectName={setProjectName}
+        videos={videos}
+        setVideos={setVideos}
+        audios={audios}
+        setAudios={setAudios}
+        posters={posters}
+        setPosters={setPosters}
+        scripts={scripts}
+        setScripts={setScripts}
+        duration={duration}
+        setDuration={setDuration}
+        videoCount={videoCount}
+        setVideoCount={setVideoCount}
+        voice={voice}
+        setVoice={setVoice}
+        style={style}
+        setStyle={setStyle}
+        onGenerate={handleStartGeneration}
+        generating={generating}
+      />
+    )
+  }
+
+  // 如果未登录，显示登录页面
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={handleLogin} />
+  }
+
+  return (
+    <>
+      <MainLayout
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        onLogout={handleLogout}
+        unreadNotifications={unreadNotifications}
+      >
+        {renderPageContent()}
+      </MainLayout>
+      
+      {/* 生成弹窗 */}
+      <GenerationModal
+        visible={showGenerationModal}
+        task={currentTask}
+        onClose={handleModalClose}
+        onComplete={handleGenerationComplete}
+      />
+    </>
   )
 }
 

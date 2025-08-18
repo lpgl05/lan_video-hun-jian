@@ -182,14 +182,20 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({
           
           {/* AI生成进度条 */}
           {generating && generateProgress > 0 && (
-            <div style={{ marginTop: '16px' }}>
+            <div 
+              className="ai-generation-progress"
+              style={{ 
+                marginTop: '16px',
+                width: '100%'  // 确保容器宽度100%
+              }}>
               <div style={{ 
                 marginBottom: '8px', 
                 fontSize: '14px', 
                 color: '#666',
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
+                width: '100%'  // 确保文字容器也是100%宽度
               }}>
                 <span>AI正在生成文案...</span>
                 <span>{Math.min(Math.round(generateProgress), 100)}%</span>
@@ -202,8 +208,13 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({
                   '50%': '#722ed1',
                   '100%': '#52c41a'
                 }}
-                size={6}
+                strokeWidth={10}  // 使用strokeWidth而不是size
                 showInfo={false}
+                style={{ 
+                  width: '100%', 
+                  minWidth: '100%',
+                  maxWidth: '100%'
+                }}
               />
             </div>
           )}

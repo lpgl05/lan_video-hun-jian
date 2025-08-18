@@ -172,6 +172,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
       <div className="section-title">
         <UploadOutlined />
         视频素材上传 ({videos.length}/{maxCount})
+        <span style={{ color: '#ff4d4f', marginLeft: '8px', fontSize: '14px' }}>
+          （建议上传的视频文件大小不要超过100MB）
+        </span>
       </div>
       
       <div className="section-content">

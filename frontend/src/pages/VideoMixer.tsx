@@ -4,6 +4,7 @@ import { PlayCircleOutlined, SaveOutlined } from '@ant-design/icons'
 import type { 
   VideoFile, 
   AudioFile, 
+  PosterFile,
   Script, 
   ProjectConfig, 
   GenerationTask,
@@ -13,6 +14,7 @@ import type {
 } from '../types'
 import VideoUpload from '../components/VideoUpload'
 import AudioUpload from '../components/AudioUpload'
+import PosterUpload from '../components/PosterUpload'
 import ScriptConfig from '../components/ScriptConfig'
 import ConfigSettings from '../components/ConfigSettings'
 import GenerationResult from '../components/GenerationResult'
@@ -23,6 +25,7 @@ const VideoMixer: React.FC = () => {
   const [projectName, setProjectName] = useState('')
   const [videos, setVideos] = useState<VideoFile[]>([])
   const [audios, setAudios] = useState<AudioFile[]>([])
+  const [posters, setPosters] = useState<PosterFile[]>([])
   const [scripts, setScripts] = useState<Script[]>([])
   const [duration, setDuration] = useState<DurationOption>('30s')
   const [videoCount, setVideoCount] = useState(3)
@@ -91,6 +94,7 @@ const VideoMixer: React.FC = () => {
         name: projectName,
         videos,
         audios,
+        posters,
         scripts: scripts.filter(s => s.selected),
         duration,
         videoCount,
@@ -191,6 +195,12 @@ const VideoMixer: React.FC = () => {
         <AudioUpload 
           audios={audios}
           onAudiosChange={setAudios}
+        />
+
+        {/* 海报上传 */}
+        <PosterUpload 
+          posters={posters}
+          onPostersChange={setPosters}
         />
 
         {/* 文案配置 */}

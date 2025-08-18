@@ -49,15 +49,15 @@ class UploadConfig:
     
     def get_optimal_concurrency(self, file_size: int) -> int:
         """根据文件大小返回最优并发数"""
-        # 小文件使用较少并发，大文件使用更多并发
+        # 减少并发数，避免网络连接问题
         if file_size < self.SMALL_FILE_THRESHOLD:
-            return min(3, self.MAX_CONCURRENT_UPLOADS)
+            return 2  # 小文件：2个并发
         elif file_size < self.MEDIUM_FILE_THRESHOLD:
-            return min(5, self.MAX_CONCURRENT_UPLOADS)
+            return 3  # 中等文件：3个并发
         elif file_size < self.LARGE_FILE_THRESHOLD:
-            return min(8, self.MAX_CONCURRENT_UPLOADS)
+            return 4  # 大文件：4个并发
         else:
-            return self.MAX_CONCURRENT_UPLOADS
+            return min(5, self.MAX_CONCURRENT_UPLOADS)  # 超大文件：最多5个并发
 
 # 全局配置实例
 upload_config = UploadConfig()

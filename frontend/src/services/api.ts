@@ -2,6 +2,7 @@ import axios from 'axios'
 import type { 
   VideoFile, 
   AudioFile, 
+  PosterFile,
   Script, 
   ProjectConfig, 
   GenerationTask,
@@ -52,7 +53,7 @@ export const getUploadProgress = async (taskId: string) => {
   }
 }
 
-// 带真实进度监控的文件上传
+// 简化版本的文件上传 - 重写进度条逻辑
 export const uploadVideoWithProgress = async (
   file: File, 
   onProgress?: (progress: number, loaded: number, total: number, speed?: string) => void
@@ -62,96 +63,93 @@ export const uploadVideoWithProgress = async (
   
   console.log('开始上传文件:', file.name)
   
-  // 先启动上传请求
-  const uploadPromise = api.post<ApiResponse<VideoFile>>('/upload/video', formData, {
-    onUploadProgress: (progressEvent) => {
-      // 这里只显示HTTP传输进度
-      if (progressEvent.total && onProgress) {
-        const httpProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-        onProgress(httpProgress * 0.1, progressEvent.loaded, progressEvent.total, "上传到服务器...")
-      }
-    }
-  })
-  
-    // 获取上传结果，包含task_id
-  const response = await uploadPromise
-
-  console.log('上传响应:', response.data)
-
-  if (!response.data.success) {
-    throw new Error(response.data.error || '上传失败')
-  }
-
-  const video = response.data.data!
-  const taskId = video.task_id
-
-  console.log('获取到task_id:', taskId)
-  console.log('video对象:', video)
-  console.log('video.task_id:', video.task_id)
-  
-  // 显示开始OSS上传状态
   if (onProgress) {
-    onProgress(10, 0, file.size, "开始上传到OSS...")
+    onProgress(0, 0, file.size, "开始上传...")
   }
-  
-  // 使用后端实时进度监控
-  if (onProgress && taskId) {
-    console.log('启动实时进度监控，taskId:', taskId)
-    let progressCheckInterval: NodeJS.Timeout
-    let lastProgress = 10
+
+  try {
+    // 使用模拟进度的方式，避免复杂的轮询逻辑
+    let currentProgress = 0
+    let progressInterval: NodeJS.Timeout | null = null
+    let isUploadComplete = false
     
-    const checkProgress = async () => {
-      try {
-        const progressData = await getUploadProgress(taskId)
-        if (progressData.success) {
-          const progress = progressData.data.progress || 0
-          const speed = progressData.data.speed || "0 MB/s"
+    // 启动模拟进度更新
+    const startProgressSimulation = () => {
+      if (progressInterval) return
+      
+      progressInterval = setInterval(() => {
+        if (isUploadComplete || currentProgress >= 95) {
+          return // 不超过95%，等待真实完成
+        }
+        
+        // 根据文件大小调整进度速度
+        const increment = file.size > 100 * 1024 * 1024 ? 2 : 5 // 大文件慢一点
+        currentProgress = Math.min(95, currentProgress + increment)
+        
+        if (onProgress) {
+          const speed = file.size > 50 * 1024 * 1024 ? "3.2 MB/s" : "1.8 MB/s"
+          onProgress(currentProgress, (currentProgress / 100) * file.size, file.size, speed)
+        }
+      }, 800) // 每800ms更新一次
+    }
+    
+    // 开始上传请求
+    const uploadPromise = api.post<ApiResponse<VideoFile>>('/upload/video', formData, {
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total && onProgress) {
+          const httpProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
           
-          // 避免进度倒退
-          const currentProgress = Math.max(lastProgress, progress)
-          lastProgress = currentProgress
-          
-          // 减少控制台日志输出，只在关键节点显示
-          if (progress % 25 === 0 || progress >= 95) {
-            console.log(`上传进度: ${currentProgress}%, 速度: ${speed}`)
-          }
-          
-          onProgress(currentProgress, (currentProgress / 100) * fileSize, fileSize, speed)
-          
-          // 上传完成
-          if (progress >= 100) {
-            clearInterval(progressCheckInterval)
-            onProgress(100, fileSize, fileSize, "上传完成")
-            console.log('上传完成')
+          if (httpProgress < 100) {
+            // HTTP传输阶段：0-15%
+            const displayProgress = Math.min(15, httpProgress * 0.15)
+            onProgress(displayProgress, progressEvent.loaded, file.size, "传输到服务器...")
+            currentProgress = displayProgress
+          } else {
+            // HTTP传输完成，开始模拟OSS上传进度
+            if (currentProgress < 20) {
+              currentProgress = 20
+              if (onProgress) {
+                onProgress(20, file.size * 0.2, file.size, "开始上传到云端...")
+              }
+            }
+            // 启动模拟进度
+            startProgressSimulation()
           }
         }
-      } catch (error) {
-        // 如果获取进度失败，使用估算进度
-        console.warn('获取实时进度失败，使用估算进度')
-        const elapsed = Date.now() - Date.now()
-        const estimatedProgress = Math.min(95, lastProgress + 2)
-        lastProgress = estimatedProgress
-        onProgress(estimatedProgress, (estimatedProgress / 100) * fileSize, fileSize, "上传中...")
       }
+    })
+
+    // 等待上传完成
+    const response = await uploadPromise
+    
+    // 清理进度模拟
+    isUploadComplete = true
+    if (progressInterval) {
+      clearInterval(progressInterval)
+      progressInterval = null
     }
     
-    // 开始监控，每2秒检查一次
-    progressCheckInterval = setInterval(checkProgress, 2000)
-    
-    // 30秒后如果还没完成，自动结束监控
-    setTimeout(() => {
-      if (progressCheckInterval) {
-        clearInterval(progressCheckInterval)
-        onProgress(100, fileSize, fileSize, "上传完成")
-      }
-    }, 30000)
-  }
+    console.log('上传完成，响应:', response.data)
 
-  // 修正 uploadedAt 字段类型
-  return {
-    ...video,
-    uploadedAt: new Date(video.uploadedAt)
-  };
+    if (!response.data.success) {
+      throw new Error(response.data.error || '上传失败')
+    }
+
+    // 显示100%完成
+    if (onProgress) {
+      onProgress(100, file.size, file.size, "上传完成")
+    }
+
+    const video = response.data.data!
+    return {
+      ...video,
+      uploadedAt: new Date(video.uploadedAt)
+    }
+    
+  } catch (error) {
+    console.error('上传失败:', error)
+    throw error
+  }
 }
 
 export const uploadAudio = async (file: File): Promise<AudioFile> => {
@@ -167,7 +165,7 @@ export const uploadAudio = async (file: File): Promise<AudioFile> => {
   return response.data.data!
 }
 
-// 带进度监控的音频上传
+// 简化版音频上传
 export const uploadAudioWithProgress = async (
   file: File, 
   onProgress?: (progress: number, loaded: number, total: number, speed?: string) => void
@@ -177,79 +175,141 @@ export const uploadAudioWithProgress = async (
   
   console.log('开始上传音频文件:', file.name)
   
-  // 先启动上传请求
-  const uploadPromise = api.post<ApiResponse<AudioFile>>('/upload/audio', formData, {
-    onUploadProgress: (progressEvent) => {
-      if (progressEvent.total && onProgress) {
-        const httpProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-        onProgress(httpProgress * 0.1, progressEvent.loaded, progressEvent.total, "上传到服务器...")
-      }
+  if (onProgress) {
+    onProgress(0, 0, file.size, "开始上传...")
+  }
+
+  try {
+    // 简化的模拟进度逻辑
+    let currentProgress = 0
+    let progressInterval: NodeJS.Timeout | null = null
+    let isUploadComplete = false
+    
+    const startProgressSimulation = () => {
+      if (progressInterval) return
+      
+      progressInterval = setInterval(() => {
+        if (isUploadComplete || currentProgress >= 95) {
+          return
+        }
+        
+        // 音频文件通常较小，进度更快一些
+        const increment = file.size > 50 * 1024 * 1024 ? 3 : 8
+        currentProgress = Math.min(95, currentProgress + increment)
+        
+        if (onProgress) {
+          const speed = "2.1 MB/s"
+          onProgress(currentProgress, (currentProgress / 100) * file.size, file.size, speed)
+        }
+      }, 600) // 音频上传稍快一些
     }
-  })
-  
-  const response = await uploadPromise
+    
+    // 启动上传请求
+    const uploadPromise = api.post<ApiResponse<AudioFile>>('/upload/audio', formData, {
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total && onProgress) {
+          const httpProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          
+          if (httpProgress < 100) {
+            // HTTP传输阶段：0-15%
+            const displayProgress = Math.min(15, httpProgress * 0.15)
+            onProgress(displayProgress, progressEvent.loaded, file.size, "传输到服务器...")
+            currentProgress = displayProgress
+          } else {
+            // HTTP传输完成，开始模拟OSS上传进度
+            if (currentProgress < 20) {
+              currentProgress = 20
+              if (onProgress) {
+                onProgress(20, file.size * 0.2, file.size, "开始上传到云端...")
+              }
+            }
+            startProgressSimulation()
+          }
+        }
+      }
+    })
+
+    // 等待上传完成
+    const response = await uploadPromise
+    
+    // 清理进度模拟
+    isUploadComplete = true
+    if (progressInterval) {
+      clearInterval(progressInterval)
+      progressInterval = null
+    }
+    
+    console.log('音频上传完成，响应:', response.data)
+
+    if (!response.data.success) {
+      throw new Error(response.data.error || '音频上传失败')
+    }
+
+    // 显示100%完成
+    if (onProgress) {
+      onProgress(100, file.size, file.size, "上传完成")
+    }
+
+    const audio = response.data.data!
+    return {
+      ...audio,
+      uploadedAt: new Date(audio.uploadedAt)
+    }
+    
+  } catch (error) {
+    console.error('音频上传失败:', error)
+    throw error
+  }
+}
+
+// 海报上传
+export const uploadPoster = async (file: File): Promise<PosterFile> => {
+  const formData = new FormData()
+  formData.append('poster', file)
+
+  const response = await api.post<ApiResponse<PosterFile>>('/upload/poster', formData)
 
   if (!response.data.success) {
     throw new Error(response.data.error || '上传失败')
   }
 
-  const audio = response.data.data!
-  const taskId = audio.task_id
+  return response.data.data!
+}
 
-  console.log('获取到音频task_id:', taskId)
-  
-  // 显示开始OSS上传状态
-  if (onProgress) {
-    onProgress(10, 0, file.size, "开始上传到OSS...")
-  }
-  
-  // 使用后端实时进度监控
-  if (onProgress && taskId) {
-    console.log('启动音频实时进度监控，taskId:', taskId)
-    let progressCheckInterval: NodeJS.Timeout
-    let lastProgress = 10
-    
-    const checkProgress = async () => {
-      try {
-        const progressData = await getUploadProgress(taskId)
-        if (progressData.success) {
-          const progress = progressData.data.progress || 0
-          const speed = progressData.data.speed || "0 MB/s"
-          
-          const currentProgress = Math.max(lastProgress, progress)
-          lastProgress = currentProgress
-          
-          if (progress % 25 === 0 || progress >= 95) {
-            console.log(`音频进度: ${currentProgress}%, 速度: ${speed}`)
-          }
-          
-          onProgress(currentProgress, (currentProgress / 100) * file.size, file.size, speed)
-          
-          if (progress >= 100) {
-            clearInterval(progressCheckInterval)
-            onProgress(100, file.size, file.size, "上传完成")
-            console.log('音频上传完成')
-          }
-        }
-      } catch (error) {
-        console.warn('获取音频实时进度失败，使用估算进度')
-        const estimatedProgress = Math.min(95, lastProgress + 5)
-        lastProgress = estimatedProgress
-        onProgress(estimatedProgress, (estimatedProgress / 100) * file.size, file.size, "上传中...")
+// 带进度监控的海报上传
+export const uploadPosterWithProgress = async (
+  file: File,
+  onProgress?: (progress: number, loaded: number, total: number, speed?: string) => void
+): Promise<PosterFile> => {
+  const formData = new FormData()
+  formData.append('poster', file)
+
+  console.log('开始上传海报文件:', file.name)
+
+  const response = await api.post<ApiResponse<PosterFile>>('/upload/poster', formData, {
+    onUploadProgress: (progressEvent) => {
+      if (progressEvent.total && onProgress) {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        onProgress(progress, progressEvent.loaded, progressEvent.total, "上传中...")
       }
     }
-    
-    progressCheckInterval = setInterval(checkProgress, 2000)
-    
-    setTimeout(() => {
-      if (progressCheckInterval) {
-        clearInterval(progressCheckInterval)
-        onProgress(100, file.size, file.size, "上传完成")
-      }
-    }, 20000)
+  })
+
+  if (!response.data.success) {
+    throw new Error(response.data.error || '上传失败')
   }
 
+  console.log('海报上传完成')
   return response.data.data!
+}
+
+// 删除海报
+export const deletePoster = async (posterId: string): Promise<void> => {
+  const response = await api.delete<ApiResponse>(`/upload/poster/${posterId}`)
+  
+  if (!response.data.success) {
+    throw new Error(response.data.error || '删除失败')
+  }
 }
 
 // AI文案生成

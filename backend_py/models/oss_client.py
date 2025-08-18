@@ -144,37 +144,54 @@ class OSSClient:
             uploaded_parts = []
             uploaded_bytes_lock = threading.Lock()
             uploaded_bytes = [0]  # 使用列表来避免闭包问题
+            completed_parts = set()  # 记录已完成的分片，避免重复计算
             
             def upload_single_part(part_info):
-                try:
-                    part_number = part_info['part_number']
-                    part_data = part_info['data']
-                    part_size_mb = len(part_data) / (1024*1024)
-                    
-                    print(f"上传分片 {part_number}: {part_info['start'] / (1024*1024):.1f}MB - {part_info['end'] / (1024*1024):.1f}MB")
-                    part_result = self.bucket.upload_part(object_name, upload_id, part_number, part_data)
-                    
-                    # 线程安全地更新进度
-                    with uploaded_bytes_lock:
-                        uploaded_bytes[0] += len(part_data)
-                        current_uploaded = uploaded_bytes[0]
+                part_number = part_info['part_number']
+                part_data = part_info['data']
+                max_retries = 3
+                
+                for attempt in range(max_retries):
+                    try:
+                        print(f"上传分片 {part_number}: {part_info['start'] / (1024*1024):.1f}MB - {part_info['end'] / (1024*1024):.1f}MB (尝试 {attempt + 1}/{max_retries})")
                         
-                        progress = (current_uploaded / file_size) * 100
-                        elapsed_time = time.time() - start_time
-                        if elapsed_time > 0:
-                            speed = (current_uploaded / (1024*1024)) / elapsed_time
-                            # 减少日志输出频率，只在关键进度点输出
-                            if int(progress) % 10 == 0 or progress >= 95:
-                                print(f"OSS上传进度: {progress:.1f}%, 速度: {speed:.2f}MB/s")
-                            
-                            # 触发进度回调
-                            if progress_callback:
-                                progress_callback(progress, current_uploaded, speed)
-                    
-                    return PartInfo(part_number, part_result.etag)
-                except Exception as e:
-                    print(f"分片 {part_number} 上传失败: {e}")
-                    raise e
+                        # 执行分片上传
+                        part_result = self.bucket.upload_part(object_name, upload_id, part_number, part_data)
+                        
+                        # 线程安全地更新进度
+                        with uploaded_bytes_lock:
+                            # 避免重复计算同一分片的进度
+                            if part_number not in completed_parts:
+                                uploaded_bytes[0] += len(part_data)
+                                completed_parts.add(part_number)
+                                current_uploaded = uploaded_bytes[0]
+                                
+                                progress = (current_uploaded / file_size) * 100
+                                elapsed_time = time.time() - start_time
+                                if elapsed_time > 0:
+                                    speed = (current_uploaded / (1024*1024)) / elapsed_time
+                                    # 减少日志输出频率，只在关键进度点输出
+                                    if int(progress) % 20 == 0 or progress >= 95:
+                                        print(f"OSS上传进度: {progress:.1f}%, 速度: {speed:.2f}MB/s")
+                                    
+                                    # 触发进度回调
+                                    if progress_callback:
+                                        progress_callback(progress, current_uploaded, speed)
+                        
+                        print(f"分片 {part_number} 上传成功")
+                        return PartInfo(part_number, part_result.etag)
+                        
+                    except Exception as e:
+                        print(f"分片 {part_number} 上传失败 (尝试 {attempt + 1}/{max_retries}): {e}")
+                        if hasattr(e, 'status') and hasattr(e, 'details'):
+                            print(f"错误详情: status={e.status}, details={e.details}")
+                        
+                        if attempt == max_retries - 1:
+                            # 最后一次尝试失败，抛出异常
+                            raise e
+                        else:
+                            # 等待后重试
+                            time.sleep(2 ** attempt)  # 指数退避
             
             # 使用线程池并发上传
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -185,7 +202,25 @@ class OSSClient:
                     parts = uploaded_parts
                 except Exception as e:
                     print(f"并发上传失败: {e}")
-                    raise e
+                    # 取消分片上传
+                    try:
+                        self.bucket.abort_multipart_upload(object_name, upload_id)
+                        print("已取消分片上传")
+                    except:
+                        pass
+                    
+                    # 如果分片上传失败，尝试单文件上传作为降级方案
+                    print("尝试单文件上传作为降级方案...")
+                    try:
+                        result = self.bucket.put_object(object_name, file_buffer, headers=headers)
+                        print("单文件上传成功")
+                        # 更新进度为100%
+                        if progress_callback:
+                            progress_callback(100, file_size, file_size / (1024*1024) / (time.time() - start_time))
+                        return f"https://{self.bucket_name}.{self.endpoint}/{object_name}"
+                    except Exception as fallback_error:
+                        print(f"单文件上传也失败: {fallback_error}")
+                        raise e
             
             # 完成分片上传
             print("合并分片...")

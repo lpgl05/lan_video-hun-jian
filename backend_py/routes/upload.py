@@ -1,5 +1,5 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException
-from services.upload_service import handle_upload_video, handle_upload_audio, upload_tasks
+from services.upload_service import handle_upload_video, handle_upload_audio, handle_upload_poster, upload_tasks
 
 router = APIRouter()
 
@@ -11,6 +11,10 @@ async def upload_video(video: UploadFile = File(...)):
 @router.post("/api/upload/audio")
 async def upload_audio(audio: UploadFile = File(...)):
     return await handle_upload_audio(audio)
+
+@router.post("/api/upload/poster")
+async def upload_poster(poster: UploadFile = File(...)):
+    return await handle_upload_poster(poster)
 
 @router.get("/api/upload/progress/{task_id}")
 async def get_upload_progress(task_id: str):
@@ -38,10 +42,8 @@ async def get_upload_progress(task_id: str):
         }
     }
 
-@router.get("/api/upload/debug/tasks")
-async def debug_all_tasks():
-    """调试：查看所有上传任务"""
-    return {
-        "success": True,
-        "data": upload_tasks
-    }
+# 移除调试接口，不再需要复杂的轮询
+# @router.get("/api/upload/debug/tasks")
+# async def debug_all_tasks():
+#     """调试：查看所有上传任务"""
+#     return {"success": True, "data": []}

@@ -153,6 +153,21 @@ const VideoMixer: React.FC = () => {
     setCurrentPage('home') // 返回主页面查看结果
   }
 
+  // 新创作 - 清空所有数据
+  const handleNewCreation = () => {
+    setCurrentTask(null)
+    setProjectName('')
+    setVideos([])
+    setAudios([])
+    setPosters([])
+    setScripts([])
+    setDuration(30)
+    setVideoCount(3)
+    setVoice('女声')
+    setStyle('自然')
+    message.success('已清空所有数据，可以开始新的创作！')
+  }
+
   // 处理弹窗关闭
   const handleModalClose = () => {
     if (currentTask?.status === 'completed' || currentTask?.status === 'failed') {
@@ -219,6 +234,7 @@ const VideoMixer: React.FC = () => {
         <GenerationResult 
           task={currentTask}
           onReset={() => setCurrentTask(null)}
+          onNewCreation={handleNewCreation}
         />
       )
     }

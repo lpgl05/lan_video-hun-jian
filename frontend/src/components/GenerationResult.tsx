@@ -7,9 +7,10 @@ import ReactPlayer from 'react-player'
 interface GenerationResultProps {
   task: GenerationTask | null
   onReset: () => void
+  onNewCreation: () => void
 }
 
-const GenerationResult: React.FC<GenerationResultProps> = ({ task, onReset }) => {
+const GenerationResult: React.FC<GenerationResultProps> = ({ task, onReset, onNewCreation }) => {
   const [previewVisible, setPreviewVisible] = useState(false)
   const [previewVideo, setPreviewVideo] = useState<string>('')
 
@@ -107,12 +108,6 @@ const GenerationResult: React.FC<GenerationResultProps> = ({ task, onReset }) =>
 
           {task.status === 'completed' && task.result && (
             <div>
-              <div style={{ marginBottom: '16px' }}>
-                <Button type="primary" onClick={onReset}>
-                  重新生成
-                </Button>
-              </div>
-              
               <div className="result-grid">
                 {task.result.videos.map((videoUrl, index) => (
                   <div key={index} className="result-item">
@@ -151,6 +146,30 @@ const GenerationResult: React.FC<GenerationResultProps> = ({ task, onReset }) =>
                     </div>
                   </div>
                 ))}
+              </div>
+              
+              {/* 按钮区域 */}
+              <div style={{ 
+                marginTop: '24px', 
+                display: 'flex', 
+                gap: '12px', 
+                justifyContent: 'center',
+                paddingTop: '20px',
+                borderTop: '1px solid #f0f0f0'
+              }}>
+                <Button 
+                  type="primary" 
+                  onClick={onReset}
+                  style={{ minWidth: '120px' }}
+                >
+                  重新生成
+                </Button>
+                <Button 
+                  onClick={onNewCreation}
+                  style={{ minWidth: '120px' }}
+                >
+                  新创作
+                </Button>
               </div>
             </div>
           )}

@@ -12,8 +12,23 @@ import type {
   StyleConfig 
 } from '../types'
 
+// 动态获取API基础URL
+const getApiBaseUrl = () => {
+  // 优先使用环境变量
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL
+  }
+
+  // 如果没有配置环境变量，根据当前主机动态生成
+  const currentHost = window.location.hostname
+  const port = '8000'
+  const protocol = window.location.protocol
+
+  return `${protocol}//${currentHost}:${port}`
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '',  // 使用空baseURL，让API路径包含完整路径
+  baseURL: getApiBaseUrl() + '/api',
   timeout: 120000,
 })
 
@@ -22,7 +37,7 @@ export const uploadVideo = async (file: File): Promise<VideoFile> => {
   const formData = new FormData()
   formData.append('video', file)
   
-  const response = await api.post<ApiResponse<VideoFile>>('/api/upload/video', formData)
+  const response = await api.post<ApiResponse<VideoFile>>('/upload/video', formData)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '上传失败')
@@ -41,7 +56,7 @@ export const getUploadProgress = async (taskId: string) => {
   try {
     console.log('发送进度查询请求，URL:', `/upload/progress/${taskId}`)
     console.log('完整URL:', `${api.defaults.baseURL}/upload/progress/${taskId}`)
-    const response = await api.get(`/api/upload/progress/${taskId}`)
+    const response = await api.get(`/upload/progress/${taskId}`)
     console.log('进度查询响应:', response.data)
     return response.data
   } catch (error) {
@@ -94,7 +109,7 @@ export const uploadVideoWithProgress = async (
     }
     
     // 开始上传请求
-    const uploadPromise = api.post<ApiResponse<VideoFile>>('/api/upload/video', formData, {
+    const uploadPromise = api.post<ApiResponse<VideoFile>>('/upload/video', formData, {
       onUploadProgress: (progressEvent) => {
         if (progressEvent.total && onProgress) {
           const httpProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -156,7 +171,7 @@ export const uploadAudio = async (file: File): Promise<AudioFile> => {
   const formData = new FormData()
   formData.append('audio', file)
   
-  const response = await api.post<ApiResponse<AudioFile>>('/api/upload/audio', formData)
+  const response = await api.post<ApiResponse<AudioFile>>('/upload/audio', formData)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '上传失败')
@@ -205,7 +220,7 @@ export const uploadAudioWithProgress = async (
     }
     
     // 启动上传请求
-    const uploadPromise = api.post<ApiResponse<AudioFile>>('/api/upload/audio', formData, {
+    const uploadPromise = api.post<ApiResponse<AudioFile>>('/upload/audio', formData, {
       onUploadProgress: (progressEvent) => {
         if (progressEvent.total && onProgress) {
           const httpProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -267,7 +282,7 @@ export const uploadPoster = async (file: File): Promise<PosterFile> => {
   const formData = new FormData()
   formData.append('poster', file)
 
-  const response = await api.post<ApiResponse<PosterFile>>('/api/upload/poster', formData)
+  const response = await api.post<ApiResponse<PosterFile>>('/upload/poster', formData)
 
   if (!response.data.success) {
     throw new Error(response.data.error || '上传失败')
@@ -286,7 +301,7 @@ export const uploadPosterWithProgress = async (
 
   console.log('开始上传海报文件:', file.name)
 
-  const response = await api.post<ApiResponse<PosterFile>>('/api/upload/poster', formData, {
+  const response = await api.post<ApiResponse<PosterFile>>('/upload/poster', formData, {
     onUploadProgress: (progressEvent) => {
       if (progressEvent.total && onProgress) {
         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -305,7 +320,7 @@ export const uploadPosterWithProgress = async (
 
 // 删除海报
 export const deletePoster = async (posterId: string): Promise<void> => {
-  const response = await api.delete<ApiResponse>(`/api/upload/poster/${posterId}`)
+  const response = await api.delete<ApiResponse>(`/upload/poster/${posterId}`)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '删除失败')
@@ -318,7 +333,7 @@ export const generateScripts = async (
   video_duration: number,
   video_count: number
 ): Promise<Script[]> => {
-  const response = await api.post<ApiResponse<Script[]>>('/api/ai/generate-scripts', {
+  const response = await api.post<ApiResponse<Script[]>>('/ai/generate-scripts', {
     base_script,
     video_duration,
     video_count,
@@ -333,7 +348,7 @@ export const generateScripts = async (
 
 // 项目配置
 export const saveProject = async (config: Omit<ProjectConfig, 'id' | 'createdAt' | 'updatedAt'>): Promise<ProjectConfig> => {
-  const response = await api.post<ApiResponse<ProjectConfig>>('/api/projects', config)
+  const response = await api.post<ApiResponse<ProjectConfig>>('/projects', config)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '保存失败')
@@ -343,7 +358,7 @@ export const saveProject = async (config: Omit<ProjectConfig, 'id' | 'createdAt'
 }
 
 export const getProject = async (id: string): Promise<ProjectConfig> => {
-  const response = await api.get<ApiResponse<ProjectConfig>>(`/api/projects/${id}`)
+  const response = await api.get<ApiResponse<ProjectConfig>>(`/projects/${id}`)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '获取失败')
@@ -354,7 +369,7 @@ export const getProject = async (id: string): Promise<ProjectConfig> => {
 
 // 视频生成
 export const startGeneration = async (projectId: string): Promise<GenerationTask> => {
-  const response = await api.post<ApiResponse<GenerationTask>>('/api/generation/start', {
+  const response = await api.post<ApiResponse<GenerationTask>>('/generation/start', {
     projectId,
   })
   
@@ -366,7 +381,7 @@ export const startGeneration = async (projectId: string): Promise<GenerationTask
 }
 
 export const getGenerationStatus = async (taskId: string): Promise<GenerationTask> => {
-  const response = await api.get<ApiResponse<GenerationTask>>(`/api/generation/status/${taskId}`)
+  const response = await api.get<ApiResponse<GenerationTask>>(`/generation/status/${taskId}`)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '获取状态失败')
@@ -378,7 +393,7 @@ export const getGenerationStatus = async (taskId: string): Promise<GenerationTas
 // 文件删除
 export const deleteVideo = async (id: string, url?: string): Promise<void> => {
   const params = url ? { file_url: url } : {}
-  const response = await api.delete<ApiResponse<void>>(`/api/videos/${id}`, { params })
+  const response = await api.delete<ApiResponse<void>>(`/videos/${id}`, { params })
   
   if (!response.data.success) {
     throw new Error(response.data.error || '删除失败')
@@ -387,7 +402,7 @@ export const deleteVideo = async (id: string, url?: string): Promise<void> => {
 
 export const deleteAudio = async (id: string, url?: string): Promise<void> => {
   const params = url ? { file_url: url } : {}
-  const response = await api.delete<ApiResponse<void>>(`/api/audios/${id}`, { params })
+  const response = await api.delete<ApiResponse<void>>(`/audios/${id}`, { params })
   
   if (!response.data.success) {
     throw new Error(response.data.error || '删除失败')
@@ -397,7 +412,7 @@ export const deleteAudio = async (id: string, url?: string): Promise<void> => {
 // 测试删除接口
 export const testDelete = async (id: string): Promise<void> => {
   console.log('调用测试删除接口:', id)
-  const response = await api.delete<ApiResponse<void>>(`/api/test/delete/${id}`)
+  const response = await api.delete<ApiResponse<void>>(`/test/delete/${id}`)
   console.log('测试删除响应:', response.data)
   
   if (!response.data.success) {

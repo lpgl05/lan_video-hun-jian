@@ -194,9 +194,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
               正在上传: {uploadingFileName}
             </div>
             <Progress 
-              percent={uploadProgress} 
+              percent={Math.round(uploadProgress * 10) / 10} 
               size="small"
-              format={(percent) => `${percent}%`}
+              format={(percent) => `${percent?.toFixed(1)}%`}
             />
             <div style={{ marginTop: '4px', fontSize: '12px', color: '#999', display: 'flex', justifyContent: 'space-between' }}>
               <span>上传进度: {uploadProgress.toFixed(1)}%</span>

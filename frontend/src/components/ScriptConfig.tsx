@@ -198,10 +198,11 @@ const ScriptConfig: React.FC<ScriptConfigProps> = ({
                 width: '100%'  // 确保文字容器也是100%宽度
               }}>
                 <span>AI正在生成文案...</span>
-                <span>{Math.min(Math.round(generateProgress), 100)}%</span>
+                <span>{Math.min(generateProgress, 100).toFixed(1)}%</span>
               </div>
               <Progress
-                percent={Math.min(Math.round(generateProgress), 100)}
+                percent={Math.min(Math.round(generateProgress * 10) / 10, 100)}
+                format={(percent) => `${percent?.toFixed(1)}%`}
                 status={generateProgress >= 100 ? 'success' : 'active'}
                 strokeColor={{
                   '0%': '#1890ff',

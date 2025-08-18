@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Progress, Space, Button, Typography } from 'antd'
+import { Modal, Space, Button, Typography } from 'antd'
 import { 
   VideoCameraOutlined, 
   CheckCircleOutlined, 
@@ -25,51 +25,20 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
   onClose,
   onComplete
 }) => {
-  const [estimatedTime] = useState(300) // 5分钟
   const [elapsedTime, setElapsedTime] = useState(0)
-  const [simulatedProgress, setSimulatedProgress] = useState(0)
 
-
-
-  // 计算估算时间
+  // 计算已用时间
   useEffect(() => {
-    if (!task || task.status !== 'processing') return
+    if (!task || task.status !== 'processing') {
+      setElapsedTime(0)
+      return
+    }
 
     const timer = setInterval(() => {
       setElapsedTime(prev => prev + 1)
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [task?.status])
-
-  // 模拟进度条
-  useEffect(() => {
-    if (!task || task.status !== 'processing') {
-      setSimulatedProgress(0)
-      return
-    }
-
-    // 重置进度
-    setSimulatedProgress(0)
-    
-    const progressInterval = setInterval(() => {
-      setSimulatedProgress(prev => {
-        if (prev >= 90) {
-          return Math.min(prev + 0.3, 95) // 90%后缓慢增长，最大到95%
-        }
-        const increment = Math.random() * 2 + 0.5 // 0.5-2.5%的随机增长
-        return Math.min(prev + increment, 90) // 确保线性增长到90%
-      })
-    }, 500)
-
-    return () => clearInterval(progressInterval)
-  }, [task?.status])
-
-  // 任务完成时设置进度为100%
-  useEffect(() => {
-    if (task?.status === 'completed') {
-      setSimulatedProgress(100)
-    }
   }, [task?.status])
 
   const formatTime = (seconds: number) => {
@@ -110,8 +79,6 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
   }
 
   const statusInfo = getStatusInfo()
-  const progress = task?.status === 'completed' ? 100 : simulatedProgress
-  const remainingTime = Math.max(0, estimatedTime - elapsedTime)
 
   return (
     <Modal
@@ -155,28 +122,17 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
           </div>
         </div>
 
-        {/* 进度条 */}
+        {/* 已用时间显示 */}
         {task?.status === 'processing' && (
-          <div className="progress-section">
-            <Progress
-              percent={progress}
-              strokeColor={{
-                '0%': '#1890ff',
-                '50%': '#722ed1',
-                '100%': '#52c41a'
-              }}
-              trailColor="#f0f0f0"
-              size={8}
-              className="custom-progress"
-            />
-            <div className="progress-info">
-              <Text className="progress-text">
-                {progress.toFixed(1)}% 完成
-              </Text>
-              <Text className="time-text">
-                预计剩余时间: {formatTime(remainingTime)}
-              </Text>
-            </div>
+          <div className="time-section" style={{ 
+            textAlign: 'center', 
+            padding: '20px 0', 
+            borderTop: '1px solid #f0f0f0',
+            borderBottom: '1px solid #f0f0f0' 
+          }}>
+            <Text type="secondary" style={{ fontSize: '16px' }}>
+              已用时: {formatTime(elapsedTime)}
+            </Text>
           </div>
         )}
 
@@ -185,14 +141,11 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
         {/* 底部按钮 */}
         <div className="modal-footer">
           {task?.status === 'processing' && (
-            <Space>
-              <Text type="secondary">
-                已用时: {formatTime(elapsedTime)}
-              </Text>
-              <Button onClick={onClose} type="link">
+            <div style={{ textAlign: 'center' }}>
+              <Button onClick={onClose} type="primary">
                 后台运行
               </Button>
-            </Space>
+            </div>
           )}
           
           {task?.status === 'completed' && (

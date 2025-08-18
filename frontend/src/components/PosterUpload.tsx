@@ -140,9 +140,9 @@ const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange })
                   正在上传: {uploadingFileName}
                 </div>
                 <Progress
-                  percent={Math.round(uploadProgress)}
+                  percent={Math.round(uploadProgress * 10) / 10}
                   status="active"
-                  format={(percent) => `${percent}%`}
+                  format={(percent) => `${percent?.toFixed(1)}%`}
                 />
                 {uploadSpeed && (
                   <div style={{ marginTop: '4px', fontSize: '12px', color: '#999' }}>

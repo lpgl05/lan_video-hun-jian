@@ -81,13 +81,14 @@ const GenerationResult: React.FC<GenerationResultProps> = ({ task, onReset, onNe
             }}>
               <span>状态: {getStatusText(task.status)}</span>
               <span style={{ color: getStatusColor(task.status) }}>
-                {task.progress}%
+                {task.progress?.toFixed(1)}%
               </span>
             </div>
             <Progress 
-              percent={task.progress} 
+              percent={Math.round((task.progress || 0) * 10) / 10} 
               status={task.status === 'failed' ? 'exception' : undefined}
               strokeColor={getStatusColor(task.status)}
+              format={(percent) => `${percent?.toFixed(1)}%`}
             />
           </div>
 

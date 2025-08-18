@@ -9,8 +9,27 @@ import type {
   ApiResponse
 } from '../types'
 
+// 获取后端API地址
+const getApiBaseUrl = () => {
+  // 如果环境变量中设置了API地址，直接使用
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL
+  }
+  
+  // 自动检测当前访问方式
+  const currentHost = window.location.hostname
+  
+  // 如果是通过IP访问的，使用相同的IP访问后端
+  if (currentHost !== 'localhost' && currentHost !== '127.0.0.1') {
+    return `http://${currentHost}:8000`
+  }
+  
+  // 默认使用localhost
+  return 'http://localhost:8000'
+}
+
 const api = axios.create({
-  baseURL: (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000') + '/api',
+  baseURL: getApiBaseUrl() + '/api',
   timeout: 120000,
 })
 

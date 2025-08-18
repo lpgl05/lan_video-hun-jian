@@ -6,7 +6,7 @@ from models.oss_client import OSSClient
 UPLOAD_VIDEO_DIR = "uploads/videos"
 UPLOAD_AUDIO_DIR = "uploads/audios"
 UPLOAD_POSTER_DIR = "uploads/posters"
-USE_OSS = False  # 暂时关闭OSS，测试本地上传
+USE_OSS = True  # 暂时关闭OSS，测试本地上传
 
 oss_client = OSSClient()
 

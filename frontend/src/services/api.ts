@@ -333,7 +333,7 @@ export const generateScripts = async (
 
 // 项目配置
 export const saveProject = async (config: Omit<ProjectConfig, 'id' | 'createdAt' | 'updatedAt'>): Promise<ProjectConfig> => {
-  const response = await api.post<ApiResponse<ProjectConfig>>('/projects', config)
+  const response = await api.post<ApiResponse<ProjectConfig>>('/api/projects', config)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '保存失败')
@@ -343,7 +343,7 @@ export const saveProject = async (config: Omit<ProjectConfig, 'id' | 'createdAt'
 }
 
 export const getProject = async (id: string): Promise<ProjectConfig> => {
-  const response = await api.get<ApiResponse<ProjectConfig>>(`/projects/${id}`)
+  const response = await api.get<ApiResponse<ProjectConfig>>(`/api/projects/${id}`)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '获取失败')
@@ -354,7 +354,7 @@ export const getProject = async (id: string): Promise<ProjectConfig> => {
 
 // 视频生成
 export const startGeneration = async (projectId: string): Promise<GenerationTask> => {
-  const response = await api.post<ApiResponse<GenerationTask>>('/generation/start', {
+  const response = await api.post<ApiResponse<GenerationTask>>('/api/generation/start', {
     projectId,
   })
   
@@ -366,7 +366,7 @@ export const startGeneration = async (projectId: string): Promise<GenerationTask
 }
 
 export const getGenerationStatus = async (taskId: string): Promise<GenerationTask> => {
-  const response = await api.get<ApiResponse<GenerationTask>>(`/generation/status/${taskId}`)
+  const response = await api.get<ApiResponse<GenerationTask>>(`/api/generation/status/${taskId}`)
   
   if (!response.data.success) {
     throw new Error(response.data.error || '获取状态失败')

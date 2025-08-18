@@ -159,7 +159,7 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
                 '100%': '#52c41a'
               }}
               trailColor="#f0f0f0"
-              strokeWidth={8}
+              size={8}
               className="custom-progress"
             />
             <div className="progress-info">

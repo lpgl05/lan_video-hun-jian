@@ -318,7 +318,7 @@ export const generateScripts = async (
   video_duration: number,
   video_count: number
 ): Promise<Script[]> => {
-  const response = await api.post<ApiResponse<Script[]>>('/ai/generate-scripts', {
+  const response = await api.post<ApiResponse<Script[]>>('/api/ai/generate-scripts', {
     base_script,
     video_duration,
     video_count,

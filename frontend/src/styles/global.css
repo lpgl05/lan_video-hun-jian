@@ -73,11 +73,14 @@ body {
 
 /* 输入框样式 */
 .ant-input,
+.ant-input.ant-input,
 .ant-select-selector,
 .ant-picker {
   border-radius: 8px;
   border: 1px solid rgba(24, 144, 255, 0.15);
   transition: all 0.3s ease;
+  color: #262626 !important;
+  background: #ffffff !important;
 }
 
 .ant-input:hover,

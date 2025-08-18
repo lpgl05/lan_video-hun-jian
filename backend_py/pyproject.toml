@@ -17,4 +17,5 @@ dependencies = [
     "oss2>=2.19.1",
     "edge-tts>=7.2.0",
     "python-dotenv>=1.1.1",
+    "aiofiles>=24.1.0",
 ]

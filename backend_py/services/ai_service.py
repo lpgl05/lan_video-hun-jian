@@ -52,7 +52,7 @@ async def generate_scripts_service(base_script: str, video_duration: int, video_
                 "Authorization": f"Bearer {FASTGPT_API_KEY}"
             },
             json=request_data_v1,
-            timeout=30
+            timeout=600
         )
         
         if response.status_code == 200:
@@ -91,7 +91,7 @@ async def generate_scripts_service(base_script: str, video_duration: int, video_
                         "Authorization": f"Bearer {FASTGPT_API_KEY}"
                     },
                     json=request_data_v2,
-                    timeout=30
+                    timeout=600
                 )
                 
                 if response.status_code == 200:
@@ -127,7 +127,7 @@ async def generate_scripts_service(base_script: str, video_duration: int, video_
                                 "Authorization": f"Bearer {FASTGPT_API_KEY}"
                             },
                             json=request_data_v3,
-                            timeout=30
+                            timeout=600
                         )
                         
                         if response.status_code == 200:
@@ -261,7 +261,7 @@ def call_fastGPT_rewrite_plugin(original_text: str, video_duration: int, rewrite
                 "original_text": original_text,
                 "rewrite_count": rewrite_count
             },
-            timeout=30
+            timeout=600
         )
         print(f"FastGPT插件格式请求参数: video_duration={video_duration}, original_text={original_text}, rewrite_count={rewrite_count}")
         
@@ -296,7 +296,7 @@ def call_fastGPT_rewrite_plugin(original_text: str, video_duration: int, rewrite
                         }
                     ]
                 },
-                timeout=30
+                timeout=600
             )
             print(f"FastGPT ChatGPT格式请求完成，状态码: {response.status_code}")
         
@@ -336,7 +336,7 @@ def call_fastGPT(base_script: str, video_duration: int, i: int):
                 }
             ]
         },
-        timeout=30
+        timeout=600
     )
     return response
 

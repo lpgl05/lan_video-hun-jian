@@ -188,6 +188,11 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
           </Button>
         </Upload>
         
+        <div style={{ marginTop: '8px', fontSize: '12px', color: '#999', lineHeight: '1.5' }}>
+          支持格式：MP4、AVI、MOV、WMV、FLV、MKV、3GP、WEBM等常见视频格式<br/>
+          文件大小：单个文件不超过500MB
+        </div>
+        
         {uploading && (
           <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '6px' }}>
             <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>

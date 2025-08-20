@@ -24,6 +24,15 @@ class AudioFile(BaseModel):
     duration: int
     uploadedAt: str
 
+class PosterFile(BaseModel):
+    id: str
+    name: str
+    url: str
+    size: int
+    width: int
+    height: int
+    uploadedAt: str
+
 class Script(BaseModel):
     id: str
     content: str
@@ -38,6 +47,7 @@ class ClipRequest(BaseModel):
     name: str
     videos: List[VideoFile]
     audios: List[AudioFile]
+    posters: List[PosterFile]
     scripts: List[Script]
     duration: str
     videoCount: int

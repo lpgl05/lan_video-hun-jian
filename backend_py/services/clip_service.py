@@ -63,6 +63,19 @@ async def download_audio(url):
     await oss_client.download_video(url, local_file)
     return local_file
 
+async def download_poster(url):
+    """下载海报图片到本地"""
+    filename = url.split("/")[-1]
+    
+    # 确保海报下载目录存在
+    poster_download_path = "downloads/posters"
+    os.makedirs(poster_download_path, exist_ok=True)
+    
+    local_file = os.path.join(poster_download_path, filename)
+    print(f"下载海报: {url} -> {local_file}")
+    await oss_client.download_video(url, local_file)  # 复用下载方法
+    return local_file
+
 def random_cut(video_path, min_duration, max_duration, count):
     video = VideoFileClip(video_path)
     clips = []
@@ -523,7 +536,7 @@ def create_title_image(text, width=1080, height=1920, style=None):
 
     return img
 
-def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_image, tts_audio, bgm_audio, output_path, duration, title_position="top", subtitle_position="bottom"):
+def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_image, tts_audio, bgm_audio, output_path, duration, title_position="top", subtitle_position="bottom", poster_image=None):
     """使用FFmpeg创建9:16视频，包含模糊背景、Title、Subtitle和音频混合"""
     ffmpeg = find_ffmpeg()
     
@@ -556,42 +569,83 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
     
     print(f"Title位置设置: {title_desc} (overlay_y={title_overlay_y})")
     print(f"Subtitle位置设置: {subtitle_desc} (overlay_y={subtitle_overlay_y})")
+    print(f"海报背景: {'启用' if poster_image else '未启用'}")
     
-    filter_complex = f"""
-    [0:v]scale={target_width}:{target_height}:force_original_aspect_ratio=increase,crop={target_width}:{target_height}[bg];
-    [bg]boxblur=luma_radius=50:chroma_radius=50:luma_power=3[bg_blur];
-    [0:v]scale={target_width}:-1[fg_scale];
-    [fg_scale]scale={target_width}:{target_width*9//16}[fg];
-    [bg_blur][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];
-    [1:v]format=rgba[title];
-    [2:v]format=rgba[subtitle];
-    [bg_with_fg][title]overlay=0:{title_overlay_y}:format=auto[bg_with_title];
-    [bg_with_title][subtitle]overlay=0:{subtitle_overlay_y}:format=auto,format=yuv420p[video_out];
-    [3:a]volume=0.8[tts];
-    [4:a]volume=0.15[bgm];
-    [tts][bgm]amix=inputs=2:duration=first:dropout_transition=0[audio_out]
-    """
-    
-    cmd = [
-        ffmpeg, '-y',
-        '-i', source_video,      # 输入0: 源视频
-        '-i', title_image,       # 输入1: Title图片
-        '-i', subtitle_image,    # 输入2: Subtitle图片
-        '-i', tts_audio,         # 输入3: TTS音频
-        '-i', bgm_audio,         # 输入4: BGM音频
-        '-filter_complex', filter_complex,
-        '-map', '[video_out]',   # 映射视频流
-        '-map', '[audio_out]',   # 映射音频流
-        '-t', str(duration),     # 设置时长
-        '-preset', 'medium',
-        '-c:v', 'libx264',
-        '-crf', '23',
-        '-c:a', 'aac',
-        '-b:a', '192k',
-        '-threads', str(os.cpu_count()),
-        '-movflags', '+faststart',
-        output_path
-    ]
+    # 根据是否有海报背景选择不同的滤镜链
+    if poster_image and poster_image != "":
+        # 有海报背景：海报作为背景，源视频作为前景
+        filter_complex = f"""
+        [5:v]scale={target_width}:{target_height}:force_original_aspect_ratio=increase,crop={target_width}:{target_height}[bg];
+        [0:v]scale={target_width}:-1[fg_scale];
+        [fg_scale]scale={target_width}:{target_width*9//16}[fg];
+        [bg][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];
+        [1:v]format=rgba[title];
+        [2:v]format=rgba[subtitle];
+        [bg_with_fg][title]overlay=0:{title_overlay_y}:format=auto[bg_with_title];
+        [bg_with_title][subtitle]overlay=0:{subtitle_overlay_y}:format=auto,format=yuv420p[video_out];
+        [3:a]volume=0.8[tts];
+        [4:a]volume=0.15[bgm];
+        [tts][bgm]amix=inputs=2:duration=first:dropout_transition=0[audio_out]
+        """
+        
+        cmd = [
+            ffmpeg, '-y',
+            '-i', source_video,      # 输入0: 源视频
+            '-i', title_image,       # 输入1: Title图片
+            '-i', subtitle_image,    # 输入2: Subtitle图片
+            '-i', tts_audio,         # 输入3: TTS音频
+            '-i', bgm_audio,         # 输入4: BGM音频
+            '-i', poster_image,      # 输入5: 海报背景
+            '-filter_complex', filter_complex,
+            '-map', '[video_out]',   # 映射视频流
+            '-map', '[audio_out]',   # 映射音频流
+            '-t', str(duration),     # 设置时长
+            '-preset', 'medium',
+            '-c:v', 'libx264',
+            '-crf', '23',
+            '-c:a', 'aac',
+            '-b:a', '192k',
+            '-threads', str(os.cpu_count()),
+            '-movflags', '+faststart',
+            output_path
+        ]
+    else:
+        # 无海报背景：使用原逻辑（模糊源视频作为背景）
+        filter_complex = f"""
+        [0:v]scale={target_width}:{target_height}:force_original_aspect_ratio=increase,crop={target_width}:{target_height}[bg];
+        [bg]boxblur=luma_radius=50:chroma_radius=50:luma_power=3[bg_blur];
+        [0:v]scale={target_width}:-1[fg_scale];
+        [fg_scale]scale={target_width}:{target_width*9//16}[fg];
+        [bg_blur][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];
+        [1:v]format=rgba[title];
+        [2:v]format=rgba[subtitle];
+        [bg_with_fg][title]overlay=0:{title_overlay_y}:format=auto[bg_with_title];
+        [bg_with_title][subtitle]overlay=0:{subtitle_overlay_y}:format=auto,format=yuv420p[video_out];
+        [3:a]volume=0.8[tts];
+        [4:a]volume=0.15[bgm];
+        [tts][bgm]amix=inputs=2:duration=first:dropout_transition=0[audio_out]
+        """
+        
+        cmd = [
+            ffmpeg, '-y',
+            '-i', source_video,      # 输入0: 源视频
+            '-i', title_image,       # 输入1: Title图片
+            '-i', subtitle_image,    # 输入2: Subtitle图片
+            '-i', tts_audio,         # 输入3: TTS音频
+            '-i', bgm_audio,         # 输入4: BGM音频
+            '-filter_complex', filter_complex,
+            '-map', '[video_out]',   # 映射视频流
+            '-map', '[audio_out]',   # 映射音频流
+            '-t', str(duration),     # 设置时长
+            '-preset', 'medium',
+            '-c:v', 'libx264',
+            '-crf', '23',
+            '-c:a', 'aac',
+            '-b:a', '192k',
+            '-threads', str(os.cpu_count()),
+            '-movflags', '+faststart',
+            output_path
+        ]
     
     try:
         print("开始FFmpeg处理...")
@@ -616,6 +670,7 @@ async def process_clips001(req):
     duration_sec = parse_duration(req.duration)
     video_files = req.videos
     audio_files = req.audios
+    poster_files = req.posters  # 获取海报数据
     scripts = [s for s in req.scripts if s.selected]
     style = req.style.dict() if hasattr(req.style, "dict") else req.style
 
@@ -628,17 +683,26 @@ async def process_clips001(req):
     # 字幕样式
     subtitle_position = style.get("subtitle", {}).get("position", "bottom")
 
-    # 下载所有视频和音频到本地
+    # 下载所有视频、音频和海报到本地
     local_video_paths = [await download_video(v.url) for v in video_files]
     local_audio_paths = [await download_audio(a.url) for a in audio_files]
+    
+    # 下载海报（如果有的话）
+    local_poster_path = None
+    if poster_files and len(poster_files) > 0:
+        # 使用第一个海报作为背景
+        poster_url = poster_files[0].url
+        local_poster_path = await download_poster(poster_url)
+        print(f"海报下载完成: {local_poster_path}")
 
     print("=======================================")
-    print("包含：Title + Subtitle + TTS语音 + 背景音乐")
+    print("包含：Title + Subtitle + TTS语音 + 背景音乐 + 海报背景")
     print(f"项目标题: {title}")
     print(f"Title位置: {title_position}")
     print(f"Subtitle位置: {subtitle_position}")
     print(f"视频源: {len(local_video_paths)}个")
     print(f"音频源: {len(local_audio_paths)}个")
+    print(f"海报背景: {'已启用' if local_poster_path else '未启用'}")
     print("=======================================")
 
     if not local_video_paths:
@@ -768,7 +832,8 @@ async def process_clips001(req):
                 final_output,
                 duration_sec,
                 title_position,
-                subtitle_position
+                subtitle_position,
+                local_poster_path  # 传递海报路径
             )
             
             compose_time = time.time() - compose_start

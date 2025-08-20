@@ -157,6 +157,11 @@ const AudioUpload: React.FC<AudioUploadProps> = ({ audios, onAudiosChange }) => 
           </Button>
         </Upload>
         
+        <div style={{ marginTop: '8px', fontSize: '12px', color: '#999', lineHeight: '1.5' }}>
+          支持格式：MP3、WAV、AAC、FLAC、OGG、WMA、M4A等常见音频格式<br/>
+          文件大小：单个文件不超过100MB
+        </div>
+        
         {uploading && (
           <div style={{ 
             marginTop: '16px', 

@@ -17,13 +17,15 @@ interface GenerationModalProps {
   task: GenerationTask | null
   onClose: () => void
   onComplete: () => void
+  onRetry?: () => void  // 新增重试回调
 }
 
 const GenerationModal: React.FC<GenerationModalProps> = ({
   visible,
   task,
   onClose,
-  onComplete
+  onComplete,
+  onRetry
 }) => {
   const [elapsedTime, setElapsedTime] = useState(0)
 
@@ -75,6 +77,12 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
           description: '正在初始化任务',
           icon: <LoadingOutlined spin style={{ color: '#1890ff' }} />
         }
+    }
+  }
+
+  const handleRetry = () => {
+    if (onRetry) {
+      onRetry()
     }
   }
 
@@ -164,7 +172,7 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
               <Button onClick={onClose}>
                 关闭
               </Button>
-              <Button type="primary" danger>
+              <Button type="primary" danger onClick={handleRetry}>
                 重新生成
               </Button>
             </Space>

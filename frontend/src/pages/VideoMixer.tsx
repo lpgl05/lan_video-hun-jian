@@ -174,6 +174,16 @@ const VideoMixer: React.FC = () => {
     setCurrentPage('home') // 返回主页面查看结果
   }
 
+  // 处理重试生成
+  const handleRetry = async () => {
+    console.log('重新生成视频...')
+    setShowGenerationModal(false) // 先关闭弹窗
+    setCurrentTask(null) // 清空当前任务
+    
+    // 重新启动生成任务
+    await handleStartGeneration()
+  }
+
   // 新创作 - 清空所有数据
   const handleNewCreation = () => {
     setCurrentTask(null)
@@ -194,13 +204,27 @@ const VideoMixer: React.FC = () => {
       title: {
         color: '#1890ff',
         position: 'top',
-        fontSize: 40,
+        fontSize: 120,  // 默认120px
+        fontFamily: 'Microsoft YaHei, sans-serif',
+        strokeColor: '#000000',
+        strokeWidth: 0,
+        shadow: false,
+        shadowColor: '#000000',
+        bold: false,
+        italic: false,
       },
       subtitle: {
-        color: '#1890ff',
+        color: '#ffffff',
         position: 'bottom',
-        fontSize: 40,
-      }
+        fontSize: 60,  // 默认60px
+        fontFamily: 'Microsoft YaHei, sans-serif',
+        strokeColor: '#000000',
+        strokeWidth: 1,
+        shadow: true,
+        shadowColor: '#000000',
+        bold: false,
+        italic: false,
+      },
     })
     message.success('已清空所有数据，可以开始新的创作！')
   }
@@ -327,6 +351,7 @@ const VideoMixer: React.FC = () => {
         task={currentTask}
         onClose={handleModalClose}
         onComplete={handleGenerationComplete}
+        onRetry={handleRetry}
       />
     </>
   )

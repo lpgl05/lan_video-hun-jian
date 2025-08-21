@@ -41,21 +41,21 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
     { label: '黑体', value: 'SimHei, sans-serif', needsLicense: false },
     { label: '楷体', value: 'KaiTi, serif', needsLicense: false },
     { 
-      label: '老报刊字体', 
-      value: 'LAOBAOKAN', 
-      fontUrl: 'https://picture-share-001-dpxj.oss-cn-beijing.aliyuncs.com/ziti/LAOBAOKAN.ttf',
+      label: '柳隶宋体', 
+      value: 'LIULISONG', 
+      fontUrl: '/fonts/LIULISONG.ttf',
       needsLicense: true
     },
     { 
       label: '妙笔珺俐体', 
       value: 'MiaobiJunli', 
-      fontUrl: 'https://picture-share-001-dpxj.oss-cn-beijing.aliyuncs.com/%E5%A6%99%E7%AC%94%E7%8F%BA%E4%BF%90%E4%BD%93.ttf',
+      fontUrl: '/fonts/妙笔珺俐体.ttf',
       needsLicense: true
     },
     { 
       label: '妙笔段慕体', 
       value: 'MiaobiDuanmu', 
-      fontUrl: 'https://picture-share-001-dpxj.oss-cn-beijing.aliyuncs.com/%E5%A6%99%E7%AC%94%E6%AE%B5%E6%85%95%E4%BD%93.ttf',
+      fontUrl: '/fonts/妙笔段慕体.ttf',
       needsLicense: true
     }
   ]
@@ -409,12 +409,12 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                   size="small"
                   onClick={() => {
                     updateFontStyle(currentEditingFont, {
-                      fontFamily: 'LAOBAOKAN',
-                      fontUrl: 'https://picture-share-001-dpxj.oss-cn-beijing.aliyuncs.com/ziti/LAOBAOKAN.ttf'
+                      fontFamily: 'LIULISONG',
+                      fontUrl: '/fonts/LIULISONG.ttf'
                     })
                   }}
                 >
-                  老报刊字体
+                  柳隶宋体
                 </Button>
                 <Button 
                   type="link" 
@@ -422,7 +422,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                   onClick={() => {
                     updateFontStyle(currentEditingFont, {
                       fontFamily: 'MiaobiJunli',
-                      fontUrl: 'https://picture-share-001-dpxj.oss-cn-beijing.aliyuncs.com/%E5%A6%99%E7%AC%94%E7%8F%BA%E4%BF%90%E4%BD%93.ttf'
+                      fontUrl: '/fonts/妙笔珺俐体.ttf'
                     })
                   }}
                 >
@@ -434,7 +434,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                   onClick={() => {
                     updateFontStyle(currentEditingFont, {
                       fontFamily: 'MiaobiDuanmu',
-                      fontUrl: 'https://picture-share-001-dpxj.oss-cn-beijing.aliyuncs.com/%E5%A6%99%E7%AC%94%E6%AE%B5%E6%85%95%E4%BD%93.ttf'
+                      fontUrl: '/fonts/妙笔段慕体.ttf'
                     })
                   }}
                 >

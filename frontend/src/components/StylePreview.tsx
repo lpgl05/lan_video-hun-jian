@@ -22,13 +22,54 @@ const StylePreview: React.FC<StylePreviewProps> = ({
   const loadFont = async (fontFamily: string, fontUrl?: string) => {
     if (!fontUrl || fontsLoaded.has(fontFamily)) return
 
+    console.log(`尝试加载字体: ${fontFamily}, URL: ${fontUrl}`)
+
+    // 方法1: 直接尝试加载字体
     try {
       const font = new FontFace(fontFamily, `url(${fontUrl})`)
       await font.load()
       document.fonts.add(font)
       setFontsLoaded(prev => new Set([...prev, fontFamily]))
+      console.log(`字体加载成功: ${fontFamily}`)
+      return
     } catch (error) {
-      console.warn(`Failed to load font ${fontFamily}:`, error)
+      console.error(`直接加载字体失败 ${fontFamily}:`, error)
+    }
+
+    // 方法2: 尝试使用动态CSS方式加载
+    try {
+      console.log(`尝试使用CSS方式加载字体: ${fontFamily}`)
+      
+      // 创建CSS样式
+      const style = document.createElement('style')
+      style.textContent = `
+        @font-face {
+          font-family: '${fontFamily}';
+          src: url('${fontUrl}') format('truetype');
+          font-display: swap;
+        }
+      `
+      document.head.appendChild(style)
+      
+      // 创建一个测试元素来触发字体加载
+      const testElement = document.createElement('div')
+      testElement.style.fontFamily = fontFamily
+      testElement.style.position = 'absolute'
+      testElement.style.left = '-9999px'
+      testElement.style.fontSize = '1px'
+      testElement.textContent = '测试'
+      document.body.appendChild(testElement)
+      
+      // 等待一段时间后移除测试元素
+      setTimeout(() => {
+        document.body.removeChild(testElement)
+        setFontsLoaded(prev => new Set([...prev, fontFamily]))
+        console.log(`通过CSS方式加载字体: ${fontFamily}`)
+      }, 100)
+      
+    } catch (cssError) {
+      console.error(`CSS方式加载字体也失败了:`, cssError)
+      console.warn(`建议将字体文件放到项目的public文件夹中，或配置服务器CORS头部`)
     }
   }
 
@@ -313,10 +354,22 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     const scaledFontSize = Math.max(6, style.fontSize * fontScale) // 最小字体6px
     
     // 设置字体
-    let fontString = `${scaledFontSize}px ${style.fontFamily}`
+    let fontFamily = style.fontFamily
+    
+    // 检查是否是自定义字体并且已加载
+    if (style.fontUrl && fontsLoaded.has(style.fontFamily)) {
+      console.log(`使用已加载的自定义字体: ${style.fontFamily}`)
+    } else if (style.fontUrl && !fontsLoaded.has(style.fontFamily)) {
+      console.warn(`自定义字体 ${style.fontFamily} 尚未加载，使用默认字体`)
+      fontFamily = 'Microsoft YaHei, sans-serif' // 备用字体
+    }
+    
+    let fontString = `${scaledFontSize}px "${fontFamily}"`
     if (style.bold) fontString = `bold ${fontString}`
     if (style.italic) fontString = `italic ${fontString}`
     ctx.font = fontString
+    
+    console.log(`设置字体: ${fontString}`)
 
     // 计算文本位置
     const textMetrics = ctx.measureText(text)

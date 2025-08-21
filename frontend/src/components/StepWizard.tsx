@@ -76,22 +76,17 @@ const StepWizard: React.FC<StepWizardProps> = ({
 
   const steps = [
     {
-      title: '上传素材',
-      icon: <UploadOutlined />,
-      content: 'upload'
-    },
-    {
-      title: '配置文案',
-      icon: <FileTextOutlined />,
-      content: 'script'
-    },
-    {
-      title: '生成设置',
+      title: '项目配置',
       icon: <SettingOutlined />,
-      content: 'config'
+      content: 'project_config'
     },
     {
-      title: '生成视频',
+      title: 'AI文案与样式',
+      icon: <FileTextOutlined />,
+      content: 'script_style'
+    },
+    {
+      title: '确认生成',
       icon: <PlayCircleOutlined />,
       content: 'generate'
     }
@@ -100,12 +95,10 @@ const StepWizard: React.FC<StepWizardProps> = ({
   // 验证当前步骤是否可以继续
   const canProceed = () => {
     switch (currentStep) {
-      case 0: // 上传素材
-        return videos.length > 0
-      case 1: // 配置文案
+      case 0: // 项目配置
+        return projectName.trim().length > 0 && videos.length > 0
+      case 1: // AI文案与样式
         return scripts.filter(s => s.selected).length > 0
-      case 2: // 生成设置
-        return projectName.trim().length > 0
       default:
         return true
     }
@@ -127,15 +120,41 @@ const StepWizard: React.FC<StepWizardProps> = ({
     const step = steps[currentStep]
     
     switch (step.content) {
-      case 'upload':
+      case 'project_config':
         return (
           <div className="step-content">
             <div className="step-section-wrapper">
               <div className="step-section-header">
                 <span className="step-number">1</span>
-                <h3 className="step-section-title">上传素材</h3>
+                <h3 className="step-section-title">项目配置与素材上传</h3>
               </div>
-              <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                {/* 项目基础配置 */}
+                <Card 
+                  title={
+                    <div className="card-title-wrapper">
+                      <div className="title-indicator"></div>
+                      <span>项目基础配置</span>
+                    </div>
+                  } 
+                  size="small"
+                  className="upload-card"
+                >
+                  <ConfigSettings
+                    duration={duration}
+                    setDuration={setDuration}
+                    voice={voice}
+                    setVoice={setVoice}
+                    style={style}
+                    setStyle={setStyle}
+                    projectName={projectName}
+                    setProjectName={setProjectName}
+                    videoCount={videoCount}
+                    setVideoCount={setVideoCount}
+                  />
+                </Card>
+
+                {/* 素材上传 */}
                 <Card 
                   title={
                     <div className="card-title-wrapper">
@@ -189,19 +208,19 @@ const StepWizard: React.FC<StepWizardProps> = ({
           </div>
         )
       
-      case 'script':
+      case 'script_style':
         return (
           <div className="step-content">
             <div className="step-section-wrapper">
               <div className="step-section-header">
                 <span className="step-number">2</span>
-                <h3 className="step-section-title">配置文案</h3>
+                <h3 className="step-section-title">AI文案生成与样式配置</h3>
               </div>
               <Card 
                 title={
                   <div className="card-title-wrapper">
                     <div className="title-indicator"></div>
-                    <span>文案配置</span>
+                    <span>AI文案生成</span>
                   </div>
                 } 
                 size="small"
@@ -223,43 +242,12 @@ const StepWizard: React.FC<StepWizardProps> = ({
           </div>
         )
       
-      case 'config':
-        return (
-          <div className="step-content">
-            <div className="step-section-wrapper">
-              <div className="step-section-header">
-                <span className="step-number">3</span>
-                <h3 className="step-section-title">生成设置</h3>
-              </div>
-              <Card 
-                title={
-                  <div className="card-title-wrapper">
-                    <div className="title-indicator"></div>
-                    <span>生成配置</span>
-                  </div>
-                } 
-                size="small"
-                className="upload-card"
-              >
-                <ConfigSettings
-                  duration={duration}
-                  setDuration={setDuration}
-                  voice={voice}
-                  setVoice={setVoice}
-                  style={style}
-                  setStyle={setStyle}
-                />
-              </Card>
-            </div>
-          </div>
-        )
-      
       case 'generate':
         return (
           <div className="step-content">
             <div className="step-section-wrapper">
               <div className="step-section-header">
-                <span className="step-number">4</span>
+                <span className="step-number">3</span>
                 <h3 className="step-section-title">确认生成</h3>
               </div>
               <Card 
@@ -274,13 +262,19 @@ const StepWizard: React.FC<StepWizardProps> = ({
               >
                 <Space direction="vertical" style={{ width: '100%' }}>
                   <div><strong>项目名称:</strong> {projectName}</div>
+                  <div><strong>视频时长:</strong> {duration}</div>
+                  <div><strong>生成数量:</strong> {videoCount} 个</div>
+                  <div><strong>配音类型:</strong> {voice === 'male' ? '男声' : '女声'}</div>
                   <div><strong>视频素材:</strong> {videos.length} 个</div>
                   <div><strong>音频素材:</strong> {audios.length} 个</div>
                   <div><strong>海报素材:</strong> {posters.length} 个</div>
                   <div><strong>选中文案:</strong> {scripts.filter(s => s.selected).length} 个</div>
-                  <div><strong>视频时长:</strong> {duration}</div>
-                  <div><strong>视频数量:</strong> {videoCount} 个</div>
-                  <div><strong>配音类型:</strong> {voice === 'male' ? '男声' : '女声'}</div>
+                  <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f6ffed', border: '1px solid #b7eb8f', borderRadius: '6px' }}>
+                    <div style={{ fontWeight: 500, color: '#52c41a', marginBottom: '4px' }}>准备就绪</div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>
+                      所有配置已完成，点击下方按钮开始生成视频
+                    </div>
+                  </div>
                 </Space>
               </Card>
             </div>
@@ -304,10 +298,9 @@ const StepWizard: React.FC<StepWizardProps> = ({
               <div className="step-info">
                 <div className="step-title">{step.title}</div>
                 <div className="step-description">
-                  {index === 0 && '项目名称配置'}
-                  {index === 1 && '视频、音频、海报素材'}
-                  {index === 2 && 'AI文案和生成设置'}
-                  {index === 3 && '确认配置并生成'}
+                  {index === 0 && '项目设置与素材上传'}
+                  {index === 1 && 'AI文案生成与样式配置'}
+                  {index === 2 && '确认配置并生成视频'}
                 </div>
               </div>
             </div>

@@ -9,6 +9,10 @@ interface ConfigSettingsProps {
   setVoice: (voice: VoiceOption) => void
   style: StyleConfig
   setStyle: (style: StyleConfig) => void
+  projectName?: string
+  setProjectName?: (name: string) => void
+  videoCount?: number
+  setVideoCount?: (count: number) => void
 }
 
 const ConfigSettings: React.FC<ConfigSettingsProps> = ({
@@ -17,13 +21,53 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
   voice,
   setVoice,
   style,
-  setStyle
+  setStyle,
+  projectName,
+  setProjectName,
+  videoCount,
+  setVideoCount
 }) => {
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <Space direction="vertical" size="middle" style={{ width: '100%' }}>
       {/* 基础配置 */}
       <Card title="基础设置" size="small">
-        <Row gutter={[16, 16]}>
+        <Row gutter={[16, 12]}>
+          {/* 项目名称和视频生成数量 */}
+          {(projectName !== undefined && setProjectName) && (
+            <>
+              <Col span={12}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 8 }}>项目名称</label>
+                  <Input
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    placeholder="请输入项目名称"
+                    style={{
+                      backgroundColor: '#ffffff',
+                      color: '#000000'
+                    }}
+                  />
+                </div>
+              </Col>
+              <Col span={12}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 8 }}>视频生成数量</label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={videoCount}
+                    onChange={(e) => setVideoCount && setVideoCount(parseInt(e.target.value) || 1)}
+                    style={{
+                      backgroundColor: '#ffffff',
+                      color: '#000000'
+                    }}
+                  />
+                </div>
+              </Col>
+            </>
+          )}
+          
           <Col span={12}>
             <div>
               <label style={{ display: 'block', marginBottom: 8 }}>视频时长</label>
@@ -56,11 +100,11 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
 
       {/* 样式配置 */}
       <Card title="样式设置" size="small">
-        <Row gutter={[16, 16]}>
+        <Row gutter={[16, 12]}>
           <Col span={12}>
-            <div style={{ marginBottom: '16px' }}>
-              <h4 style={{ marginBottom: '12px', color: '#262626' }}>主标题样式</h4>
-              <Space direction="vertical" style={{ width: '100%' }}>
+            <div style={{ marginBottom: '12px' }}>
+              <h4 style={{ marginBottom: '8px', color: '#262626', fontSize: '14px' }}>主标题样式</h4>
+              <Space direction="vertical" size="small" style={{ width: '100%' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8 }}>颜色</label>
                   <ColorPicker
@@ -111,9 +155,9 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
           </Col>
           
           <Col span={12}>
-            <div style={{ marginBottom: '16px' }}>
-              <h4 style={{ marginBottom: '12px', color: '#262626' }}>字幕样式</h4>
-              <Space direction="vertical" style={{ width: '100%' }}>
+            <div style={{ marginBottom: '12px' }}>
+              <h4 style={{ marginBottom: '8px', color: '#262626', fontSize: '14px' }}>字幕样式</h4>
+              <Space direction="vertical" size="small" style={{ width: '100%' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: 8 }}>颜色</label>
                   <ColorPicker

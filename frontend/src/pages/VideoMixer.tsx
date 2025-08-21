@@ -50,7 +50,7 @@ const VideoMixer: React.FC = () => {
     title: {
       color: '#1890ff',
       position: 'top',
-      fontSize: 40,
+      fontSize: 120,  // 默认120px
       fontFamily: 'Microsoft YaHei, sans-serif',
       strokeColor: '#000000',
       strokeWidth: 0,
@@ -62,7 +62,7 @@ const VideoMixer: React.FC = () => {
     subtitle: {
       color: '#ffffff',
       position: 'bottom',
-      fontSize: 32,
+      fontSize: 60,  // 默认60px
       fontFamily: 'Microsoft YaHei, sans-serif',
       strokeColor: '#000000',
       strokeWidth: 1,

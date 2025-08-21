@@ -188,14 +188,14 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
           </Button>
         </Upload>
         
-        <div style={{ marginTop: '8px', fontSize: '12px', color: '#999', lineHeight: '1.5' }}>
+        <div style={{ marginTop: '6px', fontSize: '12px', color: '#999', lineHeight: '1.4' }}>
           支持格式：MP4、AVI、MOV、WMV、FLV、MKV、3GP、WEBM等常见视频格式<br/>
           文件大小：单个文件不超过500MB
         </div>
         
         {uploading && (
-          <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '6px' }}>
-            <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
+          <div style={{ marginTop: '12px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '6px' }}>
+            <div style={{ marginBottom: '6px', fontSize: '14px', color: '#666' }}>
               正在上传: {uploadingFileName}
             </div>
             <Progress 
@@ -213,9 +213,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
         <div className="upload-list">
           {videos.map((video) => (
             <div key={video.id} className="upload-item">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 500, marginBottom: '4px' }}>{video.name}</div>
+                  <div style={{ fontWeight: 500, marginBottom: '2px' }}>{video.name}</div>
                   <div style={{ fontSize: '12px', color: '#8c8c8c' }}>
                     {formatFileSize(video.size)} • {formatDuration(video.duration)}
                   </div>
@@ -240,10 +240,10 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
               {video.thumbnail && (
                 <div style={{ 
                   width: '100%', 
-                  height: '120px', 
+                  height: '100px', 
                   background: `url(${video.thumbnail}) center/cover`,
                   borderRadius: '4px',
-                  marginTop: '8px'
+                  marginTop: '6px'
                 }} />
               )}
             </div>

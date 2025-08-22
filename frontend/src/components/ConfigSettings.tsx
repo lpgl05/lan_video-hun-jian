@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, Input, Select, Slider, Row, Col, Space, ColorPicker, Switch, InputNumber, Button, Modal, Upload } from 'antd'
 import { UploadOutlined, FontSizeOutlined } from '@ant-design/icons'
 import type { DurationOption, VoiceOption, StyleConfig, FontStyle, PosterFile } from '../types'
@@ -65,13 +65,71 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
     }
   ]
 
-  // 更新字体样式的辅助函数
-  const updateFontStyle = (type: 'title' | 'subtitle', updates: Partial<FontStyle>) => {
-    setStyle({
-      ...style,
-      [type]: { ...style[type], ...updates }
-    })
+  // 新增：统一规范化 style，确保 title/subtitle 都有 background/background_color/background_opacity
+  const normalizeStyle = (rawStyle: any) => {
+    const s = { ...(rawStyle || {}) }
+    const ensureSection = (key: 'title' | 'subtitle') => {
+      const sec = (s[key] && { ...s[key] }) || {}
+      const bgObj = (sec.background && typeof sec.background === 'object') ? { ...sec.background } : {}
+      if (!bgObj.background_color && sec.background_color) bgObj.background_color = sec.background_color
+      if (bgObj.background_opacity === undefined && sec.background_opacity !== undefined) bgObj.background_opacity = sec.background_opacity
+      if (bgObj.opacity === undefined && sec.opacity !== undefined) bgObj.background_opacity = sec.opacity
+      if (!bgObj.background_color) bgObj.background_color = (key === 'title') ? '#CEC970' : '#FFFFFF'
+      if (bgObj.background_opacity === undefined) bgObj.background_opacity = 160
+      sec.background = bgObj
+      sec.background_color = sec.background_color || bgObj.background_color
+      sec.background_opacity = sec.background_opacity ?? bgObj.background_opacity
+      sec.color = sec.color || (key === 'title' ? '#000' : '#ffffff')
+      sec.position = sec.position || (key === 'title' ? 'top' : 'bottom')
+      s[key] = sec
+    }
+    ensureSection('title')
+    ensureSection('subtitle')
+    return s
   }
+
+  // 更新字体样式的辅助函数（增强：规范 background 字段，保持兼容）
+  const updateFontStyle = (type: 'title' | 'subtitle', updates: Partial<FontStyle>) => {
+		const prev = (style && style[type]) || {}
+		const merged: any = { ...prev, ...updates }
+
+		// 处理 background 字段优先级：支持 object/string/flat fields
+		if (merged.background) {
+			const bg = merged.background
+			if (typeof bg === 'string') {
+				merged.background_color = merged.background_color || bg
+			} else if (typeof bg === 'object') {
+				if (bg.background_color) merged.background_color = bg.background_color
+				if (bg.background_opacity !== undefined) merged.background_opacity = bg.background_opacity
+				if (bg.color) merged.background_color = merged.background_color || bg.color
+				if (bg.opacity !== undefined) merged.background_opacity = merged.background_opacity ?? bg.opacity
+			}
+		}
+
+		// 如果设置了平铺字段，确保 background 对象也同步存在
+		if ((merged.background_color || merged.background_opacity !== undefined) && !merged.background) {
+			merged.background = {
+				// 标题缺省颜色改为 #cec970，字幕仍然默认 #000000
+				background_color: merged.background_color || (type === 'title' ? '#cec970' : '#000000'),
+				background_opacity: merged.background_opacity !== undefined ? merged.background_opacity : 160
+			}
+		} else if (merged.background && (!merged.background.background_color && merged.background_color)) {
+			merged.background.background_color = merged.background_color
+			merged.background.background_opacity = merged.background_opacity ?? merged.background.background_opacity
+		}
+
+		// 先合并到现有 style，然后规范化整个 style（保证 title/subtitle 都有 background）
+		const newStyle = {
+			...style,
+			[type]: merged
+		}
+		setStyle(normalizeStyle(newStyle))
+	}
+
+	// 新增：获取当前 background（若无则返回空对象）
+	const getCurrentBackground = (type: 'title' | 'subtitle') => {
+		return (style && style[type] && (style[type] as any).background) ? (style[type] as any).background : {}
+	}
 
   // 处理自定义字体上传
   const handleFontUpload = (file: File) => {
@@ -221,10 +279,43 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
             <InputNumber
               min={0}
               max={10}
-              value={fontStyle.strokeWidth || 0}
+              value={fontStyle.strokeWidth || 1}
               onChange={(strokeWidth) => updateFontStyle(type, { strokeWidth: strokeWidth || 0 })}
               style={{ width: '100%', height: '32px', lineHeight: '30px' }}
               addonAfter="px"
+            />
+          </Col>
+        </Row>
+
+        {/* 新增：背景颜色与透明度设置 */}
+        <Row gutter={12} style={{ marginTop: 8 }}>
+          <Col span={12}>
+            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>{type === 'title' ? '标题背景颜色' : '字幕背景颜色'}</label>
+            <ColorPicker
+              value={ (getCurrentBackground(type).background_color) || (type === 'title' ? '#CEC970' : '#FFFFFF') }
+              onChange={(color) => {
+                const curBg = getCurrentBackground(type)
+                const newBg = { ...curBg, background_color: color.toHexString() }
+                updateFontStyle(type, { background: newBg } as any)
+              }}
+              showText
+              style={{ width: '100%', height: '32px' }}
+            />
+          </Col>
+          <Col span={12}>
+            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>{type === 'title' ? '标题背景透明度' : '字幕背景透明度'}</label>
+            <InputNumber
+              min={0}
+              max={255}
+              value={ getCurrentBackground(type).background_opacity ?? getCurrentBackground(type).opacity ?? 160 }
+              onChange={(val) => {
+                const curBg = getCurrentBackground(type)
+                let opacity = typeof val === 'number' ? val : parseFloat(String(val) || '160')
+                if (opacity <= 1) opacity = Math.round(opacity * 255)
+                const newBg = { ...curBg, background_opacity: Math.round(opacity) }
+                updateFontStyle(type, { background: newBg } as any)
+              }}
+              style={{ width: '100%', height: '32px' }}
             />
           </Col>
         </Row>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Card, Input, Select, Slider, Row, Col, Space, ColorPicker, Switch, InputNumber, Button, Modal, Upload } from 'antd'
 import { UploadOutlined, FontSizeOutlined } from '@ant-design/icons'
-import type { DurationOption, VoiceOption, StyleConfig, FontStyle } from '../types'
+import type { DurationOption, VoiceOption, StyleConfig, FontStyle, PosterFile } from '../types'
 import StylePreview from './StylePreview'
+import PosterUpload from './PosterUpload'
 import '../styles/FontStyles.css'
 
 interface ConfigSettingsProps {
@@ -16,6 +17,8 @@ interface ConfigSettingsProps {
   setProjectName?: (name: string) => void
   videoCount?: number
   setVideoCount?: (count: number) => void
+  posters?: PosterFile[] // 海报数组
+  setPosters?: (posters: PosterFile[]) => void // 海报设置函数
 }
 
 const ConfigSettings: React.FC<ConfigSettingsProps> = ({
@@ -28,7 +31,9 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
   projectName,
   setProjectName,
   videoCount,
-  setVideoCount
+  setVideoCount,
+  posters,
+  setPosters
 }) => {
   const [fontModalVisible, setFontModalVisible] = useState(false)
   const [currentEditingFont, setCurrentEditingFont] = useState<'title' | 'subtitle'>('title')
@@ -312,13 +317,31 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
         </Row>
       </Card>
 
+      {/* 海报背景设置 */}
+      {setPosters && (
+        <Card title="背景海报设置" size="small">
+          <PosterUpload 
+            posters={posters || []}
+            onPostersChange={setPosters}
+          />
+        </Card>
+      )}
+
       {/* 样式预览 */}
-      <StylePreview 
-        titleStyle={style.title}
-        subtitleStyle={style.subtitle}
-        width={270}
-        height={480}
-      />
+      {(() => {
+        const posterUrl = posters && posters.length > 0 ? posters[0].url : undefined
+        console.log('ConfigSettings - posters:', posters)
+        console.log('ConfigSettings - posterUrl:', posterUrl)
+        return (
+          <StylePreview 
+            titleStyle={style.title}
+            subtitleStyle={style.subtitle}
+            width={270}
+            height={480}
+            posterUrl={posterUrl}
+          />
+        )
+      })()}
 
       {/* 高级字体设置模态框 */}
       <Modal

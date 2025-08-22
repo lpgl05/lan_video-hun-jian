@@ -140,18 +140,25 @@ const StepWizard: React.FC<StepWizardProps> = ({
                   size="small"
                   className="upload-card"
                 >
-                  <ConfigSettings
-                    duration={duration}
-                    setDuration={setDuration}
-                    voice={voice}
-                    setVoice={setVoice}
-                    style={style}
-                    setStyle={setStyle}
-                    projectName={projectName}
-                    setProjectName={setProjectName}
-                    videoCount={videoCount}
-                    setVideoCount={setVideoCount}
-                  />
+                  {(() => {
+                    console.log('StepWizard - 传递给ConfigSettings的posters:', posters)
+                    return (
+                      <ConfigSettings
+                        duration={duration}
+                        setDuration={setDuration}
+                        voice={voice}
+                        setVoice={setVoice}
+                        style={style}
+                        setStyle={setStyle}
+                        projectName={projectName}
+                        setProjectName={setProjectName}
+                        videoCount={videoCount}
+                        setVideoCount={setVideoCount}
+                        posters={posters}
+                        setPosters={setPosters}
+                      />
+                    )
+                  })()}
                 </Card>
 
                 {/* 素材上传 */}
@@ -188,21 +195,7 @@ const StepWizard: React.FC<StepWizardProps> = ({
                   />
                 </Card>
                 
-                <Card 
-                  title={
-                    <div className="card-title-wrapper">
-                      <div className="title-indicator"></div>
-                      <span>背景海报</span>
-                    </div>
-                  } 
-                  size="small"
-                  className="upload-card"
-                >
-                  <PosterUpload 
-                    posters={posters}
-                    onPostersChange={setPosters}
-                  />
-                </Card>
+
               </Space>
             </div>
           </div>

@@ -7,16 +7,51 @@ interface StylePreviewProps {
   subtitleStyle: FontStyle
   width?: number
   height?: number
+  posterUrl?: string // 海报背景图片URL
 }
 
 const StylePreview: React.FC<StylePreviewProps> = ({
   titleStyle,
   subtitleStyle,
   width = 270,
-  height = 480
+  height = 480,
+  posterUrl
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [fontsLoaded, setFontsLoaded] = useState<Set<string>>(new Set())
+  const [posterImage, setPosterImage] = useState<HTMLImageElement | null>(null)
+
+  // 加载海报图片
+  const loadPosterImage = async (url: string) => {
+    return new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image()
+      
+      // 尝试不同的跨域设置
+      img.onload = () => {
+        console.log('图片加载成功:', url)
+        resolve(img)
+      }
+      
+      img.onerror = (error) => {
+        console.error('图片加载失败:', url, error)
+        // 尝试不设置crossOrigin重新加载
+        const img2 = new Image()
+        img2.onload = () => {
+          console.log('第二次尝试加载成功:', url)
+          resolve(img2)
+        }
+        img2.onerror = (error2) => {
+          console.error('第二次尝试也失败:', url, error2)
+          reject(error2)
+        }
+        img2.src = url
+      }
+      
+      // 先尝试设置跨域
+      img.crossOrigin = 'anonymous'
+      img.src = url
+    })
+  }
 
   // 加载自定义字体
   const loadFont = async (fontFamily: string, fontUrl?: string) => {
@@ -231,6 +266,43 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     ctx.restore()
   }
 
+  // 绘制海报背景
+  const drawPosterBackground = (
+    ctx: CanvasRenderingContext2D, 
+    img: HTMLImageElement, 
+    x: number, 
+    y: number, 
+    width: number, 
+    height: number
+  ) => {
+    // 计算图片的缩放比例，保持比例的同时填满整个区域
+    const imgRatio = img.width / img.height
+    const areaRatio = width / height
+    
+    let drawWidth, drawHeight, offsetX, offsetY
+    
+    if (imgRatio > areaRatio) {
+      // 图片更宽，按高度缩放
+      drawHeight = height
+      drawWidth = height * imgRatio
+      offsetX = (width - drawWidth) / 2
+      offsetY = 0
+    } else {
+      // 图片更高，按宽度缩放
+      drawWidth = width
+      drawHeight = width / imgRatio
+      offsetX = 0
+      offsetY = (height - drawHeight) / 2
+    }
+    
+    // 绘制海报图片
+    ctx.drawImage(img, x + offsetX, y + offsetY, drawWidth, drawHeight)
+    
+    // 添加一个半透明遮罩层，确保文字可读性
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'
+    ctx.fillRect(x, y, width, height)
+  }
+
   // 绘制手机壳
   const drawPhoneFrame = (ctx: CanvasRenderingContext2D) => {
     const frameThickness = 12
@@ -311,15 +383,24 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     ctx.roundRect(screenX, screenY, screenWidth, screenHeight, 17)
     ctx.clip()
 
-    // 绘制背景（深灰色渐变模拟视频背景）
-    const gradient = ctx.createLinearGradient(screenX, screenY, screenX + screenWidth, screenY + screenHeight)
-    gradient.addColorStop(0, '#404040')
-    gradient.addColorStop(1, '#2a2a2a')
-    ctx.fillStyle = gradient
-    ctx.fillRect(screenX, screenY, screenWidth, screenHeight)
-
-    // 添加视频模拟效果
-    drawVideoSimulation(ctx, screenX, screenY, screenWidth, screenHeight)
+    // 绘制背景
+    console.log('绘制背景, posterImage:', posterImage ? '有图片' : '无图片')
+    if (posterImage) {
+      // 如果有海报图片，使用海报作为背景
+      console.log('绘制海报背景')
+      drawPosterBackground(ctx, posterImage, screenX, screenY, screenWidth, screenHeight)
+    } else {
+      // 否则使用默认的深灰色渐变模拟视频背景
+      console.log('绘制默认背景')
+      const gradient = ctx.createLinearGradient(screenX, screenY, screenX + screenWidth, screenY + screenHeight)
+      gradient.addColorStop(0, '#404040')
+      gradient.addColorStop(1, '#2a2a2a')
+      ctx.fillStyle = gradient
+      ctx.fillRect(screenX, screenY, screenWidth, screenHeight)
+      
+      // 添加视频模拟效果
+      drawVideoSimulation(ctx, screenX, screenY, screenWidth, screenHeight)
+    }
 
     // 绘制标题
     drawText(ctx, '示例标题文本', titleStyle, screenWidth, screenHeight, 'title', screenX, screenY)
@@ -422,6 +503,37 @@ const StylePreview: React.FC<StylePreviewProps> = ({
   }
 
   // 当样式改变时重新绘制
+  // 加载海报图片的useEffect
+  useEffect(() => {
+    console.log('posterUrl changed:', posterUrl)
+    if (posterUrl) {
+      // 处理URL格式，确保是完整的URL
+      let fullUrl = posterUrl
+      if (!posterUrl.startsWith('http')) {
+        // 如果不是完整URL，尝试拼接基础URL
+        if (posterUrl.startsWith('/')) {
+          fullUrl = `${window.location.origin}${posterUrl}`
+        } else {
+          fullUrl = `${window.location.origin}/${posterUrl}`
+        }
+      }
+      
+      console.log('开始加载海报图片:', fullUrl)
+      loadPosterImage(fullUrl)
+        .then(img => {
+          setPosterImage(img)
+          console.log('海报图片加载成功, 尺寸:', img.width, 'x', img.height)
+        })
+        .catch(error => {
+          console.error('海报图片加载失败:', error)
+          setPosterImage(null)
+        })
+    } else {
+      console.log('没有海报URL，清除海报图片')
+      setPosterImage(null)
+    }
+  }, [posterUrl])
+
   useEffect(() => {
     const loadFonts = async () => {
       await Promise.all([
@@ -433,7 +545,13 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     }
 
     loadFonts()
-  }, [titleStyle, subtitleStyle, width, height, fontsLoaded])
+  }, [titleStyle, subtitleStyle, width, height, fontsLoaded, posterImage])
+
+  // 当海报图片状态改变时，强制重新绘制
+  useEffect(() => {
+    console.log('posterImage状态改变，强制重新绘制')
+    setTimeout(drawPreview, 50)
+  }, [posterImage])
 
   return (
     <Card title="样式预览" size="small" style={{ marginTop: 16 }}>
@@ -460,6 +578,19 @@ const StylePreview: React.FC<StylePreviewProps> = ({
         <span style={{ fontSize: '11px', color: '#999' }}>
           字体已按比例缩放至预览尺寸
         </span>
+        {posterUrl && (
+          <div style={{ marginTop: 4 }}>
+            <button 
+              onClick={() => {
+                console.log('手动刷新预览')
+                drawPreview()
+              }}
+              style={{ fontSize: '10px', padding: '2px 6px' }}
+            >
+              刷新预览
+            </button>
+          </div>
+        )}
       </div>
     </Card>
   )

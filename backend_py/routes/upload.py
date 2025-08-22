@@ -1,5 +1,5 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, Query
-from services.upload_service import handle_upload_video, handle_upload_audio, handle_upload_poster, upload_tasks, handle_delete_video, handle_delete_audio, uploaded_files
+from services.upload_service import handle_upload_video, handle_upload_audio, handle_upload_poster, upload_tasks, handle_delete_video, handle_delete_audio, handle_delete_poster, uploaded_files
 
 router = APIRouter()
 
@@ -64,6 +64,17 @@ async def delete_audio(file_id: str, file_url: str = Query(None)):
     """删除音频文件"""
     print(f"收到删除音频请求: file_id={file_id}, file_url={file_url}")
     result = await handle_delete_audio(file_id, file_url)
+    print(f"删除结果: {result}")
+    if not result["success"]:
+        print(f"删除失败: {result.get('error', '未知错误')}")
+        raise HTTPException(status_code=400, detail=result["error"])
+    return result
+
+@router.delete("/api/upload/poster/{file_id}")
+async def delete_poster(file_id: str, file_url: str = Query(None)):
+    """删除海报文件"""
+    print(f"收到删除海报请求: file_id={file_id}, file_url={file_url}")
+    result = await handle_delete_poster(file_id, file_url)
     print(f"删除结果: {result}")
     if not result["success"]:
         print(f"删除失败: {result.get('error', '未知错误')}")

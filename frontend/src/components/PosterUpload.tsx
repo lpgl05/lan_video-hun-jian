@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Upload, Button, message, Modal, Progress, Switch, Card } from 'antd'
 import { PictureOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons'
 import type { UploadProps } from 'antd/es/upload/interface'
@@ -19,7 +19,20 @@ const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange })
   const [previewImage, setPreviewImage] = useState<string>('')
   const [enablePoster, setEnablePoster] = useState(false)
 
+  // 当有已上传的海报时，自动打开开关
+  useEffect(() => {
+    if (posters.length > 0) {
+      setEnablePoster(true)
+    }
+  }, [posters.length])
+
   const handleUpload = async (file: File) => {
+    // 检查是否已有海报（只允许一个）
+    if (posters.length >= 1) {
+      message.error('只能上传一个背景海报，请先删除现有海报！')
+      return false
+    }
+
     // 验证文件类型
     const isImage = file.type.startsWith('image/')
     if (!isImage) {
@@ -51,7 +64,8 @@ const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange })
         }
       })
 
-      onPostersChange([...posters, posterFile])
+      // 直接替换为新的海报（单张模式）
+      onPostersChange([posterFile])
       message.success('海报上传成功')
     } catch (error) {
       message.error('海报上传失败')
@@ -68,12 +82,24 @@ const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange })
 
   const handleDelete = async (posterId: string) => {
     try {
+      console.log('正在删除海报:', posterId)
       await deletePoster(posterId)
-      onPostersChange(posters.filter(poster => poster.id !== posterId))
+      console.log('删除API调用成功')
+      
+      // 更新状态
+      const updatedPosters = posters.filter(poster => poster.id !== posterId)
+      onPostersChange(updatedPosters)
+      
+      // 如果删除后没有海报了，可以选择性地关闭开关
+      // if (updatedPosters.length === 0) {
+      //   setEnablePoster(false)
+      // }
+      
       message.success('海报删除成功')
+      console.log('海报删除完成')
     } catch (error) {
-      message.error('海报删除失败')
-      console.error('Delete error:', error)
+      console.error('删除海报失败:', error)
+      message.error(`海报删除失败: ${error instanceof Error ? error.message : '未知错误'}`)
     }
   }
 
@@ -85,7 +111,7 @@ const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange })
   const uploadProps: UploadProps = {
     accept: 'image/*',
     beforeUpload: handleUpload,
-    disabled: uploading || !enablePoster,
+    disabled: uploading || !enablePoster || posters.length >= 1,
     showUploadList: false,
   }
 
@@ -101,7 +127,7 @@ const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange })
     <div className="section">
       <div className="section-title">
         <PictureOutlined />
-        背景海报上传 ({posters.length})
+        背景海报上传 ({posters.length}/1)
       </div>
 
       <div className="section-content">
@@ -116,22 +142,40 @@ const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange })
               <span>启用背景海报 (选填)</span>
             </div>
             <span style={{ fontSize: '12px', color: '#666' }}>
-              开启后可上传背景海报图片
+              开启后可上传1张背景海报图片
             </span>
           </div>
         </Card>
 
         {enablePoster && (
           <>
-            <Upload {...uploadProps}>
-              <Button icon={<PictureOutlined />} loading={uploading} disabled={!enablePoster}>
-                选择海报图片
-              </Button>
-            </Upload>
+            <div style={{ marginBottom: '16px' }}>
+              <Upload {...uploadProps}>
+                <Button 
+                  icon={<PictureOutlined />} 
+                  loading={uploading} 
+                  disabled={!enablePoster || posters.length >= 1}
+                >
+                  {posters.length >= 1 ? '已上传海报' : '选择海报图片'}
+                </Button>
+              </Upload>
+              {posters.length >= 1 && (
+                <div style={{ 
+                  marginTop: '8px', 
+                  fontSize: '12px', 
+                  color: '#999',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}>
+                  <span>💡 要更换海报，请先删除当前海报</span>
+                </div>
+              )}
+            </div>
 
             {uploading && (
               <div style={{
-                marginTop: '16px',
+                marginBottom: '16px',
                 padding: '12px',
                 background: '#fafafa',
                 borderRadius: '6px'

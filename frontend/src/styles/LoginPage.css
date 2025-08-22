@@ -174,24 +174,24 @@
   height: 48px;
   border-radius: 12px;
   border: 2px solid rgba(255, 255, 255, 0.4);
-  background: transparent !important;
+  background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: none;
   transition: all 0.3s ease;
   box-shadow: none;
 }
 
 .custom-input:hover {
-  border-color: rgba(255, 255, 255, 0.7);
-  background: transparent !important;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+  border-color: rgba(24, 144, 255, 0.7);
+  background: rgba(255, 255, 255, 1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);
 }
 
 .custom-input:focus,
 .custom-input.ant-input-affix-wrapper-focused {
   border-color: rgba(24, 144, 255, 1);
-  background: transparent !important;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.3);
+  background: rgba(255, 255, 255, 1) !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
@@ -199,18 +199,18 @@
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  color: #ffffff !important;
+  color: #333333 !important;
   font-weight: 500;
 }
 
 .custom-input .ant-input::placeholder {
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: rgba(0, 0, 0, 0.5) !important;
   font-weight: 400;
 }
 
-/* 确保密码输入框也是透明的 */
+/* 确保密码输入框也是白色的 */
 .custom-input.ant-input-affix-wrapper {
-  background: transparent !important;
+  background: rgba(255, 255, 255, 0.95) !important;
 }
 
 .custom-input.ant-input-affix-wrapper .ant-input {
@@ -218,13 +218,13 @@
 }
 
 .custom-input .anticon {
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: rgba(0, 0, 0, 0.6) !important;
   transition: color 0.3s ease;
 }
 
 .custom-input:hover .anticon,
 .custom-input:focus .anticon {
-  color: rgba(255, 255, 255, 1) !important;
+  color: rgba(24, 144, 255, 1) !important;
 }
 
 /* 登录按钮 */

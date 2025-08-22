@@ -359,7 +359,14 @@ async def handle_delete_file(file_id: str, file_type: str, file_url: str = None)
                 # 尝试从OSS列出并删除相关文件
                 try:
                     # 获取目录前缀
-                    prefix = f"{UPLOAD_VIDEO_DIR}/" if file_type == "video" else f"{UPLOAD_AUDIO_DIR}/"
+                    if file_type == "video":
+                        prefix = f"{UPLOAD_VIDEO_DIR}/"
+                    elif file_type == "audio":
+                        prefix = f"{UPLOAD_AUDIO_DIR}/"
+                    elif file_type == "poster":
+                        prefix = f"{UPLOAD_POSTER_DIR}/"
+                    else:
+                        prefix = ""
                     
                     # 列出OSS中的文件，查找匹配的文件
                     from oss2 import ObjectIterator
@@ -424,3 +431,7 @@ async def handle_delete_video(file_id: str, file_url: str = None):
 async def handle_delete_audio(file_id: str, file_url: str = None):
     """删除音频文件"""
     return await handle_delete_file(file_id, "audio", file_url)
+
+async def handle_delete_poster(file_id: str, file_url: str = None):
+    """删除海报文件"""
+    return await handle_delete_file(file_id, "poster", file_url)

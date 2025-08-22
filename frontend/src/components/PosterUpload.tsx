@@ -181,7 +181,13 @@ const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange })
                 borderRadius: '6px'
               }}>
                 <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
-                  正在上传: {uploadingFileName}
+                  <span style={{ 
+                    maxWidth: '100%', 
+                    overflow: 'hidden', 
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    display: 'block'
+                  }}>正在上传: {uploadingFileName}</span>
                 </div>
                 <Progress
                   percent={Math.round(uploadProgress * 10) / 10}

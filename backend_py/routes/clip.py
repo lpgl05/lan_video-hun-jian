@@ -137,6 +137,15 @@ async def process_video_generation(task_id: str, clip_req: ClipRequest):
         
         # 3. 执行视频剪辑处理
         _task_storage[task_id]["progress"] = 30
+        
+        # 调试：打印样式配置
+        print("=== 调试字体配置 ===")
+        print(f"收到的样式配置: {clip_req.style}")
+        if hasattr(clip_req.style, 'title'):
+            print(f"标题样式: {clip_req.style.title}")
+        if hasattr(clip_req.style, 'subtitle'):
+            print(f"字幕样式: {clip_req.style.subtitle}")
+        print("==================")
         #result = await process_clips(clip_req)
         result = await process_clips001(clip_req)
         

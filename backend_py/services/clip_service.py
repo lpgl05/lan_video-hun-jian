@@ -44,6 +44,57 @@ VIDEO_FONT = os.getenv("VIDEO_FONT", "msyh.ttc")
 FONT_PATH = os.path.join("fonts", VIDEO_FONT)
 print(f'指定的字体路径是: {FONT_PATH}')
 
+# 字体映射配置：前端字体名到后端字体文件的映射
+FONT_MAPPING = {
+    'Arial, sans-serif': None,  # 使用系统默认
+    'Microsoft YaHei, sans-serif': 'msyh.ttc',
+    'SimSun, serif': 'simsun.ttc',
+    'SimHei, sans-serif': 'simhei.ttf',
+    'KaiTi, serif': 'simkai.ttf',
+    'LIULISONG': 'LIULISONG.ttf',
+    'MiaobiJunli': '妙笔珺俐体.ttf',
+    'MiaobiDuanmu': '妙笔段慕体.ttf',
+}
+
+def get_font_path_from_style(style_config, font_type='title'):
+    """根据样式配置获取字体文件路径"""
+    if not style_config:
+        return FONT_PATH
+    
+    font_style = style_config.get(font_type, {})
+    font_family = font_style.get('fontFamily', 'Microsoft YaHei, sans-serif')
+    
+    print(f'查找字体: {font_family} (类型: {font_type})')
+    
+    # 查找字体映射
+    font_file = FONT_MAPPING.get(font_family)
+    if font_file:
+        print(f'字体映射找到: {font_file}')
+        
+        # 优先从前端目录获取
+        frontend_font_path = os.path.join("..", "frontend", "public", "fonts", font_file)
+        frontend_font_path = os.path.abspath(frontend_font_path)
+        
+        if os.path.exists(frontend_font_path):
+            print(f'✅ 使用前端字体: {frontend_font_path}')
+            return frontend_font_path
+        
+        # 如果前端不存在，尝试本地fonts目录
+        local_font_path = os.path.join("fonts", font_file)
+        local_font_path = os.path.abspath(local_font_path)
+        
+        if os.path.exists(local_font_path):
+            print(f'✅ 使用本地字体: {local_font_path}')
+            return local_font_path
+        
+        print(f'❌ 字体文件不存在，前端路径: {frontend_font_path}')
+        print(f'❌ 字体文件不存在，本地路径: {local_font_path}')
+    else:
+        print(f'❌ 字体映射中未找到: {font_family}')
+    
+    print(f'🔄 使用默认字体: {FONT_PATH}')
+    return FONT_PATH
+
 async def download_video(url):
     filename = url.split("/")[-1]
     print('---------------------------------------')
@@ -100,13 +151,17 @@ def add_text(clip, text, style, font_path=None):
     img = Image.new("RGBA", (int(clip.w), banner_h), (0, 0, 0, 160))  # 半透明黑底
     draw = ImageDraw.Draw(img)
 
-    # 优先使用用户指定的字体
+    # 优先使用从样式配置中获取的字体
+    if not font_path:
+        font_path = get_font_path_from_style(style, 'title')
+    
     font = None
     if font_path and os.path.exists(font_path):
         try:
-            print('本地文件已经存在........')
+            print(f'使用字体文件: {font_path}')
             font = ImageFont.truetype(font_path, fontsize)
-        except Exception:
+        except Exception as e:
+            print(f'加载字体失败: {e}')
             font = None
     else:
         chinese_fonts = [
@@ -306,7 +361,7 @@ async def process_clips(req):
 
             # 随机字幕
             script = random.choice(scripts).content if scripts else ""
-            clip = add_text(clip, script, style, font_path=FONT_PATH)
+            clip = add_text(clip, script, style)  # 让函数内部自动选择字体
 
             # 生成TTS语音文件
             tts_filename = f"tts_{clip_id}.wav"
@@ -455,22 +510,32 @@ def create_title_image(text, width=1080, height=1920, style=None):
     temp_img = Image.new("RGBA", (target_width, 500), (0, 0, 0, 0))
     temp_draw = ImageDraw.Draw(temp_img)
     
-    # 字体处理
+    # 使用从样式配置中获取的字体
+    font_path = get_font_path_from_style(style, 'title')
     font = None
-
-    chinese_fonts = [
-        "C:\\Windows\\Fonts\\msyh.ttc",
-        "C:\\Windows\\Fonts\\simsun.ttc",
-        "/System/Library/Fonts/PingFang.ttc",
-        "/usr/share/fonts/winfonts/msyh.ttc"
-    ]
-    
-    for fp in chinese_fonts:
+    if font_path and os.path.exists(font_path):
         try:
-            font = ImageFont.truetype(fp, fontsize)
-            break
-        except:
-            continue
+            print(f'标题使用字体文件: {font_path}')
+            font = ImageFont.truetype(font_path, fontsize)
+        except Exception as e:
+            print(f'标题字体加载失败: {e}')
+            font = None
+    
+    if font is None:
+        # 回退到系统字体
+        chinese_fonts = [
+            "C:\\Windows\\Fonts\\msyh.ttc",
+            "C:\\Windows\\Fonts\\simsun.ttc",
+            "/System/Library/Fonts/PingFang.ttc",
+            "/usr/share/fonts/winfonts/msyh.ttc"
+        ]
+        
+        for fp in chinese_fonts:
+            try:
+                font = ImageFont.truetype(fp, fontsize)
+                break
+            except:
+                continue
     
     if font is None:
         font = ImageFont.load_default()
@@ -554,13 +619,15 @@ def create_subtitle_image(text, width=480, height=854, style=None):
     temp_img = Image.new("RGBA", (target_width, 500), (0, 0, 0, 0))
     temp_draw = ImageDraw.Draw(temp_img)
     
-    # 优先使用用户指定的字体
+    # 使用从样式配置中获取的字体
+    font_path = get_font_path_from_style(style, 'subtitle')
     font = None
-    if FONT_PATH and os.path.exists(FONT_PATH):
+    if font_path and os.path.exists(font_path):
         try:
-            print('本地文件已经存在........')
-            font = ImageFont.truetype(FONT_PATH, fontsize)
-        except Exception:
+            print(f'字幕使用字体文件: {font_path}')
+            font = ImageFont.truetype(font_path, fontsize)
+        except Exception as e:
+            print(f'字幕字体加载失败: {e}')
             font = None
     else:
         chinese_fonts = [
@@ -831,11 +898,14 @@ def split_long_sentence_by_screen(sentence, video_width=1080, style=None, max_ch
     fontsize = int(subtitle_style.get("fontSize", 48))
     
     # 获取字体
+    font_path = get_font_path_from_style(style, 'subtitle')
     font = None
-    if FONT_PATH and os.path.exists(FONT_PATH):
+    if font_path and os.path.exists(font_path):
         try:
-            font = ImageFont.truetype(FONT_PATH, fontsize)
-        except Exception:
+            print(f'分屏字幕使用字体: {font_path}')
+            font = ImageFont.truetype(font_path, fontsize)
+        except Exception as e:
+            print(f'分屏字幕字体加载失败: {e}')
             font = None
     
     if font is None:
@@ -960,11 +1030,14 @@ def create_single_line_subtitle_image(text, video_width=1080, style=None):
     color = subtitle_style.get("color", "#FFFFFF")
     
     # 字体处理
+    font_path = get_font_path_from_style(style, 'subtitle')
     font = None
-    if FONT_PATH and os.path.exists(FONT_PATH):
+    if font_path and os.path.exists(font_path):
         try:
-            font = ImageFont.truetype(FONT_PATH, base_fontsize)
-        except Exception:
+            print(f'单行字幕使用字体: {font_path}')
+            font = ImageFont.truetype(font_path, base_fontsize)
+        except Exception as e:
+            print(f'单行字幕字体加载失败: {e}')
             font = None
     
     if font is None:
@@ -994,8 +1067,8 @@ def create_single_line_subtitle_image(text, video_width=1080, style=None):
     # 自动调整字体大小
     while fontsize > 20:  # 最小字体大小
         try:
-            if FONT_PATH and os.path.exists(FONT_PATH):
-                test_font = ImageFont.truetype(FONT_PATH, fontsize)
+            if font_path and os.path.exists(font_path):
+                test_font = ImageFont.truetype(font_path, fontsize)
             else:
                 test_font = ImageFont.truetype("C:\\Windows\\Fonts\\msyh.ttc", fontsize)
         except:
@@ -1354,11 +1427,14 @@ def create_adaptive_subtitle_image(text, video_width=1080, style=None):
     color = subtitle_style.get("color", "#FFFFFF")
     
     # 字体处理
+    font_path = get_font_path_from_style(style, 'subtitle')
     font = None
-    if FONT_PATH and os.path.exists(FONT_PATH):
+    if font_path and os.path.exists(font_path):
         try:
-            font = ImageFont.truetype(FONT_PATH, fontsize)
-        except Exception:
+            print(f'自适应字幕使用字体: {font_path}')
+            font = ImageFont.truetype(font_path, fontsize)
+        except Exception as e:
+            print(f'自适应字幕字体加载失败: {e}')
             font = None
     
     if font is None:
@@ -1735,282 +1811,3 @@ def split_text_into_sentences(text, max_words_per_sentence=8):
         sentences = [text]
     
     return sentences
-
-def create_dynamic_subtitles(sentences, total_duration, video_width=1080, style=None, temp_dir=None):
-    """创建动态字幕片段，每句字幕按时间显示"""
-    if not sentences:
-        return []
-    
-    if temp_dir is None:
-        temp_dir = SUBTITLE_TEMP_DIR
-    
-    subtitle_clips = []
-    
-    # 计算每句字幕的显示时间 - 基于句子长度分配时间
-    sentence_count = len(sentences)
-    
-    # 计算每个句子的相对长度权重
-    sentence_lengths = [len(sentence) for sentence in sentences]
-    total_length = sum(sentence_lengths)
-    
-    current_time = 0
-    
-    for i, sentence in enumerate(sentences):
-        # 为每句创建单行字幕图片
-        subtitle_id = str(uuid4())[:8]
-        subtitle_path = os.path.join(temp_dir, f"dynamic_subtitle_{i}_{subtitle_id}.png")
-        
-        # 使用新的单行字幕生成函数
-        subtitle_img = create_single_line_subtitle_image(sentence, video_width, style)
-        subtitle_img.save(subtitle_path)
-        
-        # 根据句子长度按比例分配时间
-        if total_length > 0:
-            sentence_ratio = sentence_lengths[i] / total_length
-            allocated_duration = total_duration * sentence_ratio
-        else:
-            allocated_duration = total_duration / sentence_count
-        
-        # 设置最小和最大显示时间
-        min_duration = 1.2  # 最少显示1.2秒
-        max_duration = 4.0   # 最多显示4秒
-        
-        # 调整显示时间
-        duration = max(min_duration, min(allocated_duration, max_duration))
-        
-        # 如果是最后一句，确保不超过总时长
-        if i == len(sentences) - 1:
-            duration = min(duration, total_duration - current_time)
-        
-        start_time = current_time
-        end_time = start_time + duration
-        
-        if duration > 0:
-            subtitle_clips.append({
-                'path': subtitle_path,
-                'start_time': start_time,
-                'end_time': end_time,
-                'duration': duration,
-                'text': sentence
-            })
-            
-            print(f"字幕片段{i+1}: {start_time:.1f}s-{end_time:.1f}s (时长{duration:.1f}s) '{sentence[:25]}...'")
-        
-        current_time = end_time
-        
-        # 如果已经达到总时长，停止创建
-        if current_time >= total_duration:
-            break
-    
-    # 如果时间分配有剩余，将剩余时间平均分配给所有字幕
-    if current_time < total_duration and subtitle_clips:
-        remaining_time = total_duration - current_time
-        time_per_clip = remaining_time / len(subtitle_clips)
-        
-        print(f"调整字幕时间：剩余{remaining_time:.1f}s，平均分配给{len(subtitle_clips)}个字幕")
-        
-        for i, clip in enumerate(subtitle_clips):
-            clip['duration'] += time_per_clip
-            if i > 0:
-                clip['start_time'] = subtitle_clips[i-1]['end_time']
-            clip['end_time'] = clip['start_time'] + clip['duration']
-            
-            print(f"调整后字幕{i+1}: {clip['start_time']:.1f}s-{clip['end_time']:.1f}s (时长{clip['duration']:.1f}s)")
-    
-    print(f"创建了{len(subtitle_clips)}个动态字幕片段，总时长{total_duration}秒")
-    return subtitle_clips
-
-async def process_clips001(req):
-    """
-    【FFmpeg版本】视频处理方法 - 支持动态字幕逐句显示
-    """
-    import time
-
-    video_count = req.videoCount
-    duration_sec = parse_duration(req.duration)
-    video_files = req.videos
-    audio_files = req.audios
-    poster_files = req.posters if hasattr(req, 'posters') else []
-    scripts = [s for s in req.scripts if s.selected]
-    style = req.style.dict() if hasattr(req.style, "dict") else req.style
-
-    # 项目的标题和样式
-    title = req.name
-    title_position = style.get("title", {}).get("position", "top")
-    subtitle_position = style.get("subtitle", {}).get("position", "bottom")
-
-    # 下载所有视频、音频和海报到本地
-    local_video_paths = [await download_video(v.url) for v in video_files]
-    local_audio_paths = [await download_audio(a.url) for a in audio_files]
-    
-    local_poster_path = None
-    if poster_files and len(poster_files) > 0:
-        poster_url = poster_files[0].url
-        local_poster_path = await download_poster(poster_url)
-        print(f"海报下载完成: {local_poster_path}")
-
-    print("=======================================")
-    print("包含：Title + 动态字幕(智能分屏显示) + TTS语音 + 背景音乐 + 海报背景")
-    print(f"项目标题: {title}")
-    print(f"Title位置: {title_position}")
-    print(f"动态字幕位置: {subtitle_position}")
-    print("=======================================")
-
-    if not local_video_paths:
-        return {"success": False, "error": "找不到视频文件"}
-
-    result_videos = []
-
-    try:
-        ffmpeg = find_ffmpeg()
-        
-        # 获取所有源视频信息
-        video_infos = []
-        for video_path in local_video_paths:
-            if os.path.exists(video_path):
-                info = get_video_info(video_path)
-                video_infos.append(info)
-
-        if not video_infos:
-            return {"success": False, "error": "无有效视频文件"}
-
-        for i in range(video_count):
-            clip_id = str(uuid4())[:8]
-            
-            # 1. 蒙太奇拼接
-            temp_clips = []
-            n_videos = len(local_video_paths)
-            base_duration = duration_sec // n_videos
-            remaining_duration = duration_sec % n_videos
-            
-            for idx, (video_path, video_info) in enumerate(zip(local_video_paths, video_infos)):
-                segment_duration = base_duration
-                if idx < remaining_duration:
-                    segment_duration += 1
-                
-                if segment_duration <= 0:
-                    continue
-                    
-                max_segment = min(segment_duration, int(video_info['duration']) - 1)
-                if max_segment <= 0:
-                    continue
-                
-                max_start = max(0, video_info['duration'] - max_segment - 0.5)
-                start_time = random.uniform(0, max_start) if max_start > 0 else 0
-                
-                temp_clip_path = os.path.join(OUTPUT_DIR, f"temp_segment_{clip_id}_{idx}.mp4")
-                
-                if extract_random_clip_ffmpeg(video_path, temp_clip_path, start_time, max_segment):
-                    temp_clips.append(temp_clip_path)
-            
-            if not temp_clips:
-                continue
-            
-            montage_clip_path = os.path.join(OUTPUT_DIR, f"montage_clip_{clip_id}.mp4")
-            
-            if len(temp_clips) == 1:
-                import shutil
-                shutil.copy2(temp_clips[0], montage_clip_path)
-            else:
-                if not concat_videos_ffmpeg(temp_clips, montage_clip_path):
-                    continue
-
-            # 2. 生成Title图片
-            title_image_path = os.path.join(SUBTITLE_TEMP_DIR, f"title_{clip_id}.png")
-            title_img = create_title_image(title, 1080, 1920, style)
-            title_img.save(title_image_path)
-
-            # 3. 准备脚本文本
-            script = random.choice(scripts).content if scripts else "这是一段精彩的视频内容，展现了多个精彩瞬间的完美融合。通过蒙太奇技术，我们将不同的视频片段巧妙地组合在一起。"
-            
-            # 4. 先生成TTS音频（重要：在生成字幕之前）
-            tts_path = os.path.join(TTS_TEMP_DIR, f"tts_{clip_id}.wav")
-            voice = 'zh-CN-YunxiNeural' if hasattr(req, 'voice') and req.voice == 'male' else 'zh-CN-XiaoxiaoNeural'
-            await generate_tts_audio(script, tts_path, voice)
-
-            # 5. 使用新的智能分屏方法分割文本
-            sentences = split_text_into_screen_friendly_sentences(script, 1080, style)
-            print(f"智能分屏字幕分割成{len(sentences)}个片段")
-            
-            # 使用新的时间同步方法创建动态字幕
-            subtitle_clips = await create_time_synced_dynamic_subtitles(
-                sentences, 
-                tts_path,  # 传入TTS音频路径
-                video_width=1080, 
-                style=style,
-                temp_dir=SUBTITLE_TEMP_DIR
-            )
-
-            # 6. FFmpeg最终合成（包含动态字幕）
-            final_output = os.path.join(OUTPUT_DIR, f"dynamic_subtitle_{clip_id}.mp4")
-            
-            bgm_audio = random.choice(local_audio_paths) if local_audio_paths else None
-            if not bgm_audio or not os.path.exists(bgm_audio):
-                silence_path = os.path.join(TTS_TEMP_DIR, f"silence_{clip_id}.wav")
-                create_silence_audio(duration_sec, silence_path)
-                bgm_audio = silence_path
-            
-            success = create_9_16_video_with_dynamic_subtitles_ffmpeg(
-                montage_clip_path,
-                title_image_path,
-                subtitle_clips,
-                tts_path,
-                bgm_audio,
-                final_output,
-                duration_sec,
-                title_position,
-                subtitle_position,
-                local_poster_path
-            )
-            
-            if success:
-                # 上传到OSS
-                try:
-                    clip_name = f"dynamic_subtitle_{clip_id}.mp4"
-                    with open(final_output, 'rb') as f:
-                        video_content = f.read()
-                    
-                    oss_url = await oss_client.upload_to_oss(
-                        file_buffer=video_content,
-                        original_filename=clip_name,
-                        folder=OSS_UPLOAD_FINAL_VEDIO
-                    )
-                    
-                    video_url = oss_url
-                    video_size = len(video_content)
-                    os.remove(final_output)
-                    
-                except Exception as e:
-                    print(f"OSS上传失败: {str(e)}")
-                    video_url = f"/outputs/clips/dynamic_subtitle_{clip_id}.mp4"
-                    video_size = os.path.getsize(final_output) if os.path.exists(final_output) else 0
-
-                # 清理临时文件
-                cleanup_files = temp_clips + [montage_clip_path, title_image_path, tts_path]
-                for subtitle_clip in subtitle_clips:
-                    cleanup_files.append(subtitle_clip['path'])
-                
-                for temp_file in cleanup_files:
-                    if os.path.exists(temp_file):
-                        os.remove(temp_file)
-                
-                result_videos.append({
-                    "id": clip_id,
-                    "name": f"dynamic_subtitle_{clip_id}.mp4",
-                    "url": video_url,
-                    "size": video_size,
-                    "duration": duration_sec,
-                    "uploadedAt": None
-                })
-                
-                print(f'智能分屏动态字幕视频{i+1}完成')
-                
-        return {
-            "success": True,
-            "message": "智能分屏动态字幕视频处理完成",
-            "videos": result_videos
-        }
-                
-    except Exception as e:
-        print(f"处理出错: {e}")
-        return {"success": False, "error": str(e)}

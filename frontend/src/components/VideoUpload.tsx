@@ -196,7 +196,13 @@ const VideoUpload: React.FC<VideoUploadProps> = ({
         {uploading && (
           <div style={{ marginTop: '12px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '6px' }}>
             <div style={{ marginBottom: '6px', fontSize: '14px', color: '#666' }}>
-              正在上传: {uploadingFileName}
+              <span style={{ 
+                maxWidth: '100%', 
+                overflow: 'hidden', 
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                display: 'block'
+              }}>正在上传: {uploadingFileName}</span>
             </div>
             <Progress 
               percent={Math.round(uploadProgress * 10) / 10} 

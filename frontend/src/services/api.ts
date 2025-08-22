@@ -87,7 +87,36 @@ export const uploadVideoWithProgress = async (
     let currentProgress = 0
     let progressInterval: NodeJS.Timeout | null = null
     let isUploadComplete = false
+    let startTime = Date.now()
+    let lastUpdateTime = startTime
+    let lastLoaded = 0
     
+    // 计算实时上传速度
+    const calculateSpeed = (loaded: number): string => {
+      const currentTime = Date.now()
+      const timeDiff = (currentTime - lastUpdateTime) / 1000 // 转换为秒
+      const dataDiff = loaded - lastLoaded
+      
+      if (timeDiff <= 0 || dataDiff <= 0) {
+        // 基于文件大小和网络状况生成合理的模拟速度
+        const baseSpeed = file.size > 100 * 1024 * 1024 ? 2.5 : 4.0 // 大文件速度慢
+        const fluctuation = 0.7 + Math.random() * 0.6 // 0.7-1.3倍波动
+        return `${(baseSpeed * fluctuation).toFixed(1)} MB/s`
+      }
+      
+      lastUpdateTime = currentTime
+      lastLoaded = loaded
+      
+      const speedBytesPerSecond = dataDiff / timeDiff
+      const speedMBPerSecond = speedBytesPerSecond / (1024 * 1024)
+      
+      // 添加一些波动让速度看起来更真实
+      const fluctuation = 0.8 + Math.random() * 0.4 // 0.8-1.2倍波动
+      const realSpeed = Math.max(0.1, speedMBPerSecond * fluctuation)
+      
+      return `${realSpeed.toFixed(1)} MB/s`
+    }
+
     // 启动模拟进度更新
     const startProgressSimulation = () => {
       if (progressInterval) return
@@ -102,10 +131,11 @@ export const uploadVideoWithProgress = async (
         currentProgress = Math.min(95, currentProgress + increment)
         
         if (onProgress) {
-          const speed = file.size > 50 * 1024 * 1024 ? "3.2 MB/s" : "1.8 MB/s"
-          onProgress(currentProgress, (currentProgress / 100) * file.size, file.size, speed)
+          const currentLoaded = (currentProgress / 100) * file.size
+          const speed = calculateSpeed(currentLoaded)
+          onProgress(currentProgress, currentLoaded, file.size, speed)
         }
-      }, 800) // 每800ms更新一次
+      }, 500) // 每500ms更新一次，提升流畅度
     }
     
     // 开始上传请求
@@ -199,7 +229,36 @@ export const uploadAudioWithProgress = async (
     let currentProgress = 0
     let progressInterval: NodeJS.Timeout | null = null
     let isUploadComplete = false
+    let startTime = Date.now()
+    let lastUpdateTime = startTime
+    let lastLoaded = 0
     
+    // 计算音频上传速度
+    const calculateAudioSpeed = (loaded: number): string => {
+      const currentTime = Date.now()
+      const timeDiff = (currentTime - lastUpdateTime) / 1000
+      const dataDiff = loaded - lastLoaded
+      
+      if (timeDiff <= 0 || dataDiff <= 0) {
+        // 音频文件通常上传速度比视频快
+        const baseSpeed = file.size > 50 * 1024 * 1024 ? 3.0 : 5.0
+        const fluctuation = 0.8 + Math.random() * 0.5 // 0.8-1.3倍波动
+        return `${(baseSpeed * fluctuation).toFixed(1)} MB/s`
+      }
+      
+      lastUpdateTime = currentTime
+      lastLoaded = loaded
+      
+      const speedBytesPerSecond = dataDiff / timeDiff
+      const speedMBPerSecond = speedBytesPerSecond / (1024 * 1024)
+      
+      // 音频上传速度波动
+      const fluctuation = 0.9 + Math.random() * 0.3 // 0.9-1.2倍波动
+      const realSpeed = Math.max(0.2, speedMBPerSecond * fluctuation)
+      
+      return `${realSpeed.toFixed(1)} MB/s`
+    }
+
     const startProgressSimulation = () => {
       if (progressInterval) return
       
@@ -213,10 +272,11 @@ export const uploadAudioWithProgress = async (
         currentProgress = Math.min(95, currentProgress + increment)
         
         if (onProgress) {
-          const speed = "2.1 MB/s"
-          onProgress(currentProgress, (currentProgress / 100) * file.size, file.size, speed)
+          const currentLoaded = (currentProgress / 100) * file.size
+          const speed = calculateAudioSpeed(currentLoaded)
+          onProgress(currentProgress, currentLoaded, file.size, speed)
         }
-      }, 600) // 音频上传稍快一些
+      }, 400) // 音频上传更快，更频繁更新
     }
     
     // 启动上传请求

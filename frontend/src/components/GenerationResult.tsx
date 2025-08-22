@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Progress, Button, message, Modal } from 'antd'
 import { PlayCircleOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons'
 import type { GenerationTask } from '../types'
@@ -13,6 +13,69 @@ interface GenerationResultProps {
 const GenerationResult: React.FC<GenerationResultProps> = ({ task, onReset, onNewCreation }) => {
   const [previewVisible, setPreviewVisible] = useState(false)
   const [previewVideo, setPreviewVideo] = useState<string>('')
+  const [simulatedProgress, setSimulatedProgress] = useState(0)
+  const [elapsedTime, setElapsedTime] = useState(0)
+  const [startTime, setStartTime] = useState<number | null>(null)
+
+  // 进度条模拟和时间计算
+  useEffect(() => {
+    if (!task) {
+      setSimulatedProgress(0)
+      setElapsedTime(0)
+      setStartTime(null)
+      return
+    }
+
+    if (task.status === 'processing') {
+      // 开始处理时记录开始时间
+      if (!startTime) {
+        setStartTime(Date.now())
+      }
+
+      // 模拟进度条平滑增长
+      const progressInterval = setInterval(() => {
+        setSimulatedProgress(prev => {
+          const realProgress = task.progress || 0
+          const targetProgress = Math.min(realProgress + 5, 95) // 总是比实际进度稍高一点，但不超过95%
+          
+          if (prev < targetProgress) {
+            return Math.min(prev + 0.5, targetProgress) // 每次增长0.5%，慢一些
+          }
+          return prev
+        })
+      }, 300) // 每300ms更新一次
+
+      // 计算已用时间
+      const timeInterval = setInterval(() => {
+        if (startTime) {
+          const now = Date.now()
+          const elapsed = Math.floor((now - startTime) / 1000)
+          setElapsedTime(elapsed)
+        }
+      }, 1000)
+
+      return () => {
+        clearInterval(progressInterval)
+        clearInterval(timeInterval)
+      }
+    } else if (task.status === 'completed') {
+      // 完成时设置为100%
+      setSimulatedProgress(100)
+    } else if (task.status === 'failed') {
+      // 失败时重置
+      setSimulatedProgress(0)
+    }
+  }, [task, startTime])
+
+  // 格式化时间显示
+  const formatElapsedTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    if (mins > 0) {
+      return `${mins}分${secs}秒`
+    }
+    return `${secs}秒`
+  }
 
   const handlePreview = (url: string) => {
     setPreviewVideo(url)
@@ -80,16 +143,27 @@ const GenerationResult: React.FC<GenerationResultProps> = ({ task, onReset, onNe
               marginBottom: '8px'
             }}>
               <span>状态: {getStatusText(task.status)}</span>
-              <span style={{ color: getStatusColor(task.status) }}>
-                {task.progress?.toFixed(1)}%
-              </span>
+              {task.status === 'processing' && (
+                <span style={{ color: '#666', fontSize: '12px' }}>
+                  已用时: {formatElapsedTime(elapsedTime)}
+                </span>
+              )}
             </div>
             <Progress 
-              percent={Math.round((task.progress || 0) * 10) / 10} 
+              percent={Math.round(simulatedProgress * 10) / 10} 
               status={task.status === 'failed' ? 'exception' : undefined}
               strokeColor={getStatusColor(task.status)}
-              format={(percent) => `${percent?.toFixed(1)}%`}
+              showInfo={false}
             />
+            {/* 只在进度条下方显示一个百分比 */}
+            <div style={{ 
+              textAlign: 'center', 
+              marginTop: '4px', 
+              fontSize: '12px',
+              color: getStatusColor(task.status)
+            }}>
+              {simulatedProgress.toFixed(1)}%
+            </div>
           </div>
 
           {task.error && (

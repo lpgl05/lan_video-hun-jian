@@ -54,9 +54,24 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
 
     switch (task.status) {
       case 'processing':
+        // 根据已用时间动态调整预计时间
+        const getEstimatedDescription = () => {
+          if (elapsedTime < 60) {
+            return '预计3-5分钟，正在初始化AI引擎...'
+          } else if (elapsedTime < 120) {
+            return '预计还需2-3分钟，正在分析内容...'
+          } else if (elapsedTime < 180) {
+            return '预计还需1-2分钟，正在合成视频...'
+          } else if (elapsedTime < 240) {
+            return '即将完成，正在优化输出...'
+          } else {
+            return '正在进行最终处理，请稍候...'
+          }
+        }
+        
         return {
           title: 'AI正在合成中',
-          description: '预计5分钟，请耐心等待...',
+          description: getEstimatedDescription(),
           icon: <LoadingOutlined spin style={{ color: '#1890ff' }} />
         }
       case 'completed':

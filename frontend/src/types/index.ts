@@ -44,18 +44,25 @@ export type DurationOption = '15s' | '30s' | '30-60s';
 // 语音朗读选项
 export type VoiceOption = 'male' | 'female';
 
+// 字体样式配置
+export interface FontStyle {
+  color: string;
+  position: 'top' | 'center' | 'bottom';
+  fontSize: number;
+  fontFamily?: string;
+  fontUrl?: string;
+  bold?: boolean;
+  italic?: boolean;
+  shadow?: boolean;
+  shadowColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+}
+
 // 样式配置
 export interface StyleConfig {
-  title: {
-    color: string;
-    position: 'top' | 'center' | 'bottom';
-    fontSize: number;
-  };
-  subtitle: {
-    color: string;
-    position: 'top' | 'center' | 'bottom';
-    fontSize: number;
-  };
+  title: FontStyle;
+  subtitle: FontStyle;
 }
 
 // 项目配置

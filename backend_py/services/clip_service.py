@@ -924,18 +924,19 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
         [tts][bgm]amix=inputs=2:duration=first:dropout_transition=0[audio_out]
         """
         
+        # 将源视频循环输入，图片输入作为 looped 静态帧流，音频在滤镜里被 trim
         cmd = [
             ffmpeg, '-y',
-            '-i', source_video,      # 输入0: 源视频
-            '-i', title_image,       # 输入1: Title图片
-            '-i', subtitle_image,    # 输入2: Subtitle图片
+            '-stream_loop', '-1', '-i', source_video,      # 输入0: 源视频（循环）
+            '-loop', '1', '-i', title_image,       # 输入1: Title图片（loop）
+            '-loop', '1', '-i', subtitle_image,    # 输入2: Subtitle图片（loop）
             '-i', tts_audio,         # 输入3: TTS音频
             '-i', bgm_audio,         # 输入4: BGM音频
-            '-i', poster_image,      # 输入5: 海报背景
+            '-loop', '1', '-i', poster_image,      # 输入5: 海报背景（loop）
             '-filter_complex', filter_complex,
             '-map', '[video_out]',   # 映射视频流
             '-map', '[audio_out]',   # 映射音频流
-            '-t', str(duration),     # 设置时长
+            '-t', str(duration),     # 设置时长（强制输出时长）
             '-preset', 'medium',
             '-c:v', 'libx264',
             '-crf', '23',
@@ -964,15 +965,15 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
         
         cmd = [
             ffmpeg, '-y',
-            '-i', source_video,      # 输入0: 源视频
-            '-i', title_image,       # 输入1: Title图片
-            '-i', subtitle_image,    # 输入2: Subtitle图片
+            '-stream_loop', '-1', '-i', source_video,      # 输入0: 源视频（循环）
+            '-loop', '1', '-i', title_image,       # 输入1: Title图片（loop）
+            '-loop', '1', '-i', subtitle_image,    # 输入2: Subtitle图片（loop）
             '-i', tts_audio,         # 输入3: TTS音频
             '-i', bgm_audio,         # 输入4: BGM音频
             '-filter_complex', filter_complex,
             '-map', '[video_out]',   # 映射视频流
             '-map', '[audio_out]',   # 映射音频流
-            '-t', str(duration),     # 设置时长
+            '-t', str(duration),     # 设置时长（强制输出时长）
             '-preset', 'medium',
             '-c:v', 'libx264',
             '-crf', '23',
@@ -1682,28 +1683,31 @@ def create_9_16_video_with_dynamic_subtitles_ffmpeg(source_video, title_image, s
         subtitle_overlay_y = f"H-h-{subtitle_margin}"
     
     # 构建输入参数
+    # 将源视频循环输入以覆盖目标时长；title 与 subtitle 图片作为 looped 输入
     inputs = [
-        '-i', source_video,  # 输入0: 源视频
-        '-i', title_image,   # 输入1: Title图片
+        '-stream_loop', '-1', '-i', source_video,  # 输入0: 源视频（循环）
+        '-loop', '1', '-i', title_image,   # 输入1: Title图片（loop）
     ]
     
     # 添加字幕输入
     subtitle_input_indices = []
     for i, subtitle_clip in enumerate(subtitle_clips):
-        inputs.extend(['-i', subtitle_clip['path']])
+        # 每个字幕图片作为 looped 输入
+        inputs.extend(['-loop', '1', '-i', subtitle_clip['path']])
         subtitle_input_indices.append(2 + i)  # 从输入2开始
     
     # 添加音频输入
     tts_input_index = len(subtitle_input_indices) + 2
     bgm_input_index = tts_input_index + 1
     inputs.extend(['-i', tts_audio, '-i', bgm_audio])
-    
+
     # 如果有海报背景
     poster_input_index = None
     if poster_image and poster_image != "":
         poster_input_index = bgm_input_index + 1
-        inputs.extend(['-i', poster_image])
-    
+        # poster 也作为 loop 输入
+        inputs.extend(['-loop', '1', '-i', poster_image])
+
     # 构建滤镜链 - 修复叠加顺序
     if poster_image and poster_image != "":
         # 有海报背景
@@ -1743,10 +1747,11 @@ def create_9_16_video_with_dynamic_subtitles_ffmpeg(source_video, title_image, s
     filter_parts.append(f"[{current_layer}]format=yuv420p[video_out];")
     
     # 音频处理
+    # 明确将音频 trim 到目标时长，混音使用 shortest，最终再截断确保一致
     filter_parts.extend([
-        f"[{tts_input_index}:a]volume=0.8[tts];",
-        f"[{bgm_input_index}:a]volume=0.15[bgm];",
-        f"[tts][bgm]amix=inputs=2:duration=first:dropout_transition=0[audio_out]"
+        f"[{tts_input_index}:a]volume=0.8,atrim=0:{duration}[tts];",
+        f"[{bgm_input_index}:a]volume=0.15,atrim=0:{duration}[bgm];",
+        f"[tts][bgm]amix=inputs=2:duration=shortest:dropout_transition=0,atrim=0:{duration}[audio_out]"
     ])
     
     filter_complex = "".join(filter_parts)

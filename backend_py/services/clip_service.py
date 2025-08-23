@@ -514,6 +514,25 @@ async def process_clips(req):
             tts_path = os.path.join(tts_temp_dir, tts_filename)
             await generate_tts_audio(script, tts_path)
 
+            # 新增：确保视频时长至少与 TTS 时长一致，避免配音被截断
+            try:
+                tts_audio_clip = AudioFileClip(tts_path)
+                tts_dur = tts_audio_clip.duration
+                tts_audio_clip.close()
+                if tts_dur and tts_dur > clip.duration:
+                    extra = tts_dur - clip.duration
+                    # 取最后一帧作为静止画面延长视频
+                    try:
+                        last_t = max(0, clip.duration - 0.05)
+                        last_frame = clip.get_frame(last_t)
+                        last_frame_clip = ImageClip(np.array(last_frame)).set_duration(extra).set_fps(getattr(clip, "fps", 25)).resize((clip.w, clip.h))
+                        clip = concatenate_videoclips([clip, last_frame_clip], method="compose")
+                        print(f"延长视频 {clip_name} {extra:.2f}s 以匹配 TTS 时长 {tts_dur:.2f}s")
+                    except Exception as e:
+                        print(f"延长视频失败，仍将按原时长处理: {e}")
+            except Exception as e:
+                print(f"读取TTS时长失败: {e}")
+
             # 随机BGM
             bgm_path = random.choice(local_audio_paths) if local_audio_paths else None
             if bgm_path and os.path.exists(bgm_path):
@@ -1453,6 +1472,19 @@ async def process_clips001(req):
             voice = 'zh-CN-YunxiNeural' if hasattr(req, 'voice') and req.voice == 'male' else 'zh-CN-XiaoxiaoNeural'
             await generate_tts_audio(script, tts_path, voice)
 
+            # 新增：读取 TTS 实际时长，若 TTS > user duration，则扩展目标时长，确保视频不会在配音未结束前终止
+            try:
+                audio_clip_tmp = AudioFileClip(tts_path)
+                tts_len = audio_clip_tmp.duration
+                audio_clip_tmp.close()
+                if tts_len and tts_len > duration_sec:
+                    print(f"检测到 TTS 时长 {tts_len:.2f}s 大于目标时长 {duration_sec}s，扩展目标时长到 {tts_len:.2f}s")
+                    duration_sec = tts_len
+                else:
+                    print(f"TTS 时长 {tts_len:.2f}s，目标时长保持 {duration_sec}s")
+            except Exception as e:
+                print(f"读取TTS时长失败，使用原目标时长: {e}")
+
             # 5. 使用新的智能分屏方法分割文本
             sentences = split_text_into_screen_friendly_sentences(script, 1080, style)
             print(f"智能分屏字幕分割成{len(sentences)}个片段")
@@ -1472,9 +1504,10 @@ async def process_clips001(req):
             bgm_audio = random.choice(local_audio_paths) if local_audio_paths else None
             if not bgm_audio or not os.path.exists(bgm_audio):
                 silence_path = os.path.join(TTS_TEMP_DIR, f"silence_{clip_id}.wav")
+                # 注意：使用更新后的 duration_sec 生成静音文件，保证长度匹配
                 create_silence_audio(duration_sec, silence_path)
                 bgm_audio = silence_path
-            
+
             success = create_9_16_video_with_dynamic_subtitles_ffmpeg(
                 montage_clip_path,
                 title_image_path,

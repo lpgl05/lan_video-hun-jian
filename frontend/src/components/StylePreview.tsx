@@ -320,8 +320,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     
     // 绘制圆角矩形外壳
     ctx.fillStyle = frameGradient
-    ctx.beginPath()
-    ctx.roundRect(0, 0, width, height, cornerRadius)
+    roundRect(ctx, 0, 0, width, height, cornerRadius)
     ctx.fill()
     
     // 绘制内部屏幕区域（挖空效果）
@@ -379,8 +378,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({
 
     // 设置裁剪区域为屏幕内部
     ctx.save()
-    ctx.beginPath()
-    ctx.roundRect(screenX, screenY, screenWidth, screenHeight, 17)
+    roundRect(ctx, screenX, screenY, screenWidth, screenHeight, 17)
     ctx.clip()
 
     // 绘制背景
@@ -411,6 +409,42 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     ctx.restore()
   }
 
+  // 在组件顶层打印收到的 style（仅用于调试）
+  useEffect(() => {
+    try {
+      console.log('StylePreview props - titleStyle:', titleStyle)
+      console.log('StylePreview props - subtitleStyle:', subtitleStyle)
+    } catch (e) {
+      // ignore
+    }
+  }, [titleStyle && JSON.stringify(titleStyle), subtitleStyle && JSON.stringify(subtitleStyle)])
+
+  // 新增：兼容的 roundRect 辅助（在多个地方替代 ctx.roundRect，防止部分浏览器报错）
+  function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+	// 如果原生支持则直接调用
+	// @ts-ignore
+	if (typeof ctx.roundRect === 'function') {
+		// @ts-ignore
+		ctx.beginPath()
+		// @ts-ignore
+		ctx.roundRect(x, y, w, h, r)
+		return
+	}
+	// 回退实现
+	const radius = Math.min(r, Math.floor(Math.min(w, h) / 2))
+	ctx.beginPath()
+	ctx.moveTo(x + radius, y)
+	ctx.lineTo(x + w - radius, y)
+	ctx.quadraticCurveTo(x + w, y, x + w, y + radius)
+	ctx.lineTo(x + w, y + h - radius)
+	ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h)
+	ctx.lineTo(x + radius, y + h)
+	ctx.quadraticCurveTo(x, y + h, x, y + h - radius)
+	ctx.lineTo(x, y + radius)
+	ctx.quadraticCurveTo(x, y, x + radius, y)
+	ctx.closePath()
+}
+
   // 绘制文本的函数
   const drawText = (
     ctx: CanvasRenderingContext2D,
@@ -422,84 +456,231 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     offsetX: number = 0,
     offsetY: number = 0
   ) => {
-    // 修正：实际视频尺寸为1080x1920(竖屏)，但后端按1080宽度处理
-    const actualVideoWidth = 1080  // 后端实际使用的视频宽度
-    const previewVideoHeight = canvasHeight * 0.5 // 视频高度占画布一半
-    const previewVideoWidth = previewVideoHeight * (16 / 9)
-    
-    // 确保不超出画布宽度
-    const actualPreviewWidth = Math.min(previewVideoWidth, canvasWidth * 0.9)
-    
-    // 计算字体缩放比例（基于宽度比例，因为后端以宽度为准）
-    const fontScale = actualPreviewWidth / actualVideoWidth
-    const scaledFontSize = Math.max(6, style.fontSize * fontScale) // 最小字体6px
-    
-    // 设置字体
-    let fontFamily = style.fontFamily
-    
-    // 检查是否是自定义字体并且已加载
-    if (style.fontUrl && fontsLoaded.has(style.fontFamily)) {
-      console.log(`使用已加载的自定义字体: ${style.fontFamily}`)
-    } else if (style.fontUrl && !fontsLoaded.has(style.fontFamily)) {
-      console.warn(`自定义字体 ${style.fontFamily} 尚未加载，使用默认字体`)
-      fontFamily = 'Microsoft YaHei, sans-serif' // 备用字体
-    }
-    
-    let fontString = `${scaledFontSize}px "${fontFamily}"`
-    if (style.bold) fontString = `bold ${fontString}`
-    if (style.italic) fontString = `italic ${fontString}`
-    ctx.font = fontString
-    
-    console.log(`设置字体: ${fontString}`)
+    try {
+      // 防御性确保 style 不为 null/undefined
+      if (!style || typeof style !== 'object') {
+        style = {} as FontStyle
+      }
 
-    // 计算文本位置
-    const textMetrics = ctx.measureText(text)
-    const textWidth = textMetrics.width
-    const textHeight = scaledFontSize
-    
-    let x = offsetX + (canvasWidth - textWidth) / 2 // 水平居中，加上偏移
-    let y: number
+      // 修正：实际视频尺寸为1080x1920(竖屏)，但后端按1080宽度处理
+      const actualVideoWidth = 1080  // 后端实际使用的视频宽度
+      const previewVideoHeight = canvasHeight * 0.5 // 视频高度占画布一半
+      const previewVideoWidth = previewVideoHeight * (16 / 9)
+      
+      // 确保不超出画布宽度
+      const actualPreviewWidth = Math.min(previewVideoWidth, canvasWidth * 0.9)
+      
+      // 计算字体缩放比例（基于宽度比例，因为后端以宽度为准）
+      const fontScale = actualPreviewWidth / actualVideoWidth
+      const rawFontSize = (style && style.fontSize) ? style.fontSize : (type === 'title' ? 64 : 48)
+      const scaledFontSize = Math.max(6, Math.round(rawFontSize * fontScale)) // 最小字体6px
+      
+      // 设置字体
+      let fontFamily = style.fontFamily || 'Microsoft YaHei, sans-serif'
+      
+      // 检查是否是自定义字体并且已加载
+      if (style.fontUrl && fontsLoaded.has(style.fontFamily)) {
+        // ok
+      } else if (style.fontUrl && !fontsLoaded.has(style.fontFamily)) {
+        fontFamily = 'Microsoft YaHei, sans-serif' // 备用字体
+      }
+      
+      let fontString = `${scaledFontSize}px "${fontFamily}"`
+      if (style.bold) fontString = `bold ${fontString}`
+      if (style.italic) fontString = `italic ${fontString}`
+      ctx.font = fontString
 
-    // 根据位置设置Y坐标
-    switch (style.position) {
-      case 'top':
-        y = offsetY + (type === 'title' ? textHeight + 20 : textHeight + 60)
-        break
-      case 'center':
-        y = offsetY + canvasHeight / 2 + (type === 'title' ? -textHeight : textHeight)
-        break
-      case 'bottom':
-        y = offsetY + canvasHeight - (type === 'title' ? textHeight + 60 : textHeight + 20)
-        break
-      default:
-        y = offsetY + canvasHeight / 2
+      // 测量文本（优先使用 actualBoundingBox 系列）
+      const metrics = ctx.measureText(text)
+      const textWidth = metrics.width || (text.length * scaledFontSize * 0.6)
+      const ascent = (metrics.actualBoundingBoxAscent !== undefined) ? metrics.actualBoundingBoxAscent : Math.round(scaledFontSize * 0.8)
+      const descent = (metrics.actualBoundingBoxDescent !== undefined) ? metrics.actualBoundingBoxDescent : Math.round(scaledFontSize * 0.25)
+      const textHeight = ascent + descent
+
+      // 计算文本基线位置
+      let x = offsetX + (canvasWidth - textWidth) / 2 // 水平居中，加上偏移
+      let y: number
+
+      switch (style.position) {
+        case 'top':
+          y = offsetY + (type === 'title' ? ascent + 20 : ascent + 60)
+          break
+        case 'center':
+          y = offsetY + canvasHeight / 2 + (type === 'title' ? -textHeight/2 : textHeight/2)
+          break
+        case 'bottom':
+          y = offsetY + canvasHeight - (type === 'title' ? textHeight + 60 : textHeight + 20)
+          y += ascent // baseline adjust
+          break
+        default:
+          y = offsetY + canvasHeight / 2
+      }
+
+      // 先绘制背景（若有），若无则对 title 使用默认背景回退（#CEC970, alpha=160）
+      let bg = parseBackgroundToRgbaForCanvas(style)
+      if (!bg) {
+        if (type === 'title') {
+          const fallback = hexToRgba('#CEC970', 160)
+          if (fallback) bg = fallback
+        } else if (type === 'subtitle') {
+          // 为字幕提供默认白色背景（与 ConfigSettings 中的默认一致）
+          const fallbackSub = hexToRgba('#FFFFFF', 160)
+          if (fallbackSub) bg = fallbackSub
+        }
+      }
+
+      // 调试：打印解析后的背景 rgba（a 为 0-1）
+      try {
+        console.log(`drawText parsed bg - type=${type}`, bg)
+      } catch (e) {}
+      
+      if (bg) {
+        const padX = Math.max(8, 8 * fontScale)
+        const padY = Math.max(6, 4 * fontScale)
+        const rectX = x - padX
+        const rectY = y - ascent - padY
+        const rectW = textWidth + padX * 2
+        const rectH = textHeight + padY * 2
+
+        ctx.save()
+        const radius = Math.min(8, Math.floor(padY + 2))
+        // 再次确保 alpha 在 0-1 范围
+        const alpha = typeof bg.a === 'number' ? Math.max(0, Math.min(1, bg.a)) : 1
+        ctx.fillStyle = `rgba(${bg.r}, ${bg.g}, ${bg.b}, ${alpha})`
+        if (radius > 0) {
+          ctx.beginPath()
+          ctx.moveTo(rectX + radius, rectY)
+          ctx.lineTo(rectX + rectW - radius, rectY)
+          ctx.quadraticCurveTo(rectX + rectW, rectY, rectX + rectW, rectY + radius)
+          ctx.lineTo(rectX + rectW, rectY + rectH - radius)
+          ctx.quadraticCurveTo(rectX + rectW, rectY + rectH, rectX + rectW - radius, rectY + rectH)
+          ctx.lineTo(rectX + radius, rectY + rectH)
+          ctx.quadraticCurveTo(rectX, rectY + rectH, rectX, rectY + rectH - radius)
+          ctx.lineTo(rectX, rectY + radius)
+          ctx.quadraticCurveTo(rectX, rectY, rectX + radius, rectY)
+          ctx.closePath()
+          ctx.fill()
+        } else {
+          ctx.fillRect(rectX, rectY, rectW, rectH)
+        }
+        ctx.restore()
+      }
+
+      // 绘制描边（如果有）
+      if (style.strokeColor && style.strokeWidth && style.strokeWidth > 0) {
+        ctx.save()
+        ctx.strokeStyle = style.strokeColor
+        const scaledStrokeWidth = Math.max(0.5, (style.strokeWidth || 1) * fontScale)
+        ctx.lineWidth = scaledStrokeWidth * 2
+        ctx.lineJoin = 'round'
+        ctx.miterLimit = 2
+        ctx.strokeText(text, x, y)
+        ctx.restore()
+      }
+
+      // 绘制阴影或主文本
+      if (style.shadow && style.shadowColor) {
+        ctx.save()
+        ctx.shadowColor = style.shadowColor
+        ctx.shadowBlur = Math.max(1, 4 * fontScale)
+        ctx.shadowOffsetX = Math.max(0.5, 2 * fontScale)
+        ctx.shadowOffsetY = Math.max(0.5, 2 * fontScale)
+        ctx.fillStyle = style.color || '#ffffff'
+        ctx.fillText(text, x, y)
+        ctx.restore()
+      } else {
+        ctx.fillStyle = style.color || '#ffffff'
+        ctx.fillText(text, x, y)
+      }
+    } catch (err) {
+      console.error('drawText error:', err, { text, type, style })
+      // 防止失败阻塞整个预览绘制，返回即可
+      return
+    }
+  }
+
+  // 新增工具：将 hex 和 alpha(0-255或0-1) 转为 {r,g,b,a(0-1)}
+  const hexToRgba = (hex: string, alpha?: number) => {
+    if (!hex) return null
+    const s = hex.trim().replace(/^#/, '')
+    if (!/^[0-9a-fA-F]{6}$/.test(s)) return null
+    const r = parseInt(s.slice(0,2), 16)
+    const g = parseInt(s.slice(2,4), 16)
+    const b = parseInt(s.slice(4,6), 16)
+    let a = 1
+    if (alpha !== undefined && alpha !== null) {
+      const n = Number(alpha)
+      if (!Number.isNaN(n)) a = n <= 1 ? n : Math.max(0, Math.min(1, n / 255))
+    }
+    return { r, g, b, a }
+  }
+
+  // 修改：从 style 中解析背景并返回 { r,g,b,a }，a 为 0-1（不再使用 section.color 作为背景）
+  function parseBackgroundToRgbaForCanvas(section: any) {
+    if (!section) return null
+    let color: any = null
+    let opacity: any = null
+
+    // nested background object 优先
+    if (section.background && typeof section.background === 'object') {
+      color = section.background.background_color || section.background.color || section.background.backgroundColor
+      opacity = section.background.background_opacity ?? section.background.opacity ?? section.background.alpha
     }
 
-    // 绘制描边
-    if (style.strokeColor && style.strokeWidth && style.strokeWidth > 0) {
-      ctx.strokeStyle = style.strokeColor
-      const scaledStrokeWidth = Math.max(0.5, style.strokeWidth * fontScale) // 缩放描边宽度
-      ctx.lineWidth = scaledStrokeWidth * 2 // Canvas描边是双向的，所以乘以2
-      ctx.lineJoin = 'round'
-      ctx.miterLimit = 2
-      ctx.strokeText(text, x, y)
+    // flat background fields（不要读取 section.color）
+    color = color || section.background_color || section.background
+
+    opacity = opacity ?? section.background_opacity ?? section.opacity
+
+    if (!color) return null
+
+    const s = String(color).trim()
+
+    // rgba(...) / rgb(...)
+    if (s.toLowerCase().startsWith('rgba')) {
+      const m = s.match(/rgba\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*\)/i)
+      if (m) return { r: Number(m[1]), g: Number(m[2]), b: Number(m[3]), a: Number(m[4]) }
+    }
+    if (s.toLowerCase().startsWith('rgb')) {
+      const m = s.match(/rgb\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*\)/i)
+      if (m) return { r: Number(m[1]), g: Number(m[2]), b: Number(m[3]), a: 1 }
     }
 
-    // 绘制阴影
-    if (style.shadow && style.shadowColor) {
-      ctx.save()
-      ctx.shadowColor = style.shadowColor
-      ctx.shadowBlur = Math.max(1, 4 * fontScale) // 缩放阴影模糊
-      ctx.shadowOffsetX = Math.max(0.5, 2 * fontScale) // 缩放阴影偏移
-      ctx.shadowOffsetY = Math.max(0.5, 2 * fontScale)
-      ctx.fillStyle = style.color
-      ctx.fillText(text, x, y)
-      ctx.restore()
-    } else {
-      // 绘制主文本
-      ctx.fillStyle = style.color
-      ctx.fillText(text, x, y)
+    // hex handling (#RRGGBB or RRGGBB)
+    const hex = s.startsWith('#') ? s.slice(1) : s
+    if (/^[0-9a-fA-F]{6}$/.test(hex)) {
+      const r = parseInt(hex.slice(0,2), 16)
+      const g = parseInt(hex.slice(2,4), 16)
+      const b = parseInt(hex.slice(4,6), 16)
+      // 解析 opacity：支持 "50", "50%", 0.2, "0.2", 200（0-255）
+      let a = 1
+      if (opacity !== undefined && opacity !== null) {
+        try {
+          const opRaw = String(opacity).trim()
+          if (opRaw.endsWith('%')) {
+            // 百分比 e.g. "50%"
+            const num = parseFloat(opRaw.slice(0, -1))
+            if (!Number.isNaN(num)) a = Math.max(0, Math.min(1, num / 100))
+          } else {
+            const num = Number(opRaw)
+            if (!Number.isNaN(num)) {
+              // 如果在0-1之间，直接使用；如果大于1且<=255，按255缩放
+              if (num >= 0 && num <= 1) a = num
+              else if (num > 1 && num <= 255) a = Math.max(0, Math.min(1, num / 255))
+              else {
+                // 使用默认(1)
+                a = Math.max(0, Math.min(1, num))
+              }
+            }
+          }
+        } catch (e) {
+          a = 1
+        }
+      }
+      return { r, g, b, a }
     }
+
+    return null
   }
 
   // 当样式改变时重新绘制
@@ -552,6 +733,44 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     console.log('posterImage状态改变，强制重新绘制')
     setTimeout(drawPreview, 50)
   }, [posterImage])
+
+  // 监听 title/subtitle 的 background 对象变化（包括 background_color/background_opacity），变动时强制重绘
+  useEffect(() => {
+    try {
+      const tBg = titleStyle && (titleStyle as any).background ? JSON.stringify((titleStyle as any).background) : ''
+      const sBg = subtitleStyle && (subtitleStyle as any).background ? JSON.stringify((subtitleStyle as any).background) : ''
+      const key = `${tBg}|${sBg}`
+      // 小延迟以确保状态稳定后绘制
+      const id = setTimeout(() => {
+        // console.log('背景变化触发绘制', key)
+        drawPreview()
+      }, 50)
+      return () => clearTimeout(id)
+    } catch (e) {
+      // 出错也尝试重绘一次
+      setTimeout(drawPreview, 50)
+    }
+  }, [
+    // 也列出常用字段以提高命中率（某些环境 props 可能被逐个修改）
+    (titleStyle as any)?.background?.background_color,
+    (titleStyle as any)?.background?.background_opacity,
+    (titleStyle as any)?.background?.opacity,
+    (subtitleStyle as any)?.background?.background_color,
+    (subtitleStyle as any)?.background?.background_opacity,
+    (subtitleStyle as any)?.background?.opacity
+  ])
+
+  // 新增：深度监听 style 对象变化，确保嵌套字段（如 background.background_opacity）更新时也会重绘
+  useEffect(() => {
+    // 使用 JSON.stringify 深度比较（注意性能：这里只用于小对象的预览）
+    const t = titleStyle ? JSON.stringify(titleStyle) : ''
+    const s = subtitleStyle ? JSON.stringify(subtitleStyle) : ''
+    const id = setTimeout(() => {
+      // 强制重绘（保证任何内部字段变化都会反映）
+      drawPreview()
+    }, 30)
+    return () => clearTimeout(id)
+  }, [titleStyle && JSON.stringify(titleStyle), subtitleStyle && JSON.stringify(subtitleStyle), posterImage, fontsLoaded])
 
   return (
     <Card title="样式预览" size="small" style={{ marginTop: 16 }}>

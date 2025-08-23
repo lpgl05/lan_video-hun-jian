@@ -4,6 +4,7 @@ import requests
 from uuid import uuid4
 from models.oss_client import OSSClient
 import subprocess
+import re
 
 # 视频相关
 from moviepy.video.io.VideoFileClip import VideoFileClip
@@ -61,7 +62,7 @@ def get_font_path_from_style(style_config, font_type='title'):
     if not style_config:
         return FONT_PATH
     
-    font_style = style_config.get(font_type, {})
+    font_style = style_config.get(font_type, {}) if isinstance(style_config, dict) else {}
     font_family = font_style.get('fontFamily', 'Microsoft YaHei, sans-serif')
     
     print(f'查找字体: {font_family} (类型: {font_type})')
@@ -94,6 +95,147 @@ def get_font_path_from_style(style_config, font_type='title'):
     
     print(f'🔄 使用默认字体: {FONT_PATH}')
     return FONT_PATH
+
+def parse_color(value, default=(0, 0, 0, 200)):
+    """
+    返回 (r,g,b,a) 四元组，a 为 0-255
+    支持：tuple/list, "#RRGGBB", "#RRGGBBAA", "rgb(...)" / "rgba(...)" / 简单数字字符串
+    """
+    if value is None:
+        return default
+    if isinstance(value, (tuple, list)):
+        if len(value) >= 4:
+            return (int(value[0]), int(value[1]), int(value[2]), int(value[3]))
+        if len(value) == 3:
+            return (int(value[0]), int(value[1]), int(value[2]), default[3])
+    s = str(value).strip()
+    # hex with #
+    if s.startswith('#'):
+        s = s[1:]
+    # hex lengths
+    if re.fullmatch(r'[0-9a-fA-F]{6}', s):
+        r = int(s[0:2], 16); g = int(s[2:4], 16); b = int(s[4:6], 16); a = default[3]
+        return (r, g, b, a)
+    if re.fullmatch(r'[0-9a-fA-F]{8}', s):
+        r = int(s[0:2], 16); g = int(s[2:4], 16); b = int(s[4:6], 16); a = int(s[6:8], 16)
+        return (r, g, b, a)
+    # rgb / rgba
+    m = re.findall(r'[\d.]+', s)
+    if m and (s.lower().startswith('rgb')):
+        try:
+            nums = [float(x) for x in m]
+            if len(nums) >= 3:
+                r, g, b = int(nums[0]), int(nums[1]), int(nums[2])
+                if len(nums) >= 4:
+                    a_val = nums[3]
+                    a = int(a_val * 255) if 0 <= a_val <= 1 else int(a_val)
+                else:
+                    a = default[3]
+                return (r, g, b, a)
+        except Exception:
+            pass
+    # fallback: try to parse simple numeric comma-separated
+    m = re.findall(r'[\d]+', s)
+    if m and len(m) >= 3:
+        try:
+            nums = [int(x) for x in m]
+            r, g, b = nums[0], nums[1], nums[2]
+            a = nums[3] if len(nums) >= 4 else default[3]
+            return (r, g, b, a)
+        except Exception:
+            pass
+    return default
+
+def get_bg_rgba_from_style(style, section_name, default=(0,0,0,200)):
+    """
+    从 style 中提取背景颜色并返回 (r,g,b,a)
+    支持多种结构并兼容旧字段
+    """
+    if not style or not isinstance(style, dict):
+        return default
+
+    lookups = [style, style.get("style", {})]
+
+    possible_keys = [section_name, section_name + 's']
+    for base in lookups:
+        if not isinstance(base, dict):
+            continue
+        section = None
+        for k in possible_keys:
+            if k in base and isinstance(base[k], dict):
+                section = base[k]
+                break
+        if section is None:
+            for k in possible_keys:
+                if k in base:
+                    section = base[k]
+                    break
+        if section is None:
+            continue
+
+        bg = None
+        if isinstance(section, dict):
+            bg = section.get("background")
+            if isinstance(bg, dict):
+                color = bg.get("background_color") or bg.get("color") or bg.get("backgroundColor")
+                opacity = bg.get("background_opacity") or bg.get("opacity") or bg.get("alpha")
+                if color:
+                    a = default[3]
+                    if opacity is not None:
+                        try:
+                            a = int(opacity)
+                        except:
+                            try:
+                                a = int(float(opacity) * 255)
+                            except:
+                                a = default[3]
+                    rgba = parse_color(color, default=(default[0], default[1], default[2], a))
+                    return (rgba[0], rgba[1], rgba[2], a)
+            if isinstance(bg, (str, tuple, list)):
+                opacity = section.get("background_opacity") or section.get("opacity") or None
+                if opacity is not None:
+                    try:
+                        a = int(opacity)
+                    except:
+                        try:
+                            a = int(float(opacity) * 255)
+                        except:
+                            a = default[3]
+                    rgba = parse_color(bg, default=default)
+                    return (rgba[0], rgba[1], rgba[2], a)
+                else:
+                    return parse_color(bg, default=default)
+
+            color_field = section.get("background_color") or section.get("color")
+            opacity_field = section.get("background_opacity") or section.get("opacity")
+            if color_field:
+                a = default[3]
+                if opacity_field is not None:
+                    try:
+                        a = int(opacity_field)
+                    except:
+                        try:
+                            a = int(float(opacity_field) * 255)
+                        except:
+                            a = default[3]
+                rgba = parse_color(color_field, default=(default[0], default[1], default[2], a))
+                return (rgba[0], rgba[1], rgba[2], a)
+
+        if isinstance(section, (tuple, list, str)):
+            return parse_color(section, default=default)
+
+    return default
+
+def rgba_to_ass_backcolour(rgba):
+    """
+    将 (r,g,b,a) 转为 ASS/FFmpeg 字幕中 BackColour 表示形式 &HAABBGGRR
+    """
+    r, g, b, a = rgba
+    aa = f"{int(a) & 0xff:02x}"
+    bb = f"{int(b) & 0xff:02x}"
+    gg = f"{int(g) & 0xff:02x}"
+    rr = f"{int(r) & 0xff:02x}"
+    return f"&H{aa}{bb}{gg}{rr}"
 
 async def download_video(url):
     filename = url.split("/")[-1]
@@ -148,7 +290,11 @@ def add_text(clip, text, style, font_path=None):
     position = title_style.get("position", "bottom")  # top | center | bottom
 
     banner_h = max(60, int(fontsize * 2))  # 简单设定高度
-    img = Image.new("RGBA", (int(clip.w), banner_h), (0, 0, 0, 160))  # 半透明黑底
+
+    # 从 style 读取背景颜色，兼容新旧结构
+    bg_rgba = get_bg_rgba_from_style(style, "title", default=(0,0,0,160))
+
+    img = Image.new("RGBA", (int(clip.w), banner_h), bg_rgba)  # 使用可配置背景
     draw = ImageDraw.Draw(img)
 
     # 优先使用从样式配置中获取的字体
@@ -489,8 +635,6 @@ def parse_duration(duration_str):
         return int(s)
     except Exception:
         return 30
-    except Exception:
-        return 30
 
 def create_title_image(text, width=1080, height=1920, style=None):
     """生成标题字幕图片 - 单独的Title层"""
@@ -576,8 +720,11 @@ def create_title_image(text, width=1080, height=1920, style=None):
     
     print(f"Title计算: 字体={fontsize}, 行数={len(lines)}, 横幅高度={banner_h}")
 
-    # 创建实际的Title横幅 - 使用渐变背景或更显眼的背景
-    img = Image.new("RGBA", (target_width, banner_h), (0, 0, 0, 220))  # 更不透明的背景
+    # 默认背景 (0,0,0,220)
+    bg_rgba = get_bg_rgba_from_style(style, "title", default=(0,0,0,220))
+
+    # 创建实际的Title横幅 - 使用用户配置背景颜色
+    img = Image.new("RGBA", (target_width, banner_h), bg_rgba)  # 使用可配置背景
     draw = ImageDraw.Draw(img)
 
     # 绘制文本，垂直居中
@@ -691,8 +838,9 @@ def create_subtitle_image(text, width=480, height=854, style=None):
     
     print(f"字幕计算: 字体={fontsize}, 行数={len(lines)}, 横幅高度={banner_h}")
 
-    # 创建实际的字幕横幅
-    img = Image.new("RGBA", (target_width, banner_h), (0, 0, 0, 200))  # 增加背景不透明度
+    # 创建实际的字幕横幅，背景使用可配置颜色
+    bg_rgba = get_bg_rgba_from_style(style, "subtitle", default=(0,0,0,160))
+    img = Image.new("RGBA", (target_width, banner_h), bg_rgba)  # 使用可配置背景
     draw = ImageDraw.Draw(img)
 
     # 绘制文本，垂直居中
@@ -1055,7 +1203,7 @@ def create_single_line_subtitle_image(text, video_width=1080, style=None):
     
     if font is None:
         font = ImageFont.load_default()
-    
+
     # 计算合适的字体大小，确保文本能在一行显示
     max_width = video_width - 120  # 左右各留60像素边距
     fontsize = base_fontsize
@@ -1083,23 +1231,22 @@ def create_single_line_subtitle_image(text, video_width=1080, style=None):
         if text_width <= max_width:
             font = test_font
             break
-        
-        fontsize -= 2
-    
     # 计算图片尺寸
     line_height = fontsize + 12
     padding = 30
     banner_h = line_height + padding * 2
     
-    # 创建字幕图片
-    img = Image.new("RGBA", (video_width, banner_h), (0, 0, 0, 200))
+    # 创建字幕图片（使用可配置背景颜色）
+    bg_rgba = get_bg_rgba_from_style(style, "subtitle", default=(0,0,0,160))
+    img = Image.new("RGBA", (video_width, banner_h), bg_rgba)
     draw = ImageDraw.Draw(img)
     
     # 绘制单行文本
     try:
         bbox = draw.textbbox((0, 0), text, font=font)
         text_width = bbox[2] - bbox[0]
-    except:
+    except Exception:
+        # 如果无法获取精确边界，使用估算宽度作为回退
         text_width = len(text) * fontsize // 2
     
     x = (video_width - text_width) // 2  # 居中
@@ -1454,7 +1601,7 @@ def create_adaptive_subtitle_image(text, video_width=1080, style=None):
     
     if font is None:
         font = ImageFont.load_default()
-    
+
     # 计算文本尺寸
     temp_img = Image.new("RGBA", (video_width, 200), (0, 0, 0, 0))
     temp_draw = ImageDraw.Draw(temp_img)
@@ -1480,20 +1627,14 @@ def create_adaptive_subtitle_image(text, video_width=1080, style=None):
     
     if current_line:
         lines.append(current_line)
-    
-    # 限制最多3行
-    lines = lines[:3]
-    if not lines:
-        lines = [""]
-    
     # 计算实际需要的尺寸
     line_height = fontsize + 12
-    text_height = len(lines) * line_height
     padding = 30
-    banner_h = text_height + padding * 2
+    banner_h = line_height + padding * 2
     
-    # 创建字幕图片
-    img = Image.new("RGBA", (video_width, banner_h), (0, 0, 0, 200))
+    # 创建字幕图片（使用可配置背景颜色）
+    bg_rgba = get_bg_rgba_from_style(style, "subtitle", default=(0,0,0,160))
+    img = Image.new("RGBA", (video_width, banner_h), bg_rgba)
     draw = ImageDraw.Draw(img)
     
     # 绘制文本

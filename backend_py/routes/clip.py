@@ -164,20 +164,25 @@ async def process_video_generation(task_id: str, clip_req: ClipRequest):
                 },
                 "updatedAt": datetime.now().isoformat()
             })
+            print(f"任务 {task_id} 成功完成")
         else:
             # 失败处理
+            error_msg = result.get("error", "处理失败")
+            print(f"任务 {task_id} 处理失败: {error_msg}")
             _task_storage[task_id].update({
                 "status": "failed",
                 "progress": 0,
-                "error": result.get("error", "处理失败"),
+                "error": error_msg,
                 "updatedAt": datetime.now().isoformat()
             })
             
     except Exception as e:
+        error_msg = str(e)
+        print(f"任务 {task_id} 异常: {error_msg}")
         _task_storage[task_id].update({
             "status": "failed",
             "progress": 0,
-            "error": str(e),
+            "error": error_msg,
             "updatedAt": datetime.now().isoformat()
         })
 

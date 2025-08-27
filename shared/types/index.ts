@@ -37,12 +37,12 @@ export type VoiceOption = 'male' | 'female';
 export interface StyleConfig {
   title: {
     color: string;
-    position: 'top' | 'center' | 'bottom';
+    position: 'top' | 'center' | 'bottom' | 'template1';
     fontSize: number;
   };
   subtitle: {
     color: string;
-    position: 'top' | 'center' | 'bottom';
+    position: 'top' | 'center' | 'bottom' | 'template1';
     fontSize: number;
   };
 }
@@ -76,8 +76,8 @@ export interface GenerationTask {
     previewUrl?: string;
   };
   error?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string | Date; // 兼容后端返回的ISO字符串和前端Date对象
+  updatedAt: string | Date; // 兼容后端返回的ISO字符串和前端Date对象
 }
 
 // API响应格式

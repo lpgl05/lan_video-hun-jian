@@ -47,7 +47,7 @@ export type VoiceOption = 'male' | 'female';
 // 字体样式配置
 export interface FontStyle {
   color: string;
-  position: 'top' | 'center' | 'bottom';
+  position: 'top' | 'center' | 'bottom' | 'template1';
   fontSize: number;
   fontFamily?: string;
   fontUrl?: string;
@@ -95,8 +95,8 @@ export interface GenerationTask {
     previewUrl?: string;
   };
   error?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string | Date; // 兼容后端返回的ISO字符串和前端Date对象
+  updatedAt: string | Date; // 兼容后端返回的ISO字符串和前端Date对象
   generatedVideos?: VideoFile[]; // 添加详细视频信息
 }
 

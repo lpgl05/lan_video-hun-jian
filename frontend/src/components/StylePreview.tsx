@@ -504,8 +504,11 @@ const StylePreview: React.FC<StylePreviewProps> = ({
       const textHeight = ascent + descent
 
       // 计算文本基线位置
-      let x = offsetX + (canvasWidth - textWidth) / 2 // 水平居中，加上偏移
+      let x: number
       let y: number
+      
+      // X坐标：所有位置都水平居中
+      x = offsetX + (canvasWidth - textWidth) / 2 // 水平居中，加上偏移
 
       switch (style.position) {
         case 'top':
@@ -518,19 +521,25 @@ const StylePreview: React.FC<StylePreviewProps> = ({
           y = offsetY + canvasHeight - (type === 'title' ? textHeight + 60 : textHeight + 20)
           y += ascent // baseline adjust
           break
+        case 'template1':
+          // 模板位置1：距上边框1372.4像素 (按1920高度比例计算预览位置)，水平居中
+          const templateY = 1372.4
+          const previewRatio = canvasHeight / 1920  // 预览画布与实际视频的比例
+          y = offsetY + templateY * previewRatio + ascent
+          break
         default:
           y = offsetY + canvasHeight / 2
       }
 
-      // 先绘制背景（若有），若无则对 title 使用默认背景回退（#CEC970, alpha=160）
+      // 先绘制背景（若有），若无则对 title 使用默认背景回退（#CEC970, alpha=0）
       let bg = parseBackgroundToRgbaForCanvas(style)
       if (!bg) {
         if (type === 'title') {
-          const fallback = hexToRgba('#CEC970', 160)
+          const fallback = hexToRgba('#CEC970', 0)
           if (fallback) bg = fallback
         } else if (type === 'subtitle') {
           // 为字幕提供默认白色背景（与 ConfigSettings 中的默认一致）
-          const fallbackSub = hexToRgba('#FFFFFF', 160)
+          const fallbackSub = hexToRgba('#FFFFFF', 0)
           if (fallbackSub) bg = fallbackSub
         }
       }

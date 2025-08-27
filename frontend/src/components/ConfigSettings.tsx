@@ -71,6 +71,15 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
     }
   ]
 
+  // 在组件加载时应用默认值
+  useEffect(() => {
+    // 确保当前style应用了所有默认值
+    const normalized = normalizeStyle(style)
+    if (JSON.stringify(normalized) !== JSON.stringify(style)) {
+      setStyle(normalized)
+    }
+  }, []) // 只在组件首次加载时执行
+
   // 新增：统一规范化 style，确保 title/subtitle 都有 background/background_color/background_opacity
   const normalizeStyle = (rawStyle: any) => {
     const s = { ...(rawStyle || {}) }
@@ -81,12 +90,14 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
       if (bgObj.background_opacity === undefined && sec.background_opacity !== undefined) bgObj.background_opacity = sec.background_opacity
       if (bgObj.opacity === undefined && sec.opacity !== undefined) bgObj.background_opacity = sec.opacity
       if (!bgObj.background_color) bgObj.background_color = (key === 'title') ? '#CEC970' : '#FFFFFF'
-      if (bgObj.background_opacity === undefined) bgObj.background_opacity = 160
+      if (bgObj.background_opacity === undefined) bgObj.background_opacity = 0  // 默认背景透明度为0
       sec.background = bgObj
       sec.background_color = sec.background_color || bgObj.background_color
       sec.background_opacity = sec.background_opacity ?? bgObj.background_opacity
       sec.color = sec.color || (key === 'title' ? '#000' : '#ffffff')
-      sec.position = sec.position || (key === 'title' ? 'top' : 'bottom')
+      sec.position = sec.position || (key === 'title' ? 'top' : 'template1')  // 字幕默认为template1位置
+      sec.fontSize = sec.fontSize ?? (key === 'title' ? 0 : 60)  // 标题默认字体大小为0
+      sec.fontFamily = sec.fontFamily || 'SourceHanSansCN-Heavy'  // 默认字体为思源黑体Heavy
       s[key] = sec
     }
     ensureSection('title')
@@ -117,7 +128,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
 			merged.background = {
 				// 标题缺省颜色改为 #cec970，字幕仍然默认 #000000
 				background_color: merged.background_color || (type === 'title' ? '#cec970' : '#000000'),
-				background_opacity: merged.background_opacity !== undefined ? merged.background_opacity : 160
+				background_opacity: merged.background_opacity !== undefined ? merged.background_opacity : 0
 			}
 		} else if (merged.background && (!merged.background.background_color && merged.background_color)) {
 			merged.background.background_color = merged.background_color
@@ -214,6 +225,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
               <Select.Option value="top">顶部</Select.Option>
               <Select.Option value="center">中间</Select.Option>
               <Select.Option value="bottom">底部</Select.Option>
+              <Select.Option value="template1">模板位置1（横屏视频）</Select.Option>
             </Select>
           </Col>
         </Row>
@@ -314,10 +326,10 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
             <InputNumber
               min={0}
               max={255}
-              value={ getCurrentBackground(type).background_opacity ?? getCurrentBackground(type).opacity ?? 160 }
+              value={ getCurrentBackground(type).background_opacity ?? getCurrentBackground(type).opacity ?? 0 }
               onChange={(val) => {
                 const curBg = getCurrentBackground(type)
-                let opacity = typeof val === 'number' ? val : parseFloat(String(val) || '160')
+                let opacity = typeof val === 'number' ? val : parseFloat(String(val) || '0')
                 if (opacity <= 1) opacity = Math.round(opacity * 255)
                 const newBg = { ...curBg, background_opacity: Math.round(opacity) }
                 updateFontStyle(type, { background: newBg } as any)

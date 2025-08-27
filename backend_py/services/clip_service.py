@@ -55,6 +55,7 @@ FONT_MAPPING = {
     'LIULISONG': 'LIULISONG.ttf',
     'MiaobiJunli': '妙笔珺俐体.ttf',
     'MiaobiDuanmu': '妙笔段慕体.ttf',
+    'SourceHanSansCN-Heavy': 'SourceHanSansCN-Heavy.otf',  # 思源黑体Heavy
 }
 
 def get_font_path_from_style(style_config, font_type='title'):
@@ -297,7 +298,7 @@ def add_text(clip, text, style, font_path=None):
     banner_h = max(60, int(fontsize * 2))  # 简单设定高度
 
     # 从 style 读取背景颜色，兼容新旧结构
-    bg_rgba = get_bg_rgba_from_style(style, "title", default=(0,0,0,160))
+    bg_rgba = get_bg_rgba_from_style(style, "title", default=(0,0,0,0))  # 默认完全透明
 
     img = Image.new("RGBA", (int(clip.w), banner_h), bg_rgba)  # 使用可配置背景
     draw = ImageDraw.Draw(img)
@@ -751,8 +752,8 @@ def create_title_image(text, width=1080, height=1920, style=None):
     
     print(f"Title计算: 字体={fontsize}, 行数={len(lines)}, 横幅高度={banner_h}")
 
-    # 默认背景 (0,0,0,220)
-    bg_rgba = get_bg_rgba_from_style(style, "title", default=(0,0,0,220))
+    # 默认背景完全透明
+    bg_rgba = get_bg_rgba_from_style(style, "title", default=(0,0,0,0))  # 默认完全透明
 
     # 创建实际的Title横幅 - 使用用户配置背景颜色
     img = Image.new("RGBA", (target_width, banner_h), bg_rgba)  # 使用可配置背景
@@ -870,7 +871,7 @@ def create_subtitle_image(text, width=480, height=854, style=None):
     print(f"字幕计算: 字体={fontsize}, 行数={len(lines)}, 横幅高度={banner_h}")
 
     # 创建实际的字幕横幅，背景使用可配置颜色
-    bg_rgba = get_bg_rgba_from_style(style, "subtitle", default=(0,0,0,160))
+    bg_rgba = get_bg_rgba_from_style(style, "subtitle", default=(0,0,0,0))  # 默认完全透明
     img = Image.new("RGBA", (target_width, banner_h), bg_rgba)  # 使用可配置背景
     draw = ImageDraw.Draw(img)
 
@@ -926,12 +927,19 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
     subtitle_margin = 250
     if subtitle_position == "top":
         subtitle_overlay_y = subtitle_margin
+        subtitle_overlay_x = "0"
         subtitle_desc = "顶部"
     elif subtitle_position == "center":
         subtitle_overlay_y = f"(H-h)/2+100"  # 稍微偏下一些
+        subtitle_overlay_x = "0"
         subtitle_desc = "中部"
+    elif subtitle_position == "template1":
+        subtitle_overlay_y = "1372.4"  # 模板位置1：距上边框1372.4像素
+        subtitle_overlay_x = "0"  # 模板位置1：水平居中（X=0表示居中）
+        subtitle_desc = "模板位置1"
     else:  # bottom
         subtitle_overlay_y = f"H-h-{subtitle_margin}"
+        subtitle_overlay_x = "0"
         subtitle_desc = "底部"
     
     print(f"Title位置设置: {title_desc} (overlay_y={title_overlay_y})")
@@ -949,7 +957,7 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
         [1:v]format=rgba[title];
         [2:v]format=rgba[subtitle];
         [bg_with_fg][title]overlay=0:{title_overlay_y}:format=auto[bg_with_title];
-        [bg_with_title][subtitle]overlay=0:{subtitle_overlay_y}:format=auto,format=yuv420p[video_out];
+        [bg_with_title][subtitle]overlay={subtitle_overlay_x}:{subtitle_overlay_y}:format=auto,format=yuv420p[video_out];
         [3:a]volume=0.8[tts];
         [4:a]volume=0.15[bgm];
         [tts][bgm]amix=inputs=2:duration=first:dropout_transition=0[audio_out]
@@ -988,7 +996,7 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
         [1:v]format=rgba[title];
         [2:v]format=rgba[subtitle];
         [bg_with_fg][title]overlay=0:{title_overlay_y}:format=auto[bg_with_title];
-        [bg_with_title][subtitle]overlay=0:{subtitle_overlay_y}:format=auto,format=yuv420p[video_out];
+        [bg_with_title][subtitle]overlay={subtitle_overlay_x}:{subtitle_overlay_y}:format=auto,format=yuv420p[video_out];
         [3:a]volume=0.8[tts];
         [4:a]volume=0.15[bgm];
         [tts][bgm]amix=inputs=2:duration=first:dropout_transition=0[audio_out]
@@ -1269,7 +1277,7 @@ def create_single_line_subtitle_image(text, video_width=1080, style=None):
     banner_h = line_height + padding * 2
     
     # 创建字幕图片（使用可配置背景颜色）
-    bg_rgba = get_bg_rgba_from_style(style, "subtitle", default=(0,0,0,160))
+    bg_rgba = get_bg_rgba_from_style(style, "subtitle", default=(0,0,0,0))  # 默认完全透明
     img = Image.new("RGBA", (video_width, banner_h), bg_rgba)
     draw = ImageDraw.Draw(img)
     
@@ -1679,7 +1687,7 @@ def create_adaptive_subtitle_image(text, video_width=1080, style=None):
     banner_h = line_height + padding * 2
     
     # 创建字幕图片（使用可配置背景颜色）
-    bg_rgba = get_bg_rgba_from_style(style, "subtitle", default=(0,0,0,160))
+    bg_rgba = get_bg_rgba_from_style(style, "subtitle", default=(0,0,0,0))  # 默认完全透明
     img = Image.new("RGBA", (video_width, banner_h), bg_rgba)
     draw = ImageDraw.Draw(img)
     
@@ -1722,10 +1730,16 @@ def create_9_16_video_with_dynamic_subtitles_ffmpeg(source_video, title_image, s
     subtitle_margin = 250
     if subtitle_position == "top":
         subtitle_overlay_y = subtitle_margin
+        subtitle_overlay_x = "0"
     elif subtitle_position == "center":
         subtitle_overlay_y = f"(H-h)/2+100"
+        subtitle_overlay_x = "0"
+    elif subtitle_position == "template1":
+        subtitle_overlay_y = "1372.4"  # 模板位置1：距上边框1372.4像素
+        subtitle_overlay_x = "0"  # 模板位置1：水平居中（X=0表示居中）
     else:
         subtitle_overlay_y = f"H-h-{subtitle_margin}"
+        subtitle_overlay_x = "0"
     
     # 构建输入参数
     # 将源视频循环输入以覆盖目标时长；title 与 subtitle 图片作为 looped 输入
@@ -1781,7 +1795,7 @@ def create_9_16_video_with_dynamic_subtitles_ffmpeg(source_video, title_image, s
         
         # 正确的字幕叠加语法
         filter_parts.append(
-            f"[{current_layer}][{input_idx}:v]overlay=0:{subtitle_overlay_y}:"
+            f"[{current_layer}][{input_idx}:v]overlay={subtitle_overlay_x}:{subtitle_overlay_y}:"
             f"enable='between(t,{subtitle_clip['start_time']},{subtitle_clip['end_time']})'"
             f"[{next_layer}];"
         )

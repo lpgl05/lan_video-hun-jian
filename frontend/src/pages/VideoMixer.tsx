@@ -51,26 +51,28 @@ const VideoMixer: React.FC = () => {
     title: {
       color: '#1890ff',
       position: 'top',
-      fontSize: 120,  // 默认120px
-      fontFamily: 'Microsoft YaHei, sans-serif',
+      fontSize: 0,  // 默认0px（不显示）
+      fontFamily: 'SourceHanSansCN-Heavy',  // 默认思源黑体Heavy
       strokeColor: '#000000',
       strokeWidth: 0,
       shadow: false,
       shadowColor: '#000000',
       bold: false,
       italic: false,
+      background_opacity: 0,  // 默认背景透明度为0
     },
     subtitle: {
       color: '#ffffff',
-      position: 'bottom',
+      position: 'template1',  // 默认模板位置1
       fontSize: 60,  // 默认60px
-      fontFamily: 'Microsoft YaHei, sans-serif',
+      fontFamily: 'SourceHanSansCN-Heavy',  // 默认思源黑体Heavy
       strokeColor: '#000000',
       strokeWidth: 1,
       shadow: true,
       shadowColor: '#000000',
       bold: false,
       italic: false,
+      background_opacity: 0,  // 默认背景透明度为0
     },
   })
 
@@ -95,12 +97,16 @@ const VideoMixer: React.FC = () => {
 
   // 添加历史记录
   const addToHistory = (project: ProjectConfig, task: GenerationTask) => {
+    // 安全地处理日期字段 - 后端返回的是ISO字符串，不是Date对象
+    const createdAtStr = typeof task.createdAt === 'string' ? task.createdAt : task.createdAt?.toISOString?.() || new Date().toISOString()
+    const updatedAtStr = typeof task.updatedAt === 'string' ? task.updatedAt : task.updatedAt?.toISOString?.() || new Date().toISOString()
+    
     const historyItem: ProjectHistory = {
       id: task.id,
       name: project.name,
       status: task.status,
-      createdAt: task.createdAt.toISOString(),
-      completedAt: task.status === 'completed' ? task.updatedAt.toISOString() : undefined,
+      createdAt: createdAtStr,
+      completedAt: task.status === 'completed' ? updatedAtStr : undefined,
       videoCount: project.videoCount,
       duration: project.duration,
       videos: task.result?.videos ? task.generatedVideos : undefined,
@@ -120,7 +126,9 @@ const VideoMixer: React.FC = () => {
         return {
           ...item,
           status: updatedTask.status,
-          completedAt: updatedTask.status === 'completed' ? updatedTask.updatedAt.toISOString() : item.completedAt,
+          completedAt: updatedTask.status === 'completed' ? 
+            (typeof updatedTask.updatedAt === 'string' ? updatedTask.updatedAt : updatedTask.updatedAt?.toISOString?.() || new Date().toISOString()) 
+            : item.completedAt,
           videos: updatedTask.result?.videos ? updatedTask.generatedVideos : item.videos,
           task: updatedTask
         }

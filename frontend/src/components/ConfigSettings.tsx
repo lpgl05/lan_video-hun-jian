@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Input, Select, Slider, Row, Col, Space, ColorPicker, Switch, InputNumber, Button, Modal, Upload } from 'antd'
+import { Card, Input, Select, Row, Col, Space, ColorPicker, Switch, InputNumber, Button, Modal, Upload } from 'antd'
 import { UploadOutlined, FontSizeOutlined } from '@ant-design/icons'
-import type { DurationOption, VoiceOption, StyleConfig, FontStyle, PosterFile } from '../types'
+import type { DurationOption, VoiceOption, StyleConfig, FontStyle, TitleConfig, PosterFile } from '../types'
 import StylePreview from './StylePreview'
 import PosterUpload from './PosterUpload'
 import '../styles/FontStyles.css'
@@ -80,33 +80,104 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
     }
   }, []) // 只在组件首次加载时执行
 
-  // 新增：统一规范化 style，确保 title/subtitle 都有 background/background_color/background_opacity
+  // 新增：统一规范化 style，确保 title/subtitle 都有默认值，支持主副标题
   const normalizeStyle = (rawStyle: any) => {
     const s = { ...(rawStyle || {}) }
-    const ensureSection = (key: 'title' | 'subtitle') => {
-      const sec = (s[key] && { ...s[key] }) || {}
-      const bgObj = (sec.background && typeof sec.background === 'object') ? { ...sec.background } : {}
-      if (!bgObj.background_color && sec.background_color) bgObj.background_color = sec.background_color
-      if (bgObj.background_opacity === undefined && sec.background_opacity !== undefined) bgObj.background_opacity = sec.background_opacity
-      if (bgObj.opacity === undefined && sec.opacity !== undefined) bgObj.background_opacity = sec.opacity
-      if (!bgObj.background_color) bgObj.background_color = (key === 'title') ? '#CEC970' : '#FFFFFF'
-      if (bgObj.background_opacity === undefined) bgObj.background_opacity = 0  // 默认背景透明度为0
-      sec.background = bgObj
-      sec.background_color = sec.background_color || bgObj.background_color
-      sec.background_opacity = sec.background_opacity ?? bgObj.background_opacity
-      sec.color = sec.color || (key === 'title' ? '#000' : '#ffffff')
-      sec.position = sec.position || (key === 'title' ? 'top' : 'template1')  // 字幕默认为template1位置
-      sec.fontSize = sec.fontSize ?? (key === 'title' ? 0 : 60)  // 标题默认字体大小为0
-      sec.fontFamily = sec.fontFamily || 'SourceHanSansCN-Heavy'  // 默认字体为思源黑体Heavy
-      s[key] = sec
+    
+    // 处理 title 配置（支持主副标题）
+    const titleSection = (s.title && { ...s.title }) || {}
+    
+    // 向后兼容：如果 title 是旧的 FontStyle 格式，将其转换为主标题
+    if (titleSection.color && titleSection.fontSize !== undefined && !titleSection.mainTitle && !titleSection.subTitle) {
+      titleSection.mainTitle = {
+        text: '',
+        fontSize: titleSection.fontSize || 64,
+        color: titleSection.color || '#000000',
+        fontFamily: titleSection.fontFamily || 'SourceHanSansCN-Heavy'
+      }
     }
-    ensureSection('title')
-    ensureSection('subtitle')
+    
+    // 确保主标题默认值
+    if (!titleSection.mainTitle) {
+      titleSection.mainTitle = {
+        text: '',
+        fontSize: 64,
+        color: '#000000',
+        fontFamily: 'SourceHanSansCN-Heavy'
+      }
+    }
+    
+    // 确保整体位置默认值
+    titleSection.position = titleSection.position || 'top'
+    titleSection.spacing = titleSection.spacing ?? 20
+    titleSection.alignment = titleSection.alignment || 'center'
+    
+    // 处理背景配置
+    const bgObj = (titleSection.background && typeof titleSection.background === 'object') ? { ...titleSection.background } : {}
+    if (!bgObj.background_color && titleSection.background_color) bgObj.background_color = titleSection.background_color
+    if (bgObj.background_opacity === undefined && titleSection.background_opacity !== undefined) bgObj.background_opacity = titleSection.background_opacity
+    if (!bgObj.background_color) bgObj.background_color = '#CEC970'
+    if (bgObj.background_opacity === undefined) bgObj.background_opacity = 0
+    titleSection.background = bgObj
+    titleSection.background_color = titleSection.background_color || bgObj.background_color
+    titleSection.background_opacity = titleSection.background_opacity ?? bgObj.background_opacity
+    
+    s.title = titleSection
+    
+    // 处理 subtitle 配置（保持原有逻辑）
+    const subtitleSection = (s.subtitle && { ...s.subtitle }) || {}
+    const subBgObj = (subtitleSection.background && typeof subtitleSection.background === 'object') ? { ...subtitleSection.background } : {}
+    if (!subBgObj.background_color && subtitleSection.background_color) subBgObj.background_color = subtitleSection.background_color
+    if (subBgObj.background_opacity === undefined && subtitleSection.background_opacity !== undefined) subBgObj.background_opacity = subtitleSection.background_opacity
+    if (!subBgObj.background_color) subBgObj.background_color = '#FFFFFF'
+    if (subBgObj.background_opacity === undefined) subBgObj.background_opacity = 0
+    subtitleSection.background = subBgObj
+    subtitleSection.background_color = subtitleSection.background_color || subBgObj.background_color
+    subtitleSection.background_opacity = subtitleSection.background_opacity ?? subBgObj.background_opacity
+    subtitleSection.color = subtitleSection.color || '#ffffff'
+    subtitleSection.position = subtitleSection.position || 'template1'
+    subtitleSection.fontSize = subtitleSection.fontSize ?? 60
+    subtitleSection.fontFamily = subtitleSection.fontFamily || 'SourceHanSansCN-Heavy'
+    s.subtitle = subtitleSection
+    
     return s
   }
 
-  // 更新字体样式的辅助函数（增强：规范 background 字段，保持兼容）
-  const updateFontStyle = (type: 'title' | 'subtitle', updates: Partial<FontStyle>) => {
+  // 更新标题整体配置
+  const updateTitleStyle = (updates: Partial<TitleConfig>) => {
+    const newStyle = {
+      ...style,
+      title: { ...style.title, ...updates } as TitleConfig
+    } as StyleConfig;
+    setStyle(newStyle);
+  }
+
+  // 更新主标题配置
+  const updateMainTitleStyle = (updates: any) => {
+    const newStyle = {
+      ...style,
+      title: {
+        ...style.title,
+        mainTitle: { ...style.title?.mainTitle, ...updates }
+      } as TitleConfig
+    } as StyleConfig;
+    setStyle(newStyle);
+  }
+
+  // 更新副标题配置
+  const updateSubTitleStyle = (updates: any) => {
+    const newStyle = {
+      ...style,
+      title: {
+        ...style.title,
+        subTitle: { ...style.title?.subTitle, ...updates }
+      } as TitleConfig
+    } as StyleConfig;
+    setStyle(newStyle);
+  }
+
+  // 更新字体样式的辅助函数（保持原有逻辑，只用于 subtitle）
+  const updateFontStyle = (type: 'subtitle', updates: Partial<FontStyle>) => {
 		const prev = (style && style[type]) || {}
 		const merged: any = { ...prev, ...updates }
 
@@ -126,8 +197,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
 		// 如果设置了平铺字段，确保 background 对象也同步存在
 		if ((merged.background_color || merged.background_opacity !== undefined) && !merged.background) {
 			merged.background = {
-				// 标题缺省颜色改为 #cec970，字幕仍然默认 #000000
-				background_color: merged.background_color || (type === 'title' ? '#cec970' : '#000000'),
+				background_color: merged.background_color || '#FFFFFF',
 				background_opacity: merged.background_opacity !== undefined ? merged.background_opacity : 0
 			}
 		} else if (merged.background && (!merged.background.background_color && merged.background_color)) {
@@ -153,7 +223,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
     const url = URL.createObjectURL(file)
     const fontName = file.name.replace(/\.(ttf|otf|woff|woff2)$/i, '')
     
-    updateFontStyle(currentEditingFont, {
+    updateFontStyle('subtitle', {
       fontFamily: fontName,
       fontUrl: url
     })
@@ -161,13 +231,13 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
     return false // 阻止默认上传行为
   }
 
-  // 渲染字体样式配置
-  const renderFontStyleConfig = (type: 'title' | 'subtitle', label: string, fontStyle: FontStyle) => (
+  // 渲染主副标题配置
+  const renderTitleConfig = (titleConfig: TitleConfig) => (
     <div style={{ 
       padding: '12px', 
-      border: `2px solid ${type === 'title' ? '#1890ff' : '#52c41a'}`, 
+      border: '2px solid #1890ff', 
       borderRadius: '8px',
-      backgroundColor: type === 'title' ? '#f0f8ff' : '#f6ffed',
+      backgroundColor: '#f0f8ff',
       marginBottom: '12px'
     }}>
       <div style={{ 
@@ -180,7 +250,262 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
           margin: 0, 
           fontSize: '14px', 
           fontWeight: 600,
-          color: type === 'title' ? '#1890ff' : '#52c41a',
+          color: '#1890ff',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px'
+        }}>
+          <FontSizeOutlined /> 标题样式
+        </h4>
+      </div>
+      
+      <Space direction="vertical" size="small" style={{ width: '100%' }}>
+        {/* 整体配置 */}
+        <Row gutter={12}>
+          <Col span={8}>
+            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>标题位置</label>
+            <Select
+              value={titleConfig.position}
+              onChange={(position) => updateTitleStyle({ position })}
+              style={{ width: '100%', height: '32px' }}
+            >
+              <Select.Option value="top">顶部</Select.Option>
+              <Select.Option value="center">中间</Select.Option>
+              <Select.Option value="bottom">底部</Select.Option>
+              <Select.Option value="template1">模板位置1</Select.Option>
+            </Select>
+          </Col>
+          <Col span={8}>
+            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>主副标题间距</label>
+            <InputNumber
+              value={titleConfig.spacing || 20}
+              onChange={(spacing) => updateTitleStyle({ spacing: spacing || 20 })}
+              style={{ width: '100%', height: '32px' }}
+              min={0}
+              max={100}
+              addonAfter="px"
+            />
+          </Col>
+          <Col span={8}>
+            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>对齐方式</label>
+            <Select
+              value={titleConfig.alignment || 'center'}
+              onChange={(alignment) => updateTitleStyle({ alignment })}
+              style={{ width: '100%', height: '32px' }}
+            >
+              <Select.Option value="left">左对齐</Select.Option>
+              <Select.Option value="center">居中</Select.Option>
+              <Select.Option value="right">右对齐</Select.Option>
+            </Select>
+          </Col>
+        </Row>
+
+        {/* 主标题配置 */}
+        <div style={{ background: '#fafafa', padding: '12px', borderRadius: '6px', border: '1px solid #d9d9d9' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <label style={{ fontWeight: 'bold', fontSize: '13px', color: '#1890ff' }}>主标题</label>
+            <Switch
+              checked={!!titleConfig.mainTitle && (titleConfig.mainTitle.fontSize > 0)}
+              onChange={(checked) => {
+                if (checked) {
+                  updateMainTitleStyle({ 
+                    text: titleConfig.mainTitle?.text || '', 
+                    fontSize: 64, 
+                    color: '#000000',
+                    fontFamily: 'SourceHanSansCN-Heavy'
+                  });
+                } else {
+                  updateMainTitleStyle({ fontSize: 0 });
+                }
+              }}
+              size="small"
+            />
+          </div>
+          
+          {titleConfig.mainTitle && titleConfig.mainTitle.fontSize > 0 && (
+            <>
+              <Row gutter={8} style={{ marginBottom: '8px' }}>
+                <Col span={24}>
+                  <Input
+                    placeholder="输入主标题文本"
+                    value={titleConfig.mainTitle.text || ''}
+                    onChange={(e) => updateMainTitleStyle({ text: e.target.value })}
+                    style={{ height: '32px' }}
+                  />
+                </Col>
+              </Row>
+              
+              <Row gutter={8}>
+                <Col span={6}>
+                  <label style={{ fontSize: '10px', display: 'block', marginBottom: 2 }}>字体大小</label>
+                  <InputNumber
+                    value={titleConfig.mainTitle.fontSize}
+                    onChange={(fontSize) => updateMainTitleStyle({ fontSize: fontSize || 64 })}
+                    style={{ width: '100%', height: '28px' }}
+                    min={12}
+                    max={200}
+                    size="small"
+                  />
+                </Col>
+                <Col span={6}>
+                  <label style={{ fontSize: '10px', display: 'block', marginBottom: 2 }}>颜色</label>
+                  <ColorPicker
+                    value={titleConfig.mainTitle.color}
+                    onChange={(color) => updateMainTitleStyle({ color: color.toHexString() })}
+                    style={{ width: '100%', height: '28px' }}
+                    size="small"
+                  />
+                </Col>
+                <Col span={12}>
+                  <label style={{ fontSize: '10px', display: 'block', marginBottom: 2 }}>字体</label>
+                  <Select
+                    value={titleConfig.mainTitle.fontFamily || 'SourceHanSansCN-Heavy'}
+                    onChange={(fontFamily) => updateMainTitleStyle({ fontFamily })}
+                    style={{ width: '100%', height: '28px' }}
+                    size="small"
+                  >
+                    <Select.Option value="SourceHanSansCN-Heavy">思源黑体Heavy</Select.Option>
+                    <Select.Option value="LIULISONG">柳隶宋体</Select.Option>
+                    <Select.Option value="妙笔段慕体">妙笔段慕体</Select.Option>
+                    <Select.Option value="妙笔珺俐体">妙笔珺俐体</Select.Option>
+                  </Select>
+                </Col>
+              </Row>
+            </>
+          )}
+        </div>
+
+        {/* 副标题配置 */}
+        <div style={{ background: '#f0f8ff', padding: '12px', borderRadius: '6px', border: '1px solid #d9d9d9' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <label style={{ fontWeight: 'bold', fontSize: '13px', color: '#52c41a' }}>副标题</label>
+            <Switch
+              checked={!!titleConfig.subTitle && (titleConfig.subTitle.fontSize > 0)}
+              onChange={(checked) => {
+                if (checked) {
+                  updateSubTitleStyle({ 
+                    text: '', 
+                    fontSize: 40, 
+                    color: '#666666',
+                    fontFamily: 'SourceHanSansCN-Heavy'
+                  });
+                } else {
+                  updateTitleStyle({ subTitle: undefined });
+                }
+              }}
+              size="small"
+            />
+          </div>
+          
+          {titleConfig.subTitle && (
+            <>
+              <Row gutter={8} style={{ marginBottom: '8px' }}>
+                <Col span={24}>
+                  <Input
+                    placeholder="输入副标题文本"
+                    value={titleConfig.subTitle.text || ''}
+                    onChange={(e) => updateSubTitleStyle({ text: e.target.value })}
+                    style={{ height: '32px' }}
+                  />
+                </Col>
+              </Row>
+              
+              <Row gutter={8}>
+                <Col span={6}>
+                  <label style={{ fontSize: '10px', display: 'block', marginBottom: 2 }}>字体大小</label>
+                  <InputNumber
+                    value={titleConfig.subTitle.fontSize}
+                    onChange={(fontSize) => updateSubTitleStyle({ fontSize: fontSize || 40 })}
+                    style={{ width: '100%', height: '28px' }}
+                    min={12}
+                    max={120}
+                    size="small"
+                  />
+                </Col>
+                <Col span={6}>
+                  <label style={{ fontSize: '10px', display: 'block', marginBottom: 2 }}>颜色</label>
+                  <ColorPicker
+                    value={titleConfig.subTitle.color}
+                    onChange={(color) => updateSubTitleStyle({ color: color.toHexString() })}
+                    style={{ width: '100%', height: '28px' }}
+                    size="small"
+                  />
+                </Col>
+                <Col span={12}>
+                  <label style={{ fontSize: '10px', display: 'block', marginBottom: 2 }}>字体</label>
+                  <Select
+                    value={titleConfig.subTitle.fontFamily || 'SourceHanSansCN-Heavy'}
+                    onChange={(fontFamily) => updateSubTitleStyle({ fontFamily })}
+                    style={{ width: '100%', height: '28px' }}
+                    size="small"
+                  >
+                    <Select.Option value="SourceHanSansCN-Heavy">思源黑体Heavy</Select.Option>
+                    <Select.Option value="LIULISONG">柳隶宋体</Select.Option>
+                    <Select.Option value="妙笔段慕体">妙笔段慕体</Select.Option>
+                    <Select.Option value="妙笔珺俐体">妙笔珺俐体</Select.Option>
+                  </Select>
+                </Col>
+              </Row>
+            </>
+          )}
+        </div>
+
+        {/* 背景配置 */}
+        <Row gutter={12}>
+          <Col span={12}>
+            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>标题背景颜色</label>
+            <ColorPicker
+              value={ (getCurrentBackground('title').background_color) || '#CEC970' }
+              onChange={(color) => {
+                const curBg = getCurrentBackground('title')
+                const newBg = { ...curBg, background_color: color.toHexString() }
+                updateTitleStyle({ background: newBg })
+              }}
+              showText
+              style={{ width: '100%', height: '32px' }}
+            />
+          </Col>
+          <Col span={12}>
+            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>标题背景透明度</label>
+            <InputNumber
+              min={0}
+              max={255}
+              value={ getCurrentBackground('title').background_opacity ?? 0 }
+              onChange={(val) => {
+                const curBg = getCurrentBackground('title')
+                let opacity = typeof val === 'number' ? val : parseFloat(String(val) || '0')
+                if (opacity <= 1) opacity = Math.round(opacity * 255)
+                const newBg = { ...curBg, background_opacity: Math.round(opacity) }
+                updateTitleStyle({ background: newBg })
+              }}
+              style={{ width: '100%', height: '32px' }}
+            />
+          </Col>
+        </Row>
+      </Space>
+    </div>
+  )
+  
+  // 渲染字幕样式配置（保持原有逻辑）
+  const renderFontStyleConfig = (type: 'subtitle', label: string, fontStyle: FontStyle) => (
+    <div style={{ 
+      padding: '12px', 
+      border: '2px solid #52c41a', 
+      borderRadius: '8px',
+      backgroundColor: '#f6ffed',
+      marginBottom: '12px'
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        marginBottom: '12px'
+      }}>
+        <h4 style={{ 
+          margin: 0, 
+          fontSize: '14px', 
+          fontWeight: 600,
+          color: '#52c41a',
           display: 'flex',
           alignItems: 'center',
           gap: '4px'
@@ -191,7 +516,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
           type="link" 
           size="small" 
           onClick={() => {
-            setCurrentEditingFont(type)
+            setCurrentEditingFont('subtitle')
             setFontModalVisible(true)
           }}
           style={{ fontSize: '12px', height: 'auto', padding: '2px 8px' }}
@@ -204,7 +529,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
         <Row gutter={12}>
           <Col span={12}>
             <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>
-              {type === 'title' ? '标题颜色' : '字幕颜色'}
+              字幕颜色
             </label>
             <ColorPicker
               value={fontStyle.color}
@@ -215,7 +540,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
           </Col>
           <Col span={12}>
             <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>
-              {type === 'title' ? '标题位置' : '字幕位置'}
+              字幕位置
             </label>
             <Select
               value={fontStyle.position}
@@ -236,7 +561,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
             <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>字体大小</label>
             <InputNumber
               min={0}
-              max={type === 'title' ? 200 : 120}
+              max={120}
               value={fontStyle.fontSize}
               onChange={(fontSize) => updateFontStyle(type, { fontSize: fontSize || 0 })}
               style={{ width: '100%', height: '32px', lineHeight: '30px' }}
@@ -309,9 +634,9 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
         {/* 新增：背景颜色与透明度设置 */}
         <Row gutter={12} style={{ marginTop: 8 }}>
           <Col span={12}>
-            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>{type === 'title' ? '标题背景颜色' : '字幕背景颜色'}</label>
+            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>字幕背景颜色</label>
             <ColorPicker
-              value={ (getCurrentBackground(type).background_color) || (type === 'title' ? '#CEC970' : '#FFFFFF') }
+              value={ (getCurrentBackground(type).background_color) || '#FFFFFF' }
               onChange={(color) => {
                 const curBg = getCurrentBackground(type)
                 const newBg = { ...curBg, background_color: color.toHexString() }
@@ -322,7 +647,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
             />
           </Col>
           <Col span={12}>
-            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>{type === 'title' ? '标题背景透明度' : '字幕背景透明度'}</label>
+            <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>字幕背景透明度</label>
             <InputNumber
               min={0}
               max={255}
@@ -418,7 +743,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
       <Card title="样式设置" size="small">
         <Row gutter={[16, 12]}>
           <Col span={12}>
-            {renderFontStyleConfig('title', '标题样式', style.title)}
+            {renderTitleConfig(style.title)}
           </Col>
           
           <Col span={12}>
@@ -473,21 +798,21 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                 <label style={{ display: 'block', marginBottom: 8 }}>加粗</label>
                 <Switch
                   checked={style[currentEditingFont].bold || false}
-                  onChange={(bold) => updateFontStyle(currentEditingFont, { bold })}
+                  onChange={(bold) => updateFontStyle('subtitle', { bold })}
                 />
               </Col>
               <Col span={8}>
                 <label style={{ display: 'block', marginBottom: 8 }}>斜体</label>
                 <Switch
                   checked={style[currentEditingFont].italic || false}
-                  onChange={(italic) => updateFontStyle(currentEditingFont, { italic })}
+                  onChange={(italic) => updateFontStyle('subtitle', { italic })}
                 />
               </Col>
               <Col span={8}>
                 <label style={{ display: 'block', marginBottom: 8 }}>阴影</label>
                 <Switch
                   checked={style[currentEditingFont].shadow || false}
-                  onChange={(shadow) => updateFontStyle(currentEditingFont, { shadow })}
+                  onChange={(shadow) => updateFontStyle('subtitle', { shadow })}
                 />
               </Col>
             </Row>
@@ -499,7 +824,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
               <label style={{ display: 'block', marginBottom: 8 }}>阴影颜色</label>
               <ColorPicker
                 value={style[currentEditingFont].shadowColor || '#000000'}
-                onChange={(color) => updateFontStyle(currentEditingFont, { shadowColor: color.toHexString() })}
+                onChange={(color) => updateFontStyle('subtitle', { shadowColor: color.toHexString() })}
               />
             </Card>
           )}
@@ -528,7 +853,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
               onChange={(e) => {
                 const fontUrl = e.target.value
                 const fontName = fontUrl.split('/').pop()?.replace(/\.(ttf|otf|woff|woff2)$/i, '') || 'CustomFont'
-                updateFontStyle(currentEditingFont, { 
+                updateFontStyle('subtitle', { 
                   fontUrl,
                   fontFamily: fontName
                 })
@@ -541,7 +866,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                   type="link" 
                   size="small"
                   onClick={() => {
-                    updateFontStyle(currentEditingFont, {
+                    updateFontStyle('subtitle', {
                       fontFamily: 'LIULISONG',
                       fontUrl: '/fonts/LIULISONG.ttf'
                     })
@@ -553,7 +878,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                   type="link" 
                   size="small"
                   onClick={() => {
-                    updateFontStyle(currentEditingFont, {
+                    updateFontStyle('subtitle', {
                       fontFamily: 'MiaobiJunli',
                       fontUrl: '/fonts/妙笔珺俐体.ttf'
                     })
@@ -565,7 +890,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                   type="link" 
                   size="small"
                   onClick={() => {
-                    updateFontStyle(currentEditingFont, {
+                    updateFontStyle('subtitle', {
                       fontFamily: 'MiaobiDuanmu',
                       fontUrl: '/fonts/妙笔段慕体.ttf'
                     })

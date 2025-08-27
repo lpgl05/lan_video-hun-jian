@@ -809,12 +809,7 @@ def create_title_image(text, width=1080, height=1920, style=None):
     sub_text = sub_title.get("text", "") if sub_title else ""
     sub_font_size = sub_title.get("fontSize", 0) if sub_title else 0
     
-    # 检查是否有任何需要渲染的内容
-    has_main_title = main_title and main_text and main_font_size > 0
-    has_sub_title = sub_title and sub_text and sub_font_size > 0
-    has_legacy_title = not has_main_title and not has_sub_title and text and title_config.get("fontSize", 0) > 0
-    
-    if not has_main_title and not has_sub_title and not has_legacy_title:
+    if (not main_text or main_font_size <= 0) and (not sub_text or sub_font_size <= 0):
         # 创建1x1透明图片
         img = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
         return img
@@ -822,87 +817,86 @@ def create_title_image(text, width=1080, height=1920, style=None):
     # 计算实际需要的横幅尺寸
     target_width = 1080  # 视频宽度
     
-    # 如果是旧版本兼容模式，使用原有逻辑
-    if has_legacy_title:
-        fontsize = int(title_config.get("fontSize", 64))
-        color = title_config.get("color", "#FFD700")
-        return create_legacy_title_image(text, target_width, style, fontsize, color)
+    # 先创建临时画布来计算实际需要的高度
+    temp_img = Image.new("RGBA", (target_width, 500), (0, 0, 0, 0))
+    temp_draw = ImageDraw.Draw(temp_img)
     
-    # 新的主副标题渲染逻辑
-    spacing = title_config.get("spacing", 20)  # 主副标题之间的间距
-    alignment = title_config.get("alignment", "center")  # 对齐方式
+    # 使用从样式配置中获取的字体
+    font_path = get_font_path_from_style(style, 'title')
+    font = None
+    if font_path and os.path.exists(font_path):
+        try:
+            print(f'标题使用字体文件: {font_path}')
+            font = ImageFont.truetype(font_path, fontsize)
+        except Exception as e:
+            print(f'标题字体加载失败: {e}')
+            font = None
     
-    # 计算每个标题的尺寸和文本行
-    main_title_info = None
-    sub_title_info = None
-    
-    if has_main_title:
-        main_title_info = calculate_title_layout(main_text, main_font_size, target_width, main_title, style)
+    if font is None:
+        # 回退到系统字体
+        chinese_fonts = [
+            "C:\\Windows\\Fonts\\msyh.ttc",
+            "C:\\Windows\\Fonts\\simsun.ttc",
+            "/System/Library/Fonts/PingFang.ttc",
+            "/usr/share/fonts/winfonts/msyh.ttc"
+        ]
         
-    if has_sub_title:
-        sub_title_info = calculate_title_layout(sub_text, sub_font_size, target_width, sub_title, style)
+        for fp in chinese_fonts:
+            try:
+                font = ImageFont.truetype(fp, fontsize)
+                break
+            except:
+                continue
     
-    # 计算总高度
-    total_height = 0
-    padding_vertical = 60  # 上下内边距
-    
-    if main_title_info:
-        total_height += main_title_info['height']
-        
-    if sub_title_info:
-        if main_title_info:
-            total_height += spacing  # 主副标题之间的间距
-        total_height += sub_title_info['height']
-    
-    total_height += padding_vertical
-    total_height = max(140, total_height)  # 最小高度
-    
-    print(f"主副标题计算: 主标题高度={main_title_info['height'] if main_title_info else 0}, 副标题高度={sub_title_info['height'] if sub_title_info else 0}, 间距={spacing}, 总高度={total_height}")
-    
-    # 创建图片
-    bg_rgba = get_bg_rgba_from_style(style, "title", default=(0,0,0,0))
-    img = Image.new("RGBA", (target_width, total_height), bg_rgba)
-    draw = ImageDraw.Draw(img)
-    
-    # 开始绘制
-    current_y = padding_vertical // 2  # 从上边距开始
-    
-    # 绘制主标题
-    if main_title_info:
-        current_y = draw_title_text(draw, main_title_info, target_width, current_y, alignment)
-        if sub_title_info:
-            current_y += spacing  # 添加间距
-    
-    # 绘制副标题
-    if sub_title_info:
-        draw_title_text(draw, sub_title_info, target_width, current_y, alignment)
-    
-    return img
+    if font is None:
+        font = ImageFont.load_default()
 
-
-def create_legacy_title_image(text, target_width, style, fontsize, color):
-    """创建旧版本兼容的标题图片"""
-    # 获取字体
-    font = load_font_for_title({'fontSize': fontsize}, style, 'title')
+    # 文本换行 - Title通常较短，限制更严格
+    max_width = target_width - 120  # 左右各留60像素边距
+    lines = []
+    current_line = ""
     
-    # 文本换行
-    max_width = target_width - 120
-    lines = wrap_text_for_title(text, font, max_width)
-    lines = lines[:2]  # 最多2行
+    for char in text:
+        test_line = current_line + char
+        try:
+            bbox = temp_draw.textbbox((0, 0), test_line, font=font)
+            text_width = bbox[2] - bbox[0]
+        except:
+            text_width = len(test_line) * fontsize // 2
+            
+        if text_width > max_width and current_line:
+            lines.append(current_line)
+            current_line = char
+        else:
+            current_line = test_line
     
-    # 计算高度
-    line_height = fontsize + 20
+    if current_line:
+        lines.append(current_line)
+    
+    # 限制行数 - Title最多2行
+    lines = lines[:2]
+    
+    # 计算实际需要的高度
+    line_height = fontsize + 20  # Title行间距更大
     text_total_height = len(lines) * line_height
-    padding_vertical = 60
-    banner_h = max(140, text_total_height + padding_vertical)
+    padding_vertical = 60  # 上下各30像素内边距
+    banner_h = text_total_height + padding_vertical
     
-    # 创建图片
-    bg_rgba = get_bg_rgba_from_style(style, "title", default=(0,0,0,0))
-    img = Image.new("RGBA", (target_width, banner_h), bg_rgba)
+    # 确保最小高度
+    banner_h = max(140, banner_h)  # Title最小140像素高度
+    
+    print(f"Title计算: 字体={fontsize}, 行数={len(lines)}, 横幅高度={banner_h}")
+
+    # 默认背景完全透明
+    bg_rgba = get_bg_rgba_from_style(style, "title", default=(0,0,0,0))  # 默认完全透明
+
+    # 创建实际的Title横幅 - 使用用户配置背景颜色
+    img = Image.new("RGBA", (target_width, banner_h), bg_rgba)  # 使用可配置背景
     draw = ImageDraw.Draw(img)
-    
-    # 绘制文本
+
+    # 绘制文本，垂直居中
     start_y = (banner_h - text_total_height) // 2
+    
     for line in lines:
         try:
             bbox = draw.textbbox((0, 0), line, font=font)
@@ -910,67 +904,16 @@ def create_legacy_title_image(text, target_width, style, fontsize, color):
         except:
             tw = len(line) * fontsize // 2
             
-        x = (target_width - tw) // 2
+        x = (target_width - tw) // 2  # 水平居中
         try:
+            # 添加文字阴影效果
             draw.text((x+2, start_y+2), line, font=font, fill=(0, 0, 0, 128))  # 阴影
             draw.text((x, start_y), line, font=font, fill=color)  # 主文字
         except:
             draw.text((x, start_y), line, fill=color)
         start_y += line_height
-    
+
     return img
-
-
-def calculate_title_layout(text, font_size, target_width, title_config, style):
-    """计算单个标题的布局信息"""
-    font = load_font_for_title(title_config, style, 'title')
-    max_width = target_width - 120  # 左右边距
-    lines = wrap_text_for_title(text, font, max_width)
-    lines = lines[:2]  # 最多2行
-    
-    line_height = font_size + 20
-    height = len(lines) * line_height
-    
-    return {
-        'text': text,
-        'lines': lines,
-        'font': font,
-        'font_size': font_size,
-        'color': title_config.get('color', '#000000'),
-        'height': height,
-        'line_height': line_height
-    }
-
-
-def draw_title_text(draw, title_info, target_width, start_y, alignment):
-    """绘制单个标题的文本"""
-    current_y = start_y
-    
-    for line in title_info['lines']:
-        try:
-            bbox = draw.textbbox((0, 0), line, font=title_info['font'])
-            tw = bbox[2] - bbox[0]
-        except:
-            tw = len(line) * title_info['font_size'] // 2
-        
-        # 根据对齐方式计算x位置
-        if alignment == 'left':
-            x = 60  # 左边距
-        elif alignment == 'right':
-            x = target_width - tw - 60  # 右边距
-        else:  # center
-            x = (target_width - tw) // 2
-        
-        try:
-            # 添加阴影效果
-            draw.text((x+2, current_y+2), line, font=title_info['font'], fill=(0, 0, 0, 128))
-            draw.text((x, current_y), line, font=title_info['font'], fill=title_info['color'])
-        except:
-            draw.text((x, current_y), line, fill=title_info['color'])
-        
-        current_y += title_info['line_height']
-    
-    return current_y
 
 def create_subtitle_image(text, width=480, height=854, style=None):
     """生成字幕图片 - 只生成字幕横幅大小的图片"""

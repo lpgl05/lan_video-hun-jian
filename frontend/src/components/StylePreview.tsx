@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { Card } from 'antd'
-import type { FontStyle } from '../types'
+import type { FontStyle, TitleConfig } from '../types'
 
 interface StylePreviewProps {
-  titleStyle: FontStyle
+  titleStyle: TitleConfig
   subtitleStyle: FontStyle
   width?: number
   height?: number
@@ -400,8 +400,8 @@ const StylePreview: React.FC<StylePreviewProps> = ({
       drawVideoSimulation(ctx, screenX, screenY, screenWidth, screenHeight)
     }
 
-    // 绘制标题
-    drawText(ctx, '示例标题文本', titleStyle, screenWidth, screenHeight, 'title', screenX, screenY)
+    // 绘制标题（支持主副标题）
+    drawTitleWithSubtitle(ctx, titleStyle, screenWidth, screenHeight, screenX, screenY)
 
     // 绘制字幕
     drawText(ctx, '示例字幕文本', subtitleStyle, screenWidth, screenHeight, 'subtitle', screenX, screenY)
@@ -614,6 +614,253 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     }
   }
 
+  // 绘制主副标题
+  const drawTitleWithSubtitle = (
+    ctx: CanvasRenderingContext2D,
+    titleConfig: TitleConfig,
+    canvasWidth: number,
+    canvasHeight: number,
+    offsetX: number = 0,
+    offsetY: number = 0
+  ) => {
+    try {
+      // 获取主副标题配置
+      const mainTitle = titleConfig.mainTitle
+      const subTitle = titleConfig.subTitle
+      const spacing = titleConfig.spacing || 20
+      const alignment = titleConfig.alignment || 'center'
+      
+      // 如果没有主副标题，尝试使用旧版本兼容模式
+      if (!mainTitle && !subTitle) {
+        if (titleConfig.fontSize && titleConfig.fontSize > 0) {
+          const legacyStyle: FontStyle = {
+            color: titleConfig.color || '#000000',
+            position: titleConfig.position || 'top',
+            fontSize: titleConfig.fontSize,
+            fontFamily: titleConfig.fontFamily,
+            fontUrl: titleConfig.fontUrl,
+            bold: titleConfig.bold,
+            italic: titleConfig.italic,
+            shadow: titleConfig.shadow,
+            shadowColor: titleConfig.shadowColor,
+            strokeColor: titleConfig.strokeColor,
+            strokeWidth: titleConfig.strokeWidth
+          }
+          drawText(ctx, '示例标题文本', legacyStyle, canvasWidth, canvasHeight, 'title', offsetX, offsetY)
+        }
+        return
+      }
+      
+      // 计算整体标题区域的位置
+      const actualVideoWidth = 1080
+      const previewVideoHeight = canvasHeight * 0.5
+      const previewVideoWidth = previewVideoHeight * (16 / 9)
+      const actualPreviewWidth = Math.min(previewVideoWidth, canvasWidth * 0.9)
+      const fontScale = actualPreviewWidth / actualVideoWidth
+      
+      let titleAreaY = offsetY
+      
+      // 根据位置计算标题区域的Y位置
+      switch (titleConfig.position) {
+        case 'top':
+          titleAreaY = offsetY + 20
+          break
+        case 'center':
+          titleAreaY = offsetY + canvasHeight / 2 - 50
+          break
+        case 'bottom':
+          titleAreaY = offsetY + canvasHeight - 100
+          break
+        case 'template1':
+          const templateY = 1372.4
+          const previewRatio = canvasHeight / 1920
+          titleAreaY = offsetY + templateY * previewRatio - 50
+          break
+        default:
+          titleAreaY = offsetY + 20
+      }
+      
+      let currentY = titleAreaY
+      
+      // 绘制主标题
+      if (mainTitle && mainTitle.fontSize > 0) {
+        const displayText = mainTitle.text || '主标题示例'
+        const mainTitleStyle: FontStyle = {
+          color: mainTitle.color || '#000000',
+          position: 'top', // 使用绝对位置
+          fontSize: mainTitle.fontSize,
+          fontFamily: mainTitle.fontFamily,
+          fontUrl: mainTitle.fontUrl,
+          bold: mainTitle.bold,
+          italic: mainTitle.italic,
+          shadow: mainTitle.shadow,
+          shadowColor: mainTitle.shadowColor,
+          strokeColor: mainTitle.strokeColor,
+          strokeWidth: mainTitle.strokeWidth
+        }
+        
+        // 使用绝对位置绘制主标题
+        drawTextAtPosition(ctx, displayText, mainTitleStyle, canvasWidth, canvasHeight, offsetX, currentY, alignment)
+        
+        // 计算主标题高度用于间距计算
+        const mainFontSize = Math.max(6, Math.round(mainTitle.fontSize * fontScale))
+        currentY += mainFontSize + (spacing * fontScale)
+      }
+      
+      // 绘制副标题
+      if (subTitle && subTitle.fontSize > 0) {
+        const displayText = subTitle.text || '副标题示例'
+        const subTitleStyle: FontStyle = {
+          color: subTitle.color || '#666666',
+          position: 'top', // 使用绝对位置
+          fontSize: subTitle.fontSize,
+          fontFamily: subTitle.fontFamily,
+          fontUrl: subTitle.fontUrl,
+          bold: subTitle.bold,
+          italic: subTitle.italic,
+          shadow: subTitle.shadow,
+          shadowColor: subTitle.shadowColor,
+          strokeColor: subTitle.strokeColor,
+          strokeWidth: subTitle.strokeWidth
+        }
+        
+        // 使用绝对位置绘制副标题
+        drawTextAtPosition(ctx, displayText, subTitleStyle, canvasWidth, canvasHeight, offsetX, currentY, alignment)
+      }
+      
+    } catch (err) {
+      console.error('drawTitleWithSubtitle error:', err)
+      // 失败时使用默认文本
+      const fallbackStyle: FontStyle = {
+        color: '#000000',
+        position: titleConfig.position || 'top',
+        fontSize: 32
+      }
+      drawText(ctx, '标题预览', fallbackStyle, canvasWidth, canvasHeight, 'title', offsetX, offsetY)
+    }
+  }
+  
+  // 在指定位置绘制文本的辅助函数
+  const drawTextAtPosition = (
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    style: FontStyle,
+    canvasWidth: number,
+    canvasHeight: number,
+    offsetX: number,
+    absoluteY: number,
+    alignment: 'left' | 'center' | 'right'
+  ) => {
+    try {
+      const actualVideoWidth = 1080
+      const previewVideoHeight = canvasHeight * 0.5
+      const previewVideoWidth = previewVideoHeight * (16 / 9)
+      const actualPreviewWidth = Math.min(previewVideoWidth, canvasWidth * 0.9)
+      const fontScale = actualPreviewWidth / actualVideoWidth
+      const scaledFontSize = Math.max(6, Math.round(style.fontSize * fontScale))
+      
+      // 设置字体
+      let fontFamily = style.fontFamily || 'Microsoft YaHei, sans-serif'
+      if (style.fontUrl && fontsLoaded.has(style.fontFamily)) {
+        // 使用自定义字体
+      } else if (style.fontUrl && !fontsLoaded.has(style.fontFamily)) {
+        fontFamily = 'Microsoft YaHei, sans-serif'
+      }
+      
+      let fontString = `${scaledFontSize}px "${fontFamily}"`
+      if (style.bold) fontString = `bold ${fontString}`
+      if (style.italic) fontString = `italic ${fontString}`
+      ctx.font = fontString
+      
+      // 测量文本
+      const metrics = ctx.measureText(text)
+      const textWidth = metrics.width || (text.length * scaledFontSize * 0.6)
+      const ascent = (metrics.actualBoundingBoxAscent !== undefined) ? metrics.actualBoundingBoxAscent : Math.round(scaledFontSize * 0.8)
+      const descent = (metrics.actualBoundingBoxDescent !== undefined) ? metrics.actualBoundingBoxDescent : Math.round(scaledFontSize * 0.25)
+      const textHeight = ascent + descent
+      
+      // 计算X位置
+      let x: number
+      switch (alignment) {
+        case 'left':
+          x = offsetX + 20
+          break
+        case 'right':
+          x = offsetX + canvasWidth - textWidth - 20
+          break
+        case 'center':
+        default:
+          x = offsetX + (canvasWidth - textWidth) / 2
+          break
+      }
+      
+      const y = absoluteY + ascent
+      
+      // 绘制背景（如果有）
+      const bg = parseBackgroundToRgbaForCanvas(titleStyle)
+      if (bg) {
+        const padX = Math.max(8, 8 * fontScale)
+        const padY = Math.max(6, 4 * fontScale)
+        const rectX = x - padX
+        const rectY = y - ascent - padY
+        const rectW = textWidth + padX * 2
+        const rectH = textHeight + padY * 2
+        
+        ctx.save()
+        const alpha = typeof bg.a === 'number' ? Math.max(0, Math.min(1, bg.a)) : 1
+        ctx.fillStyle = `rgba(${bg.r}, ${bg.g}, ${bg.b}, ${alpha})`
+        const radius = Math.min(8, Math.floor(padY + 2))
+        if (radius > 0) {
+          ctx.beginPath()
+          ctx.moveTo(rectX + radius, rectY)
+          ctx.lineTo(rectX + rectW - radius, rectY)
+          ctx.quadraticCurveTo(rectX + rectW, rectY, rectX + rectW, rectY + radius)
+          ctx.lineTo(rectX + rectW, rectY + rectH - radius)
+          ctx.quadraticCurveTo(rectX + rectW, rectY + rectH, rectX + rectW - radius, rectY + rectH)
+          ctx.lineTo(rectX + radius, rectY + rectH)
+          ctx.quadraticCurveTo(rectX, rectY + rectH, rectX, rectY + rectH - radius)
+          ctx.lineTo(rectX, rectY + radius)
+          ctx.quadraticCurveTo(rectX, rectY, rectX + radius, rectY)
+          ctx.closePath()
+          ctx.fill()
+        } else {
+          ctx.fillRect(rectX, rectY, rectW, rectH)
+        }
+        ctx.restore()
+      }
+      
+      // 绘制描边（如果有）
+      if (style.strokeColor && style.strokeWidth && style.strokeWidth > 0) {
+        ctx.save()
+        ctx.strokeStyle = style.strokeColor
+        const scaledStrokeWidth = Math.max(0.5, (style.strokeWidth || 1) * fontScale)
+        ctx.lineWidth = scaledStrokeWidth * 2
+        ctx.lineJoin = 'round'
+        ctx.miterLimit = 2
+        ctx.strokeText(text, x, y)
+        ctx.restore()
+      }
+      
+      // 绘制阴影或主文本
+      if (style.shadow && style.shadowColor) {
+        ctx.save()
+        ctx.shadowColor = style.shadowColor
+        ctx.shadowBlur = Math.max(1, 4 * fontScale)
+        ctx.shadowOffsetX = Math.max(0.5, 2 * fontScale)
+        ctx.shadowOffsetY = Math.max(0.5, 2 * fontScale)
+        ctx.fillStyle = style.color || '#000000'
+        ctx.fillText(text, x, y)
+        ctx.restore()
+      } else {
+        ctx.fillStyle = style.color || '#000000'
+        ctx.fillText(text, x, y)
+      }
+      
+    } catch (err) {
+      console.error('drawTextAtPosition error:', err)
+    }
+  }
+
   // 新增工具：将 hex 和 alpha(0-255或0-1) 转为 {r,g,b,a(0-1)}
   const hexToRgba = (hex: string, alpha?: number) => {
     if (!hex) return null
@@ -732,10 +979,29 @@ const StylePreview: React.FC<StylePreviewProps> = ({
 
   useEffect(() => {
     const loadFonts = async () => {
-      await Promise.all([
-        loadFont(titleStyle.fontFamily, titleStyle.fontUrl),
-        loadFont(subtitleStyle.fontFamily, subtitleStyle.fontUrl)
-      ])
+      const fontsToLoad = []
+      
+      // 加载主标题字体
+      if (titleStyle.mainTitle?.fontFamily) {
+        fontsToLoad.push(loadFont(titleStyle.mainTitle.fontFamily, titleStyle.mainTitle.fontUrl))
+      }
+      
+      // 加载副标题字体
+      if (titleStyle.subTitle?.fontFamily) {
+        fontsToLoad.push(loadFont(titleStyle.subTitle.fontFamily, titleStyle.subTitle.fontUrl))
+      }
+      
+      // 兼容旧版本：如果没有主副标题但有旧的fontFamily属性
+      if (!titleStyle.mainTitle && !titleStyle.subTitle && titleStyle.fontFamily) {
+        fontsToLoad.push(loadFont(titleStyle.fontFamily, titleStyle.fontUrl))
+      }
+      
+      // 加载字幕字体
+      if (subtitleStyle.fontFamily) {
+        fontsToLoad.push(loadFont(subtitleStyle.fontFamily, subtitleStyle.fontUrl))
+      }
+      
+      await Promise.all(fontsToLoad)
       // 延迟一下确保字体加载完成
       setTimeout(drawPreview, 100)
     }

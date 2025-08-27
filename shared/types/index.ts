@@ -33,17 +33,70 @@ export type DurationOption = '15s' | '30s' | '30-60s';
 // 语音朗读选项
 export type VoiceOption = 'male' | 'female';
 
+// 主副标题配置（用于单个标题区域内的主副标题）
+export interface TitleConfig {
+  // 主标题
+  mainTitle?: {
+    text?: string;
+    fontSize: number;
+    color: string;
+    fontFamily?: string;
+    fontUrl?: string;
+    bold?: boolean;
+    italic?: boolean;
+    shadow?: boolean;
+    shadowColor?: string;
+    strokeColor?: string;
+    strokeWidth?: number;
+  };
+  // 副标题
+  subTitle?: {
+    text?: string;
+    fontSize: number;
+    color: string;
+    fontFamily?: string;
+    fontUrl?: string;
+    bold?: boolean;
+    italic?: boolean;
+    shadow?: boolean;
+    shadowColor?: string;
+    strokeColor?: string;
+    strokeWidth?: number;
+  };
+  // 整体配置
+  position: 'top' | 'center' | 'bottom' | 'template1';
+  spacing?: number; // 主副标题间距
+  alignment?: 'left' | 'center' | 'right'; // 对齐方式
+  background?: any; // 背景配置
+  
+  // 兼容旧版本的属性
+  color?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  fontUrl?: string;
+  bold?: boolean;
+  italic?: boolean;
+  shadow?: boolean;
+  shadowColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+}
+
 // 样式配置
 export interface StyleConfig {
-  title: {
-    color: string;
-    position: 'top' | 'center' | 'bottom' | 'template1';
-    fontSize: number;
-  };
+  title: TitleConfig;
   subtitle: {
     color: string;
     position: 'top' | 'center' | 'bottom' | 'template1';
     fontSize: number;
+    fontFamily?: string;
+    fontUrl?: string;
+    bold?: boolean;
+    italic?: boolean;
+    shadow?: boolean;
+    shadowColor?: string;
+    strokeColor?: string;
+    strokeWidth?: number;
   };
 }
 

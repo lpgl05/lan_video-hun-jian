@@ -25,26 +25,12 @@ import {
   EyeOutlined,
   BellOutlined
 } from '@ant-design/icons'
-import type { GenerationTask } from '../types'
+import type { GenerationTask, ProjectHistory } from '../types'
 
 interface UserCenterProps {
   onBack: () => void
-}
-
-interface ProjectHistory {
-  id: string
-  name: string
-  status: 'completed' | 'processing' | 'failed'
-  createdAt: string
-  completedAt?: string
-  videoCount: number
-  duration: string
-  videos?: Array<{
-    id: string
-    name: string
-    url: string
-    size: number
-  }>
+  projectHistory?: ProjectHistory[]
+  onViewProject?: (historyItem: ProjectHistory) => void
 }
 
 interface NotificationItem {
@@ -56,53 +42,17 @@ interface NotificationItem {
   read: boolean
 }
 
-const UserCenter: React.FC<UserCenterProps> = ({ onBack }) => {
+const UserCenter: React.FC<UserCenterProps> = ({ onBack, projectHistory = [], onViewProject }) => {
   const [activeTab, setActiveTab] = useState('overview')
-  const [projectHistory, setProjectHistory] = useState<ProjectHistory[]>([])
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const [loading, setLoading] = useState(false)
 
   // 模拟数据加载
   useEffect(() => {
-    loadProjectHistory()
     loadNotifications()
   }, [])
 
-  const loadProjectHistory = () => {
-    // 模拟从localStorage或API获取历史记录
-    const mockHistory: ProjectHistory[] = [
-      {
-        id: '1',
-        name: '旅游宣传片',
-        status: 'completed',
-        createdAt: '2025-01-18 10:30:00',
-        completedAt: '2025-01-18 10:35:00',
-        videoCount: 3,
-        duration: '30s',
-        videos: [
-          { id: '1', name: '旅游片段1.mp4', url: '', size: 1024000 },
-          { id: '2', name: '旅游片段2.mp4', url: '', size: 2048000 },
-        ]
-      },
-      {
-        id: '2',
-        name: '产品介绍视频',
-        status: 'processing',
-        createdAt: '2025-01-18 14:20:00',
-        videoCount: 5,
-        duration: '60s'
-      },
-      {
-        id: '3',
-        name: '教育培训内容',
-        status: 'failed',
-        createdAt: '2025-01-18 09:15:00',
-        videoCount: 2,
-        duration: '30s'
-      }
-    ]
-    setProjectHistory(mockHistory)
-  }
+  // 移除loadProjectHistory，直接使用传入的projectHistory prop
 
   const loadNotifications = () => {
     // 模拟通知数据
@@ -224,7 +174,13 @@ const UserCenter: React.FC<UserCenterProps> = ({ onBack }) => {
         <List.Item
           actions={[
             item.status === 'completed' && (
-              <Button type="link" icon={<EyeOutlined />}>查看</Button>
+              <Button 
+                type="link" 
+                icon={<EyeOutlined />}
+                onClick={() => onViewProject?.(item)}
+              >
+                查看
+              </Button>
             ),
             item.status === 'completed' && (
               <Button type="link" icon={<DownloadOutlined />}>下载</Button>

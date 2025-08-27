@@ -472,7 +472,13 @@ const StylePreview: React.FC<StylePreviewProps> = ({
       
       // 计算字体缩放比例（基于宽度比例，因为后端以宽度为准）
       const fontScale = actualPreviewWidth / actualVideoWidth
-      const rawFontSize = (style && style.fontSize) ? style.fontSize : (type === 'title' ? 64 : 48)
+      const rawFontSize = (style && typeof style.fontSize === 'number') ? style.fontSize : (type === 'title' ? 64 : 48)
+      
+      // 如果字体大小为0，则不显示文本
+      if (rawFontSize <= 0) {
+        return
+      }
+      
       const scaledFontSize = Math.max(6, Math.round(rawFontSize * fontScale)) // 最小字体6px
       
       // 设置字体

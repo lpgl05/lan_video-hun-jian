@@ -116,3 +116,17 @@ export interface UploadProgress {
   status: 'uploading' | 'completed' | 'failed';
   error?: string;
 }
+
+// 项目历史记录
+export interface ProjectHistory {
+  id: string;
+  name: string;
+  status: TaskStatus;
+  createdAt: string;
+  completedAt?: string;
+  videoCount: number;
+  duration: DurationOption;
+  videos?: VideoFile[];
+  project: ProjectConfig; // 保存完整的项目配置
+  task: GenerationTask; // 保存完整的任务信息
+}

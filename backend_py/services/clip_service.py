@@ -286,6 +286,11 @@ def add_text(clip, text, style, font_path=None):
     # 使用 PIL 渲染文本，避免 TextClip 依赖 ImageMagick
     title_style = style.get("title", {}) if isinstance(style, dict) else {}
     fontsize = int(title_style.get("fontSize", 40))
+    
+    # 如果字体大小为0，则不显示标题
+    if fontsize <= 0:
+        return clip
+        
     color = title_style.get("color", "#FFFFFF")
     position = title_style.get("position", "bottom")  # top | center | bottom
 
@@ -664,6 +669,13 @@ def create_title_image(text, width=1080, height=1920, style=None):
     
     title_style = style.get("title", {}) if style else {}
     fontsize = int(title_style.get("fontSize", 64))  # Title字体更大
+    
+    # 如果字体大小为0，则不显示标题
+    if fontsize <= 0:
+        # 创建1x1透明图片
+        img = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+        return img
+        
     color = title_style.get("color", "#FFD700")  # Title默认金色
     
     # 计算实际需要的横幅尺寸

@@ -9,7 +9,8 @@ import type {
   GenerationTask,
   DurationOption,
   VoiceOption,
-  StyleConfig 
+  StyleConfig,
+  ProjectHistory 
 } from '../types'
 import MainLayout from '../components/MainLayout'
 import LoginPage from '../components/LoginPage'
@@ -77,8 +78,58 @@ const VideoMixer: React.FC = () => {
   const [currentTask, setCurrentTask] = useState<GenerationTask | null>(null)
   const [generating, setGenerating] = useState(false)
   
+  // 历史记录状态
+  const [projectHistory, setProjectHistory] = useState<ProjectHistory[]>(() => {
+    // 从localStorage加载历史记录
+    const saved = localStorage.getItem('projectHistory')
+    return saved ? JSON.parse(saved) : []
+  })
+  
   // 模拟未读通知数量
   const [unreadNotifications] = useState(2)
+
+  // 保存历史记录到localStorage
+  const saveHistoryToStorage = (history: ProjectHistory[]) => {
+    localStorage.setItem('projectHistory', JSON.stringify(history))
+  }
+
+  // 添加历史记录
+  const addToHistory = (project: ProjectConfig, task: GenerationTask) => {
+    const historyItem: ProjectHistory = {
+      id: task.id,
+      name: project.name,
+      status: task.status,
+      createdAt: task.createdAt.toISOString(),
+      completedAt: task.status === 'completed' ? task.updatedAt.toISOString() : undefined,
+      videoCount: project.videoCount,
+      duration: project.duration,
+      videos: task.result?.videos ? task.generatedVideos : undefined,
+      project,
+      task
+    }
+
+    const newHistory = [historyItem, ...projectHistory.filter(h => h.id !== task.id)]
+    setProjectHistory(newHistory)
+    saveHistoryToStorage(newHistory)
+  }
+
+  // 更新历史记录中的任务状态
+  const updateHistoryItem = (taskId: string, updatedTask: GenerationTask) => {
+    const newHistory = projectHistory.map(item => {
+      if (item.id === taskId) {
+        return {
+          ...item,
+          status: updatedTask.status,
+          completedAt: updatedTask.status === 'completed' ? updatedTask.updatedAt.toISOString() : item.completedAt,
+          videos: updatedTask.result?.videos ? updatedTask.generatedVideos : item.videos,
+          task: updatedTask
+        }
+      }
+      return item
+    })
+    setProjectHistory(newHistory)
+    saveHistoryToStorage(newHistory)
+  }
 
   // 轮询任务状态
   useEffect(() => {
@@ -90,6 +141,9 @@ const VideoMixer: React.FC = () => {
       try {
         const updatedTask = await getGenerationStatus(currentTask.id)
         setCurrentTask(updatedTask)
+        
+        // 更新历史记录中的任务状态
+        updateHistoryItem(currentTask.id, updatedTask)
         
         if (updatedTask.status === 'completed' || updatedTask.status === 'failed') {
           setGenerating(false)
@@ -142,9 +196,12 @@ const VideoMixer: React.FC = () => {
       const task = await startGeneration(savedProject.id)
       setCurrentTask(task)
       
+      // 3. 添加到历史记录
+      addToHistory(savedProject, task)
+      
       message.success('视频生成任务已启动，请稍候...')
       
-      // 3. 开始轮询任务状态（前端会自动轮询）
+      // 4. 开始轮询任务状态（前端会自动轮询）
       
     } catch (error) {
       message.error('启动生成失败')
@@ -241,6 +298,7 @@ const VideoMixer: React.FC = () => {
   }
 
   const handleReset = () => {
+    // 不清除历史记录，只清除当前任务状态，返回配置页面
     setCurrentTask(null)
     setGenerating(false)
   }
@@ -285,6 +343,22 @@ const VideoMixer: React.FC = () => {
       return (
         <UserCenter 
           onBack={() => setCurrentPage('home')}
+          projectHistory={projectHistory}
+          onViewProject={(historyItem) => {
+            // 恢复项目配置并查看结果
+            const { project, task } = historyItem
+            setProjectName(project.name)
+            setVideos(project.videos)
+            setAudios(project.audios)
+            setPosters(project.posters)
+            setScripts(project.scripts)
+            setDuration(project.duration)
+            setVideoCount(project.videoCount)
+            setVoice(project.voice)
+            setStyle(project.style)
+            setCurrentTask(task)
+            setCurrentPage('home')
+          }}
         />
       )
     }

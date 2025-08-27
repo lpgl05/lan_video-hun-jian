@@ -62,6 +62,12 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
       value: 'MiaobiDuanmu', 
       fontUrl: '/fonts/妙笔段慕体.ttf',
       needsLicense: true
+    },
+    { 
+      label: '思源黑体Heavy', 
+      value: 'SourceHanSansCN-Heavy', 
+      fontUrl: '/fonts/SourceHanSansCN-Heavy.otf',
+      needsLicense: true
     }
   ]
 
@@ -217,12 +223,13 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
           <Col span={8}>
             <label style={{ display: 'block', marginBottom: 4, fontSize: '12px' }}>字体大小</label>
             <InputNumber
-              min={10}
+              min={0}
               max={type === 'title' ? 200 : 120}
               value={fontStyle.fontSize}
-              onChange={(fontSize) => updateFontStyle(type, { fontSize: fontSize || 10 })}
+              onChange={(fontSize) => updateFontStyle(type, { fontSize: fontSize || 0 })}
               style={{ width: '100%', height: '32px', lineHeight: '30px' }}
               addonAfter="px"
+              placeholder="0=不显示"
             />
           </Col>
           <Col span={16}>

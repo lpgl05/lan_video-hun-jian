@@ -237,7 +237,7 @@ const GenerationResult: React.FC<GenerationResultProps> = ({ task, onReset, onNe
                   onClick={onReset}
                   style={{ minWidth: '120px' }}
                 >
-                  重新生成
+                  查看原配置
                 </Button>
                 <Button 
                   onClick={onNewCreation}

@@ -934,7 +934,9 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
         subtitle_overlay_x = "0"
         subtitle_desc = "中部"
     elif subtitle_position == "template1":
-        subtitle_overlay_y = "1372.4"  # 模板位置1：距上边框1372.4像素
+        # 模板位置1：距上边框1372.4像素 - 需要考虑字幕图片内部的偏移
+        # 字幕图片有上下40像素的padding，文字在图片中心，所以需要向上调整
+        subtitle_overlay_y = str(1372.4 - 60)  # 减去字幕图片高度的一半，让文字中心在1372.4位置
         subtitle_overlay_x = "0"  # 模板位置1：水平居中（X=0表示居中）
         subtitle_desc = "模板位置1"
     else:  # bottom
@@ -1735,7 +1737,8 @@ def create_9_16_video_with_dynamic_subtitles_ffmpeg(source_video, title_image, s
         subtitle_overlay_y = f"(H-h)/2+100"
         subtitle_overlay_x = "0"
     elif subtitle_position == "template1":
-        subtitle_overlay_y = "1372.4"  # 模板位置1：距上边框1372.4像素
+        # 模板位置1：距上边框1372.4像素 - 需要考虑字幕图片内部的偏移
+        subtitle_overlay_y = str(1372.4 - 60)  # 减去字幕图片高度的一半，让文字中心在1372.4位置
         subtitle_overlay_x = "0"  # 模板位置1：水平居中（X=0表示居中）
     else:
         subtitle_overlay_y = f"H-h-{subtitle_margin}"

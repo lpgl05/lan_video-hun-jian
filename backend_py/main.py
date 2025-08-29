@@ -22,6 +22,10 @@ app.include_router(upload_router)
 from routes.clip import router as clip_router
 app.include_router(clip_router)
 
+# 添加静态文件服务 - 支持个人创作模式的本地文件访问
+import os
+app.mount("/local-files", StaticFiles(directory="uploads"), name="local-files")
+
 @app.get("/api/ping")
 def ping():
     return {"msg": "pong"}

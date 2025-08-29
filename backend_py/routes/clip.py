@@ -2,7 +2,7 @@ import asyncio
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
 from typing import List, Dict, Any
-from services.clip_service import process_clips, process_clips001
+from services.clip_service import process_clips, process_clips001, process_clips_optimized
 from uuid import uuid4
 from datetime import datetime
 
@@ -126,10 +126,12 @@ async def start_generation(req: StartGenerationRequest, background_tasks: Backgr
 
 async def process_video_generation(task_id: str, clip_req: ClipRequest):
     """后台异步处理视频生成"""
+    start_time = datetime.now()
     try:
         # 1. 初始化任务
         _task_storage[task_id]["progress"] = 5
         _task_storage[task_id]["updatedAt"] = datetime.now().isoformat()
+        _task_storage[task_id]["startTime"] = start_time.isoformat()
         
         # 2. 开始处理视频
         _task_storage[task_id]["progress"] = 20
@@ -146,15 +148,41 @@ async def process_video_generation(task_id: str, clip_req: ClipRequest):
         if hasattr(clip_req.style, 'subtitle'):
             print(f"字幕样式: {clip_req.style.subtitle}")
         print("==================")
-        #result = await process_clips(clip_req)
-        result = await process_clips001(clip_req)
+        # 🎯 智能选择处理模式：基于创作模式和功能需求
+        style_dict = clip_req.style.dict() if hasattr(clip_req.style, "dict") else clip_req.style
+        creation_mode = style_dict.get("creationMode", "personal")  # 默认个人创作模式
+        has_poster = hasattr(clip_req, 'posters') and clip_req.posters and len(clip_req.posters) > 0
+        
+        print(f"🎯 创作模式: {'👤 个人创作' if creation_mode == 'personal' else '👥 团队协作'}")
+        
+        # 🚀 智能选择处理模式
+        if creation_mode == "personal":
+            # 个人创作模式：优先使用本地处理（未来实现）
+            if has_poster:
+                print("🎬 个人模式+海报：使用高级处理（PNG动态字幕）")
+                result = await process_clips001(clip_req)
+            else:
+                print("🚀 个人模式：使用优化处理（ASS字幕 + 智能缓存）")
+                result = await process_clips_optimized(clip_req)
+        else:
+            # 团队协作模式：使用OSS云端处理
+            if has_poster:
+                print("🎬 团队模式+海报：使用高级处理（PNG动态字幕）")
+                result = await process_clips001(clip_req)
+            else:
+                print("🚀 团队模式：使用优化处理（ASS字幕 + 智能缓存）")
+                result = await process_clips_optimized(clip_req)
         
         # 4. 处理完成，上传中
         _task_storage[task_id]["progress"] = 90
         _task_storage[task_id]["updatedAt"] = datetime.now().isoformat()
         
         if result.get("success"):
-            # 5. 完成
+            # 5. 完成 - 计算耗时
+            end_time = datetime.now()
+            duration_seconds = (end_time - start_time).total_seconds()
+            duration_minutes = duration_seconds / 60
+            
             _task_storage[task_id].update({
                 "status": "completed",
                 "progress": 100,
@@ -162,28 +190,46 @@ async def process_video_generation(task_id: str, clip_req: ClipRequest):
                     "videos": [video["url"] for video in result["videos"]],
                     "previewUrl": result["videos"][0]["url"] if result["videos"] else None
                 },
-                "updatedAt": datetime.now().isoformat()
+                "updatedAt": end_time.isoformat(),
+                "endTime": end_time.isoformat(),
+                "durationSeconds": round(duration_seconds, 1),
+                "durationMinutes": round(duration_minutes, 1)
             })
-            print(f"任务 {task_id} 成功完成")
+            print(f"任务 {task_id} 成功完成，耗时 {duration_minutes:.1f} 分钟")
         else:
-            # 失败处理
+            # 失败处理 - 也计算耗时
+            end_time = datetime.now()
+            duration_seconds = (end_time - start_time).total_seconds()
+            duration_minutes = duration_seconds / 60
+            
             error_msg = result.get("error", "处理失败")
-            print(f"任务 {task_id} 处理失败: {error_msg}")
+            print(f"任务 {task_id} 处理失败: {error_msg}，耗时 {duration_minutes:.1f} 分钟")
             _task_storage[task_id].update({
                 "status": "failed",
                 "progress": 0,
                 "error": error_msg,
-                "updatedAt": datetime.now().isoformat()
+                "updatedAt": end_time.isoformat(),
+                "endTime": end_time.isoformat(),
+                "durationSeconds": round(duration_seconds, 1),
+                "durationMinutes": round(duration_minutes, 1)
             })
             
     except Exception as e:
+        # 异常处理 - 也计算耗时
+        end_time = datetime.now()
+        duration_seconds = (end_time - start_time).total_seconds()
+        duration_minutes = duration_seconds / 60
+        
         error_msg = str(e)
-        print(f"任务 {task_id} 异常: {error_msg}")
+        print(f"任务 {task_id} 异常: {error_msg}，耗时 {duration_minutes:.1f} 分钟")
         _task_storage[task_id].update({
             "status": "failed",
             "progress": 0,
             "error": error_msg,
-            "updatedAt": datetime.now().isoformat()
+            "updatedAt": end_time.isoformat(),
+            "endTime": end_time.isoformat(),
+            "durationSeconds": round(duration_seconds, 1),
+            "durationMinutes": round(duration_minutes, 1)
         })
 
 @router.get("/api/generation/status/{task_id}")

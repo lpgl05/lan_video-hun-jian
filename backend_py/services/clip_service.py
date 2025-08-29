@@ -6,6 +6,10 @@ from models.oss_client import OSSClient
 import subprocess
 import re
 
+# 导入新的优化模块
+from services.ass_subtitle_service import ass_generator
+from services.smart_material_cache import smart_cache
+
 # 视频相关
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.VideoClip import TextClip, ColorClip
@@ -239,6 +243,18 @@ def rgba_to_ass_backcolour(rgba):
     return f"&H{aa}{bb}{gg}{rr}"
 
 async def download_video(url):
+    # 🎯 检查是否为本地文件URL（个人创作模式）
+    if url.startswith("http://127.0.0.1:8000/local-files/"):
+        # 本地文件路径转换
+        relative_path = url.replace("http://127.0.0.1:8000/local-files/", "")
+        local_file_path = os.path.join("uploads", relative_path)
+        
+        if os.path.exists(local_file_path):
+            print(f"👤 个人创作模式，直接使用本地视频文件: {local_file_path}")
+            return local_file_path
+        else:
+            raise FileNotFoundError(f"本地视频文件不存在: {local_file_path}")
+    
     filename = url.split("/")[-1]
     print('---------------------------------------')
     print(url)
@@ -250,15 +266,42 @@ async def download_video(url):
     return local_file
 
 async def download_audio(url):
+    # 🎯 检查是否为本地文件URL（个人创作模式）
+    if url.startswith("http://127.0.0.1:8000/local-files/"):
+        # 本地文件路径转换
+        relative_path = url.replace("http://127.0.0.1:8000/local-files/", "")
+        local_file_path = os.path.join("uploads", relative_path)
+        
+        if os.path.exists(local_file_path):
+            print(f"👤 个人创作模式，直接使用本地音频文件: {local_file_path}")
+            return local_file_path
+        else:
+            raise FileNotFoundError(f"本地音频文件不存在: {local_file_path}")
+    
     filename = url.split("/")[-1]
+    print('---------------------------------------')
+    print(f"下载音频: {url}")
+    print(f"文件名: {filename}")
 
     local_file = DOWNLOAD_AUDIO_PATH + "/" + filename
-    print(local_file)
-    await oss_client.download_video(url, local_file)
+    print(f"本地路径: {local_file}")
+    await oss_client.download_video(url, local_file)  # OSS客户端只有download_video方法
     return local_file
 
 async def download_poster(url):
     """下载海报图片到本地"""
+    # 🎯 检查是否为本地文件URL（个人创作模式）
+    if url.startswith("http://127.0.0.1:8000/local-files/"):
+        # 本地文件路径转换
+        relative_path = url.replace("http://127.0.0.1:8000/local-files/", "")
+        local_file_path = os.path.join("uploads", relative_path)
+        
+        if os.path.exists(local_file_path):
+            print(f"👤 个人创作模式，直接使用本地海报文件: {local_file_path}")
+            return local_file_path
+        else:
+            raise FileNotFoundError(f"本地海报文件不存在: {local_file_path}")
+    
     filename = url.split("/")[-1]
     
     # 确保海报下载目录存在
@@ -481,6 +524,20 @@ def build_montage_clips(source_paths, target_duration, count):
     return outputs
 
 async def process_clips(req):
+    # 导入性能监控（如果可用）
+    try:
+        from tools.performance_monitor import start_video_generation_monitoring, checkpoint, finish_video_generation_monitoring
+        # 开始性能监控
+        start_video_generation_monitoring()
+        use_monitoring = True
+    except ImportError:
+        print("性能监控不可用，继续正常处理")
+        def checkpoint(name, info=None):
+            print(f"处理检查点: {name}")
+        def finish_video_generation_monitoring():
+            print("处理完成")
+        use_monitoring = False
+    
     video_count = req.videoCount
     duration_sec = parse_duration(req.duration)
     min_duration = duration_sec
@@ -490,9 +547,13 @@ async def process_clips(req):
     scripts = [s for s in req.scripts if s.selected]
     style = req.style.dict() if hasattr(req.style, "dict") else req.style
 
+    checkpoint("参数解析完成", f"视频数量:{video_count}, 时长:{duration_sec}s")
+
     # 下载所有视频和音频到本地
     local_video_paths = [await download_video(v.url) for v in video_files]
     local_audio_paths = [await download_audio(a.url) for a in audio_files]
+    
+    checkpoint("资源下载完成", f"视频:{len(local_video_paths)}个, 音频:{len(local_audio_paths)}个")
 
     print("=======================================")
     print(local_video_paths)
@@ -514,11 +575,15 @@ async def process_clips(req):
             # 随机字幕
             script = random.choice(scripts).content if scripts else ""
             clip = add_text(clip, script, style)  # 让函数内部自动选择字体
+            
+            checkpoint(f"视频{i+1}片段处理完成", f"时长:{clip.duration:.1f}s")
 
             # 生成TTS语音文件
             tts_filename = f"tts_{clip_id}.wav"
             tts_path = os.path.join(tts_temp_dir, tts_filename)
             await generate_tts_audio(script, tts_path)
+            
+            checkpoint(f"视频{i+1}TTS生成完成")
 
             # 新增：确保视频时长至少与 TTS 时长一致，避免配音被截断
             try:
@@ -548,7 +613,14 @@ async def process_clips(req):
                 clip = add_bgm(clip, bgm_path)
                 
             # 导出视频
-            clip.write_videofile(clip_path, codec="libx264", audio_codec="aac", verbose=False, logger=None)
+            try:
+                clip.write_videofile(clip_path, codec="libx264", audio_codec="aac", verbose=False, logger=None)
+                print(f"视频导出成功: {clip_path}")
+            except Exception as e:
+                print(f"视频导出失败: {e}")
+                raise e
+            
+            checkpoint(f"视频{i+1}导出完成", f"文件大小:{os.path.getsize(clip_path)/(1024*1024):.1f}MB")
             
             # 将导出的视频上传到oss上
             try:
@@ -570,11 +642,15 @@ async def process_clips(req):
                 video_size = len(video_content)
                 print(f"视频已上传到OSS: {oss_url}")
                 
+                checkpoint(f"视频{i+1}上传完成", f"OSS URL: {oss_url[:50]}...")
+                
             except Exception as e:
                 print(f"OSS上传失败: {str(e)}")
                 # 如果OSS上传失败，使用本地路径
                 video_url = f"/outputs/clips/{clip_name}"
                 video_size = os.path.getsize(clip_path) if os.path.exists(clip_path) else 0
+                
+                checkpoint(f"视频{i+1}上传失败", f"错误: {str(e)}")
 
             result_videos.append({
                 "id": clip_id,
@@ -584,6 +660,10 @@ async def process_clips(req):
                 "duration": duration_sec,
                 "uploadedAt": None
             })
+        # 完成性能监控
+        if use_monitoring:
+            finish_video_generation_monitoring()
+        
         return {
             "success": True,
             "message": "视频剪辑处理完成",
@@ -1578,11 +1658,332 @@ def create_dynamic_subtitles(sentences, total_duration, video_width=1080, style=
     print(f"创建了{len(subtitle_clips)}个动态字幕片段，总时长{total_duration}秒")
     return subtitle_clips
 
+async def process_clips_optimized(req):
+    """
+    【优化版本】视频处理方法 - 使用ASS字幕 + 智能缓存
+    性能目标：3-5分钟生成，保留所有高级功能
+    """
+    import time
+    start_time = time.time()
+
+    video_count = req.videoCount
+    duration_sec = parse_duration(req.duration)
+    video_files = req.videos
+    audio_files = req.audios
+    poster_files = req.posters if hasattr(req, 'posters') else []
+    scripts = [s for s in req.scripts if s.selected]
+    style = req.style.dict() if hasattr(req.style, "dict") else req.style
+
+    # 项目的标题和样式
+    title = req.name
+    title_position = style.get("title", {}).get("position", "top")
+    subtitle_position = style.get("subtitle", {}).get("position", "bottom")
+    
+    # 支持主副标题：优先使用主标题的文本，如果没有则使用项目名称
+    title_config = style.get("title", {})
+    if title_config.get("mainTitle") and title_config.get("mainTitle", {}).get("text"):
+        title = title_config["mainTitle"]["text"]
+    
+    print(f"🚀 开始优化版本视频生成...")
+    print(f"   项目标题: {title}")
+    print(f"   视频数量: {video_count}")
+    print(f"   目标时长: {duration_sec}秒")
+    print(f"   脚本数量: {len(scripts)}")
+    print("=" * 50)
+
+    # 🎯 第一步：智能素材预加载（并行下载）
+    print("📥 第一步：智能预加载素材...")
+    preload_start = time.time()
+    
+    # 收集所有素材URL
+    all_urls = []
+    all_urls.extend([v.url for v in video_files])
+    all_urls.extend([a.url for a in audio_files])
+    if poster_files:
+        all_urls.extend([p.url for p in poster_files])
+    
+    # 并行预加载所有素材
+    url_to_path = await smart_cache.preload_materials(all_urls)
+    
+    preload_time = time.time() - preload_start
+    print(f"✅ 素材预加载完成，耗时: {preload_time:.1f}秒")
+    print(f"   成功加载: {len(url_to_path)}/{len(all_urls)} 个素材")
+
+    # 映射到本地路径
+    local_video_paths = [url_to_path.get(v.url) for v in video_files if url_to_path.get(v.url)]
+    local_audio_paths = [url_to_path.get(a.url) for a in audio_files if url_to_path.get(a.url)]
+    
+    local_poster_path = None
+    if poster_files and len(poster_files) > 0:
+        poster_url = poster_files[0].url
+        local_poster_path = url_to_path.get(poster_url)
+        if local_poster_path:
+            print(f"🖼️  海报加载完成: {local_poster_path}")
+
+    if not local_video_paths:
+        return {"success": False, "error": "找不到可用的视频文件"}
+
+    result_videos = []
+
+    try:
+        ffmpeg = find_ffmpeg()
+        
+        # 🎯 第二步：获取视频信息（批量处理）
+        print("📊 第二步：分析视频信息...")
+        video_info_start = time.time()
+        
+        video_infos = []
+        for video_path in local_video_paths:
+            if os.path.exists(video_path):
+                info = get_video_info(video_path)
+                video_infos.append(info)
+
+        if not video_infos:
+            return {"success": False, "error": "无有效视频文件"}
+        
+        video_info_time = time.time() - video_info_start
+        print(f"✅ 视频信息分析完成，耗时: {video_info_time:.1f}秒")
+
+        # 🎯 第三步：批量生成视频
+        print("🎬 第三步：开始批量生成视频...")
+        generation_start = time.time()
+
+        for i in range(video_count):
+            clip_start = time.time()
+            clip_id = str(uuid4())[:8]
+            
+            print(f"\n🎞️  处理视频 {i+1}/{video_count} (ID: {clip_id})")
+            
+            # 3.1 蒙太奇拼接（使用FFmpeg，更快）
+            montage_start = time.time()
+            temp_clips = []
+            n_videos = len(local_video_paths)
+            base_duration = duration_sec // n_videos
+            remaining_duration = duration_sec % n_videos
+            
+            for idx, (video_path, video_info) in enumerate(zip(local_video_paths, video_infos)):
+                segment_duration = base_duration
+                if idx < remaining_duration:
+                    segment_duration += 1
+                
+                if segment_duration <= 0:
+                    continue
+                    
+                max_segment = min(segment_duration, int(video_info['duration']) - 1)
+                if max_segment <= 0:
+                    continue
+                
+                max_start = max(0, video_info['duration'] - max_segment - 0.5)
+                start_time = random.uniform(0, max_start) if max_start > 0 else 0
+                
+                temp_clip_path = os.path.join(OUTPUT_DIR, f"temp_segment_{clip_id}_{idx}.mp4")
+                
+                if extract_random_clip_ffmpeg(video_path, temp_clip_path, start_time, max_segment):
+                    temp_clips.append(temp_clip_path)
+            
+            if not temp_clips:
+                continue
+            
+            montage_clip_path = os.path.join(OUTPUT_DIR, f"montage_clip_{clip_id}.mp4")
+            
+            if len(temp_clips) == 1:
+                import shutil
+                shutil.copy2(temp_clips[0], montage_clip_path)
+            else:
+                if not concat_videos_ffmpeg(temp_clips, montage_clip_path):
+                    continue
+            
+            montage_time = time.time() - montage_start
+            print(f"   ✅ 蒙太奇拼接完成，耗时: {montage_time:.1f}秒")
+
+            # 3.2 生成Title图片（保留原功能）
+            title_start = time.time()
+            title_image_path = os.path.join(SUBTITLE_TEMP_DIR, f"title_{clip_id}.png")
+            title_img = create_title_image(title, 1080, 1920, style)
+            title_img.save(title_image_path)
+            title_time = time.time() - title_start
+            print(f"   ✅ 标题图片生成完成，耗时: {title_time:.1f}秒")
+
+            # 3.3 准备脚本文本
+            script = random.choice(scripts).content if scripts else "这是一段精彩的视频内容，展现了多个精彩瞬间的完美融合。通过蒙太奇技术，我们将不同的视频片段巧妙地组合在一起。"
+            
+            # 3.4 生成TTS音频
+            tts_start = time.time()
+            tts_path = os.path.join(TTS_TEMP_DIR, f"tts_{clip_id}.wav")
+            voice = 'zh-CN-YunxiNeural' if hasattr(req, 'voice') and req.voice == 'male' else 'zh-CN-XiaoxiaoNeural'
+            await generate_tts_audio(script, tts_path, voice)
+            tts_time = time.time() - tts_start
+            print(f"   ✅ TTS语音生成完成，耗时: {tts_time:.1f}秒")
+
+            # 🚀 3.5 生成ASS字幕（关键优化）
+            ass_start = time.time()
+            
+            # 智能分割文本
+            sentences = split_text_into_screen_friendly_sentences(script, 1080, style)
+            print(f"   📝 智能分屏分割成{len(sentences)}个片段")
+            
+            # 读取TTS实际时长
+            try:
+                from moviepy.audio.io.AudioFileClip import AudioFileClip
+                audio_clip_tmp = AudioFileClip(tts_path)
+                actual_tts_duration = audio_clip_tmp.duration
+                audio_clip_tmp.close()
+                
+                # 使用TTS实际时长，确保字幕时间匹配
+                target_duration = max(duration_sec, actual_tts_duration)
+                print(f"   🎵 TTS时长: {actual_tts_duration:.1f}s，目标时长: {target_duration:.1f}s")
+            except Exception as e:
+                print(f"   ⚠️  读取TTS时长失败: {e}")
+                target_duration = duration_sec
+            
+            # 🚀 生成ASS字幕文件（替代PNG图片）
+            ass_subtitle_path = os.path.join(SUBTITLE_TEMP_DIR, f"subtitle_{clip_id}.ass")
+            ass_generator.create_ass_file(
+                sentences=sentences,
+                total_duration=target_duration,
+                style_config=style,
+                output_path=ass_subtitle_path
+            )
+            
+            ass_time = time.time() - ass_start
+            print(f"   ✅ ASS字幕生成完成，耗时: {ass_time:.1f}秒")
+
+            # 3.6 最终视频合成（使用ASS字幕）
+            final_start = time.time()
+            final_output = os.path.join(OUTPUT_DIR, f"optimized_{clip_id}.mp4")
+            
+            # 处理背景音乐
+            bgm_audio = random.choice(local_audio_paths) if local_audio_paths else None
+            silence_path = None
+            if not bgm_audio or not os.path.exists(bgm_audio):
+                silence_path = os.path.join(TTS_TEMP_DIR, f"silence_{clip_id}.wav")
+                create_silence_audio(target_duration, silence_path)
+                bgm_audio = silence_path
+                print(f"   🔇 生成静音音频: {silence_path}")
+
+            # 🚀 使用ASS字幕的FFmpeg合成（性能关键）
+            try:
+                success = create_optimized_video_with_ass_subtitles(
+                    source_video=montage_clip_path,
+                    title_image=title_image_path,
+                    ass_subtitle=ass_subtitle_path,
+                    tts_audio=tts_path,
+                    bgm_audio=bgm_audio,
+                    output_path=final_output,
+                    duration=target_duration,
+                    title_position=title_position,
+                    poster_image=local_poster_path
+                )
+                
+                final_time = time.time() - final_start
+                print(f"   ✅ 视频合成完成，耗时: {final_time:.1f}秒")
+                
+                if not success:
+                    print(f"   ❌ FFmpeg处理失败，跳过视频{i+1}")
+                    continue
+                    
+            except Exception as e:
+                print(f"   ❌ 视频合成异常: {e}")
+                print(f"   跳过视频{i+1}")
+                continue
+            
+            # 只有成功才会执行到这里
+            # 上传到OSS
+            upload_start = time.time()
+            try:
+                clip_name = f"optimized_{clip_id}.mp4"
+                with open(final_output, 'rb') as f:
+                    video_content = f.read()
+                
+                oss_url = await oss_client.upload_to_oss(
+                    file_buffer=video_content,
+                    original_filename=clip_name,
+                    folder=OSS_UPLOAD_FINAL_VEDIO
+                )
+                
+                video_url = oss_url
+                video_size = len(video_content)
+                os.remove(final_output)
+                
+                upload_time = time.time() - upload_start
+                print(f"   ✅ OSS上传完成，耗时: {upload_time:.1f}秒")
+                
+            except Exception as e:
+                print(f"   ❌ OSS上传失败: {str(e)}")
+                video_url = f"/outputs/clips/optimized_{clip_id}.mp4"
+                video_size = os.path.getsize(final_output) if os.path.exists(final_output) else 0
+
+            # 清理临时文件
+            cleanup_files = temp_clips + [montage_clip_path, title_image_path, tts_path, ass_subtitle_path]
+            if silence_path:
+                cleanup_files.append(silence_path)
+            
+            for temp_file in cleanup_files:
+                if os.path.exists(temp_file):
+                    try:
+                        os.remove(temp_file)
+                        print(f"   🗑️ 清理: {os.path.basename(temp_file)}")
+                    except Exception as e:
+                        print(f"   ⚠️ 清理失败: {temp_file} - {e}")
+            
+            result_videos.append({
+                "id": clip_id,
+                "name": f"optimized_{clip_id}.mp4",
+                "url": video_url,
+                "size": video_size,
+                "duration": target_duration,
+                "uploadedAt": None
+            })
+            
+            clip_time = time.time() - clip_start
+            print(f"   🎉 视频{i+1}完成，总耗时: {clip_time:.1f}秒")
+                
+        generation_time = time.time() - generation_start
+        total_time = time.time() - start_time
+        
+        print("\n" + "=" * 50)
+        print("🎊 优化版本生成完成！")
+        print(f"📊 性能统计:")
+        print(f"   素材预加载: {preload_time:.1f}秒")
+        print(f"   视频信息分析: {video_info_time:.1f}秒") 
+        print(f"   视频生成: {generation_time:.1f}秒")
+        print(f"   总耗时: {total_time:.1f}秒")
+        print(f"   平均每个视频: {generation_time/max(video_count,1):.1f}秒")
+        print(f"   成功生成: {len(result_videos)}/{video_count} 个视频")
+        
+        # 检查是否有视频生成成功
+        if not result_videos:
+            error_msg = f"视频生成失败：请求生成{video_count}个视频，但没有任何视频成功生成"
+            print(f"❌ {error_msg}")
+            return {"success": False, "error": error_msg}
+        
+        return {
+            "success": True,
+            "message": f"优化版本视频处理完成，总耗时{total_time:.1f}秒，成功生成{len(result_videos)}/{video_count}个视频",
+            "videos": result_videos,
+            "performance_stats": {
+                "total_time": total_time,
+                "preload_time": preload_time,
+                "generation_time": generation_time,
+                "videos_generated": len(result_videos),
+                "videos_requested": video_count
+            }
+        }
+                
+    except Exception as e:
+        import traceback
+        error_msg = f"优化版本视频生成异常: {str(e)}"
+        print(f"❌ {error_msg}")
+        print("详细错误信息:")
+        traceback.print_exc()
+        return {"success": False, "error": error_msg}
+
 async def process_clips001(req):
     """
     【FFmpeg版本】视频处理方法 - 支持动态字幕逐句显示
     """
     import time
+    from services.smart_material_cache import smart_cache
 
     video_count = req.videoCount
     duration_sec = parse_duration(req.duration)
@@ -1605,15 +2006,33 @@ async def process_clips001(req):
     print(f"使用标题: {title}")
     print(f"标题配置: {title_config}")
 
-    # 下载所有视频、音频和海报到本地
-    local_video_paths = [await download_video(v.url) for v in video_files]
-    local_audio_paths = [await download_audio(a.url) for a in audio_files]
+    # 🚀 使用智能缓存并行下载所有素材
+    print("📥 使用智能缓存下载素材...")
+    download_start = time.time()
+    
+    # 收集所有素材URL
+    all_urls = []
+    all_urls.extend([v.url for v in video_files])
+    all_urls.extend([a.url for a in audio_files])
+    if poster_files:
+        all_urls.extend([p.url for p in poster_files])
+    
+    # 并行下载所有素材
+    url_to_path = await smart_cache.preload_materials(all_urls)
+    
+    download_time = time.time() - download_start
+    print(f"✅ 智能缓存下载完成，耗时: {download_time:.1f}秒")
+    
+    # 映射到本地路径
+    local_video_paths = [url_to_path.get(v.url) for v in video_files if url_to_path.get(v.url)]
+    local_audio_paths = [url_to_path.get(a.url) for a in audio_files if url_to_path.get(a.url)]
     
     local_poster_path = None
     if poster_files and len(poster_files) > 0:
         poster_url = poster_files[0].url
-        local_poster_path = await download_poster(poster_url)
-        print(f"海报下载完成: {local_poster_path}")
+        local_poster_path = url_to_path.get(poster_url)
+        if local_poster_path:
+            print(f"🖼️  海报加载完成: {local_poster_path}")
 
     print("=======================================")
     print("包含：Title + 动态字幕(智能分屏显示) + TTS语音 + 背景音乐 + 海报背景")
@@ -2070,6 +2489,105 @@ def create_fallback_static_subtitle_video(source_video, title_image, subtitle_im
         tts_audio, bgm_audio, output_path, duration, 
         title_position, subtitle_position, poster_image
     )
+
+def create_optimized_video_with_ass_subtitles(source_video, title_image, ass_subtitle, tts_audio, bgm_audio, output_path, duration, title_position="top", poster_image=None):
+    """
+    使用ASS字幕的优化视频合成
+    性能优化：单次FFmpeg调用，ASS字幕烧录
+    """
+    ffmpeg = find_ffmpeg()
+    
+    target_width = 1080
+    target_height = 1920
+    
+    # 计算Title位置
+    title_margin = 200
+    if title_position == "top":
+        title_overlay_y = title_margin
+    elif title_position == "center":
+        title_overlay_y = f"(H-h)/2-100"
+    else:
+        title_overlay_y = f"H-h-{title_margin}"
+    
+    print(f"🎬 ASS字幕视频合成:")
+    print(f"   源视频: {source_video}")
+    print(f"   ASS字幕: {ass_subtitle}")
+    print(f"   Title位置: {title_position}")
+    print(f"   海报背景: {'是' if poster_image else '否'}")
+    
+    # 🚀 优化后的FFmpeg滤镜链 - 简化且高效
+    if poster_image and poster_image != "" and os.path.exists(poster_image):
+        # 有海报背景的版本
+        filter_complex = f"[4:v]scale={target_width}:{target_height}:force_original_aspect_ratio=increase,crop={target_width}:{target_height}[bg];" \
+                        f"[0:v]scale={target_width}:{target_width*9//16}[fg];" \
+                        f"[bg][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];" \
+                        f"[bg_with_fg]subtitles='{ass_subtitle.replace('\\', '/')}'[with_subtitles];" \
+                        f"[with_subtitles][1:v]overlay=0:{title_overlay_y}[video_out];" \
+                        f"[2:a]volume=0.8[tts];[3:a]volume=0.15[bgm];" \
+                        f"[tts][bgm]amix=inputs=2:duration=first[audio_out]"
+        
+        inputs = [
+            ffmpeg, '-y',
+            '-stream_loop', '-1', '-i', source_video,  # 输入0: 源视频
+            '-loop', '1', '-i', title_image,           # 输入1: Title图片
+            '-i', tts_audio,                           # 输入2: TTS音频
+            '-i', bgm_audio,                           # 输入3: BGM音频
+            '-loop', '1', '-i', poster_image,          # 输入4: 海报背景
+        ]
+    else:
+        # 无海报背景的版本（简化模糊背景）
+        filter_complex = f"[0:v]scale={target_width}:{target_height}:force_original_aspect_ratio=increase,crop={target_width}:{target_height},boxblur=20:20[bg];" \
+                        f"[0:v]scale={target_width}:{target_width*9//16}[fg];" \
+                        f"[bg][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];" \
+                        f"[bg_with_fg]subtitles='{ass_subtitle.replace('\\', '/')}'[with_subtitles];" \
+                        f"[with_subtitles][1:v]overlay=0:{title_overlay_y}[video_out];" \
+                        f"[2:a]volume=0.8[tts];[3:a]volume=0.15[bgm];" \
+                        f"[tts][bgm]amix=inputs=2:duration=first[audio_out]"
+        
+        inputs = [
+            ffmpeg, '-y',
+            '-stream_loop', '-1', '-i', source_video,  # 输入0: 源视频
+            '-loop', '1', '-i', title_image,           # 输入1: Title图片
+            '-i', tts_audio,                           # 输入2: TTS音频
+            '-i', bgm_audio,                           # 输入3: BGM音频
+        ]
+    
+    # 构建完整命令 - 优化参数提升速度
+    cmd = inputs + [
+        '-filter_complex', filter_complex,
+        '-map', '[video_out]',
+        '-map', '[audio_out]',
+        '-t', str(duration),
+        '-preset', 'veryfast',  # 使用veryfast预设最大化速度
+        '-c:v', 'libx264',
+        '-crf', '28',  # 稍微降低质量换取速度
+        '-c:a', 'aac',
+        '-b:a', '128k',  # 降低音频比特率
+        '-threads', str(os.cpu_count()),
+        '-movflags', '+faststart',
+        '-avoid_negative_ts', 'make_zero',  # 避免时间戳问题
+        '-fflags', '+genpts',  # 生成时间戳
+        output_path
+    ]
+    
+    try:
+        print("   ⚡ 开始ASS字幕FFmpeg处理...")
+        
+        # 打印命令用于调试（去掉敏感路径信息）
+        cmd_debug = [item.replace(os.getcwd(), '.') for item in cmd]
+        print(f"   🔧 FFmpeg命令: {' '.join(cmd_debug[:10])}...")
+        
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"   ❌ FFmpeg错误: {result.stderr}")
+            return False
+        
+        print("   ✅ ASS字幕FFmpeg处理完成")
+        return True
+        
+    except Exception as e:
+        print(f"   ❌ FFmpeg执行失败: {e}")
+        return False
 
 def find_ffmpeg():
     """查找FFmpeg可执行文件"""

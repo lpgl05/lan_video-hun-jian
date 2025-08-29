@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Card, Input, Select, Row, Col, Space, ColorPicker, Switch, InputNumber, Button, Modal, Upload } from 'antd'
 import { UploadOutlined, FontSizeOutlined } from '@ant-design/icons'
-import type { DurationOption, VoiceOption, StyleConfig, FontStyle, TitleConfig, PosterFile } from '../types'
+import type { DurationOption, VoiceOption, StyleConfig, FontStyle, TitleConfig, PosterFile, AdvancedConfig } from '../types'
 import StylePreview from './StylePreview'
 import PosterUpload from './PosterUpload'
 import '../styles/FontStyles.css'
@@ -91,19 +91,29 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
     if (titleSection.color && titleSection.fontSize !== undefined && !titleSection.mainTitle && !titleSection.subTitle) {
       titleSection.mainTitle = {
         text: '',
-        fontSize: titleSection.fontSize || 64,
-        color: titleSection.color || '#000000',
-        fontFamily: titleSection.fontFamily || 'SourceHanSansCN-Heavy'
+        fontSize: titleSection.fontSize || 0,  // 主标题默认关闭
+        color: titleSection.color || '#ffffff',  // 主标题默认白色
+        fontFamily: titleSection.fontFamily || 'SourceHanSansCN-Heavy'  // 默认思源黑体Heavy
       }
     }
     
-    // 确保主标题默认值
+    // 确保主标题默认值（默认关闭）
     if (!titleSection.mainTitle) {
       titleSection.mainTitle = {
         text: '',
-        fontSize: 64,
-        color: '#000000',
-        fontFamily: 'SourceHanSansCN-Heavy'
+        fontSize: 0,  // 主标题默认关闭
+        color: '#ffffff',  // 主标题默认白色
+        fontFamily: 'SourceHanSansCN-Heavy'  // 默认思源黑体Heavy
+      }
+    }
+    
+    // 确保副标题默认值（默认关闭）
+    if (!titleSection.subTitle) {
+      titleSection.subTitle = {
+        text: '',
+        fontSize: 0,  // 副标题默认关闭
+        color: '#ffff00',  // 副标题默认黄色
+        fontFamily: 'SourceHanSansCN-Heavy'  // 默认思源黑体Heavy
       }
     }
     
@@ -134,8 +144,8 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
     subtitleSection.background = subBgObj
     subtitleSection.background_color = subtitleSection.background_color || subBgObj.background_color
     subtitleSection.background_opacity = subtitleSection.background_opacity ?? subBgObj.background_opacity
-    subtitleSection.color = subtitleSection.color || '#ffffff'
-    subtitleSection.position = subtitleSection.position || 'template1'
+    subtitleSection.color = subtitleSection.color || '#ffffff'  // 字幕默认白色
+    subtitleSection.position = subtitleSection.position || 'template1'  // 默认模板位置1（横屏视频）
     subtitleSection.fontSize = subtitleSection.fontSize ?? 60
     subtitleSection.fontFamily = subtitleSection.fontFamily || 'SourceHanSansCN-Heavy'
     s.subtitle = subtitleSection
@@ -311,7 +321,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                   updateMainTitleStyle({ 
                     text: titleConfig.mainTitle?.text || '', 
                     fontSize: 64, 
-                    color: '#000000',
+                    color: '#ffffff',  // 主标题默认白色
                     fontFamily: 'SourceHanSansCN-Heavy'
                   });
                 } else {
@@ -386,18 +396,18 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
                   updateSubTitleStyle({ 
                     text: '', 
                     fontSize: 40, 
-                    color: '#666666',
+                    color: '#ffff00',  // 副标题默认黄色
                     fontFamily: 'SourceHanSansCN-Heavy'
                   });
                 } else {
-                  updateTitleStyle({ subTitle: undefined });
+                  updateSubTitleStyle({ fontSize: 0 });  // 关闭时设置fontSize为0，而不是删除整个subTitle
                 }
               }}
               size="small"
             />
           </div>
           
-          {titleConfig.subTitle && (
+          {titleConfig.subTitle && titleConfig.subTitle.fontSize > 0 && (
             <>
               <Row gutter={8} style={{ marginBottom: '8px' }}>
                 <Col span={24}>
@@ -671,6 +681,39 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
       {/* 基础配置 */}
       <Card title="基础设置" size="small">
         <Row gutter={[16, 12]}>
+          {/* 创作模式选择 */}
+          <Col span={24}>
+            <div>
+              <label style={{ display: 'block', marginBottom: 8 }}>创作模式</label>
+              <Select
+                value={style.creationMode || 'personal'}
+                onChange={(value) => {
+                  setStyle({
+                    ...style,
+                    creationMode: value,
+                    // 保持优化模式
+                    advanced: {
+                      ...style.advanced,
+                      enabled: true
+                    }
+                  })
+                }}
+                style={{ width: '100%' }}
+                options={[
+                  { 
+                    label: '👤 个人创作', 
+                    value: 'personal'
+                  },
+                  { 
+                    label: '👥 团队创作', 
+                    value: 'team'
+                  }
+                ]}
+              />
+
+            </div>
+          </Col>
+
           {/* 项目名称和视频生成数量 */}
           {(projectName !== undefined && setProjectName) && (
             <>
@@ -758,6 +801,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
           <PosterUpload 
             posters={posters || []}
             onPostersChange={setPosters}
+            creationMode={style.creationMode || 'personal'}
           />
         </Card>
       )}

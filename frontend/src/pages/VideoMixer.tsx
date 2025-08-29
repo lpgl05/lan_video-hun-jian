@@ -16,8 +16,10 @@ import MainLayout from '../components/MainLayout'
 import LoginPage from '../components/LoginPage'
 import StepWizard from '../components/StepWizard'
 import UserCenter from '../components/UserCenter'
+import HistoryPage from '../components/HistoryPage'
 import GenerationResult from '../components/GenerationResult'
 import GenerationModal from '../components/GenerationModal'
+import DebugPanel from '../components/DebugPanel'
 import { saveProject, startGeneration, getGenerationStatus } from '../services/api'
 
 const VideoMixer: React.FC = () => {
@@ -26,7 +28,7 @@ const VideoMixer: React.FC = () => {
   const [userInfo, setUserInfo] = useState<{ phone: string; username: string } | null>(null)
   
   // 页面状态
-  const [currentPage, setCurrentPage] = useState<'home' | 'user-center'>('home')
+  const [currentPage, setCurrentPage] = useState<'home' | 'user-center' | 'history'>('home')
   
   // 弹窗状态
   const [showGenerationModal, setShowGenerationModal] = useState(false)
@@ -49,7 +51,7 @@ const VideoMixer: React.FC = () => {
   const [voice, setVoice] = useState<VoiceOption>('female')
   const [style, setStyle] = useState<StyleConfig>({
     title: {
-      color: '#1890ff',
+      color: '#ffffff',  // 主标题默认白色
       position: 'top',
       fontSize: 0,  // 默认0px（不显示）
       fontFamily: 'SourceHanSansCN-Heavy',  // 默认思源黑体Heavy
@@ -60,10 +62,23 @@ const VideoMixer: React.FC = () => {
       bold: false,
       italic: false,
       background_opacity: 0,  // 默认背景透明度为0
+      // 主副标题默认关闭
+      mainTitle: {
+        text: '',
+        fontSize: 0,  // 主标题默认关闭
+        color: '#ffffff',
+        fontFamily: 'SourceHanSansCN-Heavy'
+      },
+      subTitle: {
+        text: '',
+        fontSize: 0,  // 副标题默认关闭
+        color: '#ffff00',
+        fontFamily: 'SourceHanSansCN-Heavy'
+      }
     },
     subtitle: {
-      color: '#ffffff',
-      position: 'template1',  // 默认模板位置1
+      color: '#ffffff',  // 字幕默认白色
+      position: 'template1',  // 默认模板位置1（横屏视频）
       fontSize: 60,  // 默认60px
       fontFamily: 'SourceHanSansCN-Heavy',  // 默认思源黑体Heavy
       strokeColor: '#000000',
@@ -267,22 +282,35 @@ const VideoMixer: React.FC = () => {
     setVoice('female')
     setStyle({
       title: {
-        color: '#1890ff',
+        color: '#ffffff',  // 主标题默认白色
         position: 'top',
-        fontSize: 120,  // 默认120px
-        fontFamily: 'Microsoft YaHei, sans-serif',
+        fontSize: 0,  // 默认0px（不显示）
+        fontFamily: 'SourceHanSansCN-Heavy',  // 默认思源黑体Heavy
         strokeColor: '#000000',
         strokeWidth: 0,
         shadow: false,
         shadowColor: '#000000',
         bold: false,
         italic: false,
+        // 主副标题默认关闭
+        mainTitle: {
+          text: '',
+          fontSize: 0,  // 主标题默认关闭
+          color: '#ffffff',
+          fontFamily: 'SourceHanSansCN-Heavy'
+        },
+        subTitle: {
+          text: '',
+          fontSize: 0,  // 副标题默认关闭
+          color: '#ffff00',
+          fontFamily: 'SourceHanSansCN-Heavy'
+        }
       },
       subtitle: {
-        color: '#ffffff',
-        position: 'bottom',
+        color: '#ffffff',  // 字幕默认白色
+        position: 'template1',  // 默认模板位置1（横屏视频）
         fontSize: 60,  // 默认60px
-        fontFamily: 'Microsoft YaHei, sans-serif',
+        fontFamily: 'SourceHanSansCN-Heavy',  // 默认思源黑体Heavy
         strokeColor: '#000000',
         strokeWidth: 1,
         shadow: true,
@@ -364,7 +392,54 @@ const VideoMixer: React.FC = () => {
             setVideoCount(project.videoCount)
             setVoice(project.voice)
             setStyle(project.style)
-            setCurrentTask(task)
+            
+            // 对于已完成的任务，确保不会重新开始轮询
+            if (task.status === 'completed') {
+              // 确保任务数据完整，包括结果信息
+              const completeTask = {
+                ...task,
+                progress: 100,
+                result: task.result || { videos: historyItem.videos?.map(v => v.url) || [] }
+              }
+              setCurrentTask(completeTask)
+            } else {
+              setCurrentTask(task)
+            }
+            setCurrentPage('home')
+          }}
+        />
+      )
+    }
+
+    if (currentPage === 'history') {
+      return (
+        <HistoryPage 
+          projectHistory={projectHistory}
+          onViewProject={(historyItem) => {
+            // 恢复项目配置并查看结果
+            const { project, task } = historyItem
+            setProjectName(project.name)
+            setVideos(project.videos)
+            setAudios(project.audios)
+            setPosters(project.posters)
+            setScripts(project.scripts)
+            setDuration(project.duration)
+            setVideoCount(project.videoCount)
+            setVoice(project.voice)
+            setStyle(project.style)
+            
+            // 对于已完成的任务，确保不会重新开始轮询
+            if (task.status === 'completed') {
+              // 确保任务数据完整，包括结果信息
+              const completeTask = {
+                ...task,
+                progress: 100,
+                result: task.result || { videos: historyItem.videos?.map(v => v.url) || [] }
+              }
+              setCurrentTask(completeTask)
+            } else {
+              setCurrentTask(task)
+            }
             setCurrentPage('home')
           }}
         />
@@ -435,6 +510,21 @@ const VideoMixer: React.FC = () => {
         onComplete={handleGenerationComplete}
         onRetry={handleRetry}
       />
+      
+      {/* 调试面板 - 已禁用 */}
+      {/* <DebugPanel 
+        task={currentTask}
+        onRefresh={() => {
+          if (currentTask) {
+            getGenerationStatus(currentTask.id).then(updatedTask => {
+              setCurrentTask(updatedTask)
+              updateHistoryItem(currentTask.id, updatedTask)
+            }).catch(error => {
+              console.error('刷新任务状态失败:', error)
+            })
+          }
+        }}
+      /> */}
     </>
   )
 }

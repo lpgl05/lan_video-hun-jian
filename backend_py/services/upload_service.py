@@ -8,7 +8,7 @@ from typing import Dict, Any
 UPLOAD_VIDEO_DIR = "uploads/videos"
 UPLOAD_AUDIO_DIR = "uploads/audios"
 UPLOAD_POSTER_DIR = "uploads/posters"
-USE_OSS = True  # 切换为 True 即可上传到 OSS
+USE_OSS = True  # 全局OSS开关，但可通过请求参数覆盖
 
 oss_client = OSSClient()
 
@@ -18,7 +18,7 @@ upload_tasks: Dict[str, Dict[str, Any]] = {}
 # 文件存储映射 - 用于跟踪已上传的文件
 uploaded_files: Dict[str, Dict[str, str]] = {}
 
-async def handle_upload_video(video, task_id: str = None):
+async def handle_upload_video(video, task_id: str = None, creation_mode: str = "personal"):
     if video is None:
         return {"success": False, "error": "未收到文件"}
     try:
@@ -59,28 +59,53 @@ async def handle_upload_video(video, task_id: str = None):
         })
         
         print(f"文件接收完成，大小: {len(content) / (1024*1024):.2f}MB")
+        print(f"创作模式: {creation_mode}")
         print(f"当前所有任务: {list(upload_tasks.keys())}")
         
-        if USE_OSS:
+        # 根据创作模式决定是否使用OSS
+        use_oss = USE_OSS and (creation_mode == "team")
+        print(f"使用OSS: {'是' if use_oss else '否'} (创作模式: {creation_mode})")
+        
+        if use_oss:
             print(f'开始上传视频到阿里云oss, task_id: {task_id}')
+            
+            # 更新状态为检查去重
+            upload_tasks[task_id].update({
+                "progress": 15,
+                "status": "checking",
+                "stage": "duplicate_checking"
+            })
+            
             start_time = datetime.now()
             
             def progress_callback(progress: float, uploaded_bytes: int, speed_mbps: float):
                 """OSS上传进度回调"""
                 if task_id in upload_tasks:
-                    upload_tasks[task_id].update({
-                        "progress": progress,
-                        "uploaded_bytes": uploaded_bytes,
-                        "speed": f"{speed_mbps:.2f} MB/s",
-                        "status": "uploading"
-                    })
-                    # 只在关键进度点输出日志
-                    if int(progress) % 20 == 0 or progress >= 95:
-                        print(f"任务 {task_id} 进度: {progress:.1f}%, 速度: {speed_mbps:.2f}MB/s")
+                    # 如果是去重跳过，快速完成
+                    if progress == 100.0 and uploaded_bytes == len(content) and speed_mbps == 0:
+                        upload_tasks[task_id].update({
+                            "progress": 100,
+                            "uploaded_bytes": uploaded_bytes,
+                            "speed": "去重跳过",
+                            "status": "completed"
+                        })
+                        print(f"任务 {task_id} 文件去重，瞬间完成")
+                    else:
+                        # 正常上传进度（从20%开始，为去重检查留空间）
+                        adjusted_progress = 20 + (progress * 0.8)
+                        upload_tasks[task_id].update({
+                            "progress": adjusted_progress,
+                            "uploaded_bytes": uploaded_bytes,
+                            "speed": f"{speed_mbps:.2f} MB/s",
+                            "status": "uploading"
+                        })
+                        # 只在关键进度点输出日志
+                        if int(adjusted_progress) % 20 == 0 or adjusted_progress >= 95:
+                            print(f"任务 {task_id} 进度: {adjusted_progress:.1f}%, 速度: {speed_mbps:.2f}MB/s")
                 else:
                     print(f"警告: task_id {task_id} 不存在")
             
-            # 上传到OSS
+            # 上传到OSS（内置去重检查）
             file_url = await oss_client.upload_to_oss_with_progress(
                 file_buffer=content,
                 original_filename=file_name,
@@ -98,17 +123,32 @@ async def handle_upload_video(video, task_id: str = None):
                 "file_url": file_url
             })
         else:
+            # 个人创作模式：本地存储
+            print(f"👤 个人创作模式：保存到本地")
             os.makedirs(UPLOAD_VIDEO_DIR, exist_ok=True)
-            save_path = os.path.join(UPLOAD_VIDEO_DIR, file_name)
+            
+            # 使用哈希文件名便于管理（但保留在本地）
+            import hashlib
+            file_hash = hashlib.md5(content).hexdigest()
+            file_extension = os.path.splitext(file_name)[1]
+            local_filename = f"local_{file_hash}{file_extension}"
+            save_path = os.path.join(UPLOAD_VIDEO_DIR, local_filename)
+            
             with open(save_path, "wb") as f:
                 f.write(content)
-            file_url = f"/uploads/videos/{file_name}"
+            
+            # 返回本地文件的HTTP访问URL
+            relative_path = f"videos/{local_filename}"
+            file_url = f"http://127.0.0.1:8000/local-files/{relative_path}"
+            print(f"👤 本地视频文件保存: {save_path}")
+            print(f"👤 本地视频访问URL: {file_url}")
             
             # 更新任务状态为完成
             upload_tasks[task_id].update({
                 "status": "completed",
                 "progress": 100,
-                "file_url": file_url
+                "file_url": file_url,
+                "local_mode": True  # 标记为本地模式
             })
         # duration 字段可后续完善，这里先为 0
         video_file = {
@@ -145,7 +185,7 @@ async def handle_upload_video(video, task_id: str = None):
     except Exception as e:
         return {"success": False, "error": f"上传失败: {str(e)}"}
 
-async def handle_upload_audio(audio, task_id: str = None):
+async def handle_upload_audio(audio, task_id: str = None, creation_mode: str = "personal"):
     if audio is None:
         return {"success": False, "error": "未收到文件"}
     try:
@@ -172,23 +212,48 @@ async def handle_upload_audio(audio, task_id: str = None):
         }
         
         print(f"创建音频上传任务: {task_id}")
+        print(f"音频创作模式: {creation_mode}")
         
-        if USE_OSS:
+        # 根据创作模式决定是否使用OSS
+        use_oss = USE_OSS and (creation_mode == "team")
+        print(f"音频使用OSS: {'是' if use_oss else '否'} (创作模式: {creation_mode})")
+        
+        if use_oss:
             print(f'开始上传音频到阿里云oss, task_id: {task_id}')
+            
+            # 更新状态为检查去重
+            upload_tasks[task_id].update({
+                "progress": 15,
+                "status": "checking",
+                "stage": "duplicate_checking"
+            })
+            
             start_time = datetime.now()
             
             def progress_callback(progress: float, uploaded_bytes: int, speed_mbps: float):
                 """OSS音频上传进度回调"""
                 if task_id in upload_tasks:
-                    upload_tasks[task_id].update({
-                        "progress": progress,
-                        "uploaded_bytes": uploaded_bytes,
-                        "speed": f"{speed_mbps:.2f} MB/s",
-                        "status": "uploading"
-                    })
-                    # 只在关键进度点输出日志
-                    if int(progress) % 20 == 0 or progress >= 95:
-                        print(f"音频任务 {task_id} 进度: {progress:.1f}%, 速度: {speed_mbps:.2f}MB/s")
+                    # 如果是去重跳过，快速完成
+                    if progress == 100.0 and uploaded_bytes == len(content) and speed_mbps == 0:
+                        upload_tasks[task_id].update({
+                            "progress": 100,
+                            "uploaded_bytes": uploaded_bytes,
+                            "speed": "去重跳过",
+                            "status": "completed"
+                        })
+                        print(f"音频任务 {task_id} 文件去重，瞬间完成")
+                    else:
+                        # 正常上传进度（从20%开始）
+                        adjusted_progress = 20 + (progress * 0.8)
+                        upload_tasks[task_id].update({
+                            "progress": adjusted_progress,
+                            "uploaded_bytes": uploaded_bytes,
+                            "speed": f"{speed_mbps:.2f} MB/s",
+                            "status": "uploading"
+                        })
+                        # 只在关键进度点输出日志
+                        if int(adjusted_progress) % 20 == 0 or adjusted_progress >= 95:
+                            print(f"音频任务 {task_id} 进度: {adjusted_progress:.1f}%, 速度: {speed_mbps:.2f}MB/s")
                 else:
                     print(f"警告: 音频task_id {task_id} 不存在")
             
@@ -209,17 +274,32 @@ async def handle_upload_audio(audio, task_id: str = None):
                 "file_url": file_url
             })
         else:
+            # 个人创作模式：音频本地存储
+            print(f"👤 个人创作模式：音频保存到本地")
             os.makedirs(UPLOAD_AUDIO_DIR, exist_ok=True)
-            save_path = os.path.join(UPLOAD_AUDIO_DIR, file_name)
+            
+            # 使用哈希文件名便于管理（但保留在本地）
+            import hashlib
+            file_hash = hashlib.md5(content).hexdigest()
+            file_extension = os.path.splitext(file_name)[1]
+            local_filename = f"local_{file_hash}{file_extension}"
+            save_path = os.path.join(UPLOAD_AUDIO_DIR, local_filename)
+            
             with open(save_path, "wb") as f:
                 f.write(content)
-            file_url = f"/uploads/audios/{file_name}"
+            
+            # 返回本地文件的HTTP访问URL
+            relative_path = f"audios/{local_filename}"
+            file_url = f"http://127.0.0.1:8000/local-files/{relative_path}"
+            print(f"👤 本地音频文件保存: {save_path}")
+            print(f"👤 本地音频访问URL: {file_url}")
             
             # 模拟进度更新
             upload_tasks[task_id].update({
                 "status": "completed",
                 "progress": 100,
-                "file_url": file_url
+                "file_url": file_url,
+                "local_mode": True  # 标记为本地模式
             })
             
         # duration 字段可后续完善，这里先为 0
@@ -262,7 +342,7 @@ async def handle_upload_audio(audio, task_id: str = None):
             })
         return {"success": False, "error": f"上传失败: {str(e)}"}
 
-async def handle_upload_poster(poster, task_id: str = None):
+async def handle_upload_poster(poster, task_id: str = None, creation_mode: str = "personal"):
     if poster is None:
         return {"success": False, "error": "未收到文件"}
     try:
@@ -281,25 +361,46 @@ async def handle_upload_poster(poster, task_id: str = None):
             task_id = file_id
 
         print(f"创建海报上传任务: {task_id}")
+        print(f"海报创作模式: {creation_mode}")
 
-        if USE_OSS:
+        # 根据创作模式决定是否使用OSS
+        use_oss = USE_OSS and (creation_mode == "team")
+        print(f"海报使用OSS: {'是' if use_oss else '否'} (创作模式: {creation_mode})")
+
+        if use_oss:
             print(f'开始上传海报到阿里云oss, task_id: {task_id}')
             start_time = datetime.now()
 
-            file_url = await oss_client.upload_to_oss(
+            # 使用带进度和去重检查的上传方法
+            file_url = await oss_client.upload_to_oss_with_progress(
                 file_buffer=content,
                 original_filename=file_name,
-                folder=UPLOAD_POSTER_DIR
+                folder=UPLOAD_POSTER_DIR,
+                progress_callback=None  # 海报文件通常较小，不需要进度回调
             )
             end_time = datetime.now()
             t = end_time - start_time
             print(f'上传海报到阿里云oss成功，文件url为：{file_url}, 上传耗时： {t}')
         else:
+            # 个人创作模式：海报本地存储
+            print(f"👤 个人创作模式：海报保存到本地")
             os.makedirs(UPLOAD_POSTER_DIR, exist_ok=True)
-            save_path = os.path.join(UPLOAD_POSTER_DIR, file_name)
+            
+            # 使用哈希文件名便于管理（但保留在本地）
+            import hashlib
+            file_hash = hashlib.md5(content).hexdigest()
+            file_extension = os.path.splitext(file_name)[1]
+            local_filename = f"local_{file_hash}{file_extension}"
+            save_path = os.path.join(UPLOAD_POSTER_DIR, local_filename)
+            
             with open(save_path, "wb") as f:
                 f.write(content)
-            file_url = f"/uploads/posters/{file_name}"
+            
+            # 返回本地文件的HTTP访问URL
+            relative_path = f"posters/{local_filename}"
+            file_url = f"http://127.0.0.1:8000/local-files/{relative_path}"
+            print(f"👤 本地海报文件保存: {save_path}")
+            print(f"👤 本地海报访问URL: {file_url}")
 
         # 简单的图片尺寸检测 (可以使用PIL库获取更精确的信息)
         width, height = None, None

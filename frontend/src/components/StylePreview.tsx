@@ -26,7 +26,9 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     return new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image()
       
-      // 尝试不同的跨域设置
+      // 对于本地或相对路径，不设置crossOrigin
+      const isLocalOrRelative = !url.startsWith('http') || url.startsWith(window.location.origin)
+      
       img.onload = () => {
         console.log('图片加载成功:', url)
         resolve(img)
@@ -34,21 +36,29 @@ const StylePreview: React.FC<StylePreviewProps> = ({
       
       img.onerror = (error) => {
         console.error('图片加载失败:', url, error)
-        // 尝试不设置crossOrigin重新加载
-        const img2 = new Image()
-        img2.onload = () => {
-          console.log('第二次尝试加载成功:', url)
-          resolve(img2)
+        
+        // 如果第一次失败，尝试不设置crossOrigin重新加载
+        if (!isLocalOrRelative) {
+          const img2 = new Image()
+          img2.onload = () => {
+            console.log('第二次尝试（无crossOrigin）加载成功:', url)
+            resolve(img2)
+          }
+          img2.onerror = (error2) => {
+            console.error('第二次尝试也失败:', url, error2)
+            reject(error2)
+          }
+          // 不设置crossOrigin
+          img2.src = url
+        } else {
+          reject(error)
         }
-        img2.onerror = (error2) => {
-          console.error('第二次尝试也失败:', url, error2)
-          reject(error2)
-        }
-        img2.src = url
       }
       
-      // 先尝试设置跨域
-      img.crossOrigin = 'anonymous'
+      // 根据URL类型决定是否设置跨域
+      if (!isLocalOrRelative) {
+        img.crossOrigin = 'anonymous'
+      }
       img.src = url
     })
   }
@@ -711,7 +721,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({
       if (subTitle && subTitle.fontSize > 0) {
         const displayText = subTitle.text || '副标题示例'
         const subTitleStyle: FontStyle = {
-          color: subTitle.color || '#666666',
+          color: subTitle.color || '#ffff00',  // 副标题默认黄色
           position: 'top', // 使用绝对位置
           fontSize: subTitle.fontSize,
           fontFamily: subTitle.fontFamily,
@@ -952,12 +962,19 @@ const StylePreview: React.FC<StylePreviewProps> = ({
     if (posterUrl) {
       // 处理URL格式，确保是完整的URL
       let fullUrl = posterUrl
+      
+      // 如果是相对路径，转换为绝对路径
       if (!posterUrl.startsWith('http')) {
-        // 如果不是完整URL，尝试拼接基础URL
+        // 处理本地开发环境和OSS URL
         if (posterUrl.startsWith('/')) {
-          fullUrl = `${window.location.origin}${posterUrl}`
+          // 如果是以/开头的路径，直接使用
+          fullUrl = posterUrl
+        } else if (posterUrl.includes('oss-') || posterUrl.includes('aliyuncs.com')) {
+          // 如果是OSS URL但缺少协议，添加https
+          fullUrl = posterUrl.startsWith('//') ? `https:${posterUrl}` : `https://${posterUrl}`
         } else {
-          fullUrl = `${window.location.origin}/${posterUrl}`
+          // 其他情况，作为相对路径处理
+          fullUrl = `/${posterUrl}`
         }
       }
       
@@ -969,7 +986,17 @@ const StylePreview: React.FC<StylePreviewProps> = ({
         })
         .catch(error => {
           console.error('海报图片加载失败:', error)
-          setPosterImage(null)
+          // 如果加载失败，尝试直接使用原始URL（不设置crossOrigin）
+          const fallbackImg = new Image()
+          fallbackImg.onload = () => {
+            setPosterImage(fallbackImg)
+            console.log('备用方案加载海报成功')
+          }
+          fallbackImg.onerror = () => {
+            console.error('所有海报加载方案都失败了')
+            setPosterImage(null)
+          }
+          fallbackImg.src = posterUrl
         })
     } else {
       console.log('没有海报URL，清除海报图片')

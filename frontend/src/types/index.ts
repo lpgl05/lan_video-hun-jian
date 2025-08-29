@@ -108,10 +108,17 @@ export interface TitleConfig {
   strokeWidth?: number;
 }
 
+// 高级功能配置
+export interface AdvancedConfig {
+  enabled: boolean; // 是否启用高级模式
+}
+
 // 样式配置
 export interface StyleConfig {
   title: TitleConfig;
   subtitle: FontStyle;
+  advanced?: AdvancedConfig; // 高级功能配置
+  creationMode?: 'personal' | 'team'; // 创作模式：个人创作 vs 团队协作
 }
 
 // 项目配置
@@ -147,6 +154,10 @@ export interface GenerationTask {
   createdAt: string | Date; // 兼容后端返回的ISO字符串和前端Date对象
   updatedAt: string | Date; // 兼容后端返回的ISO字符串和前端Date对象
   generatedVideos?: VideoFile[]; // 添加详细视频信息
+  startTime?: string; // 开始时间
+  endTime?: string; // 结束时间
+  durationSeconds?: number; // 耗时（秒）
+  durationMinutes?: number; // 耗时（分钟）
 }
 
 // API响应格式

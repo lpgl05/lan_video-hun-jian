@@ -6,7 +6,8 @@ import {
   BellOutlined,
   LogoutOutlined,
   SettingOutlined,
-  HomeOutlined
+  HomeOutlined,
+  HistoryOutlined
 } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import '../styles/MainLayout.css'
@@ -15,8 +16,8 @@ const { Header, Content, Sider } = Layout
 
 interface MainLayoutProps {
   children: React.ReactNode
-  currentPage: 'home' | 'user-center'
-  onPageChange: (page: 'home' | 'user-center') => void
+  currentPage: 'home' | 'user-center' | 'history'
+  onPageChange: (page: 'home' | 'user-center' | 'history') => void
   onLogout?: () => void
   unreadNotifications?: number
 }
@@ -36,6 +37,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       icon: <HomeOutlined />,
       label: '视频制作',
       onClick: () => onPageChange('home')
+    },
+    {
+      key: 'history',
+      icon: <HistoryOutlined />,
+      label: '历史记录',
+      onClick: () => onPageChange('history')
     },
     {
       key: 'user-center',

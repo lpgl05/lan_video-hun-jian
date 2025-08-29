@@ -10,6 +10,7 @@ import time
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import threading
+import hashlib
 from config.upload_optimization import upload_config
 
 # 加载.env文件中的环境变量
@@ -32,6 +33,78 @@ class OSSClient:
         
         # 设置超时时间（连接超时，读取超时）
         self.bucket.timeout = (upload_config.CONNECTION_TIMEOUT, upload_config.READ_TIMEOUT)
+        
+        # 检查OSS权限（用于决定是否启用去重功能）
+        self._oss_permission_checked = self._check_oss_permissions()
+    
+    def _calculate_file_hash(self, file_buffer: bytes) -> str:
+        """计算文件的MD5哈希值"""
+        return hashlib.md5(file_buffer).hexdigest()
+    
+    def _check_oss_permissions(self) -> bool:
+        """检查OSS权限，决定是否启用去重功能"""
+        try:
+            # 测试head_object权限（去重功能的核心需求）
+            test_key = "test/permission_check_dummy_file.txt"
+            
+            # 尝试检查一个不存在的文件（期望得到NoSuchKey错误，而不是权限错误）
+            try:
+                self.bucket.head_object(test_key)
+                # 如果没有异常，说明文件竟然存在（意外情况）
+                print(f"✅ OSS head_object权限正常，启用去重功能")
+                return True
+            except oss2.exceptions.NoSuchKey:
+                # 这是期望的结果：文件不存在，但有权限检查
+                print(f"✅ OSS head_object权限正常，启用去重功能")
+                return True
+            except oss2.exceptions.AccessDenied:
+                # 没有head_object权限
+                print(f"⚠️ 缺少head_object权限，禁用去重功能")
+                return False
+                
+        except Exception as e:
+            print(f"⚠️ OSS权限检查失败，禁用去重功能: {e}")
+            return False
+    
+    async def check_file_exists(self, file_hash: str, folder: str = 'uploads') -> Optional[str]:
+        """
+        检查OSS中是否已存在相同哈希的文件
+        
+        Args:
+            file_hash: 文件MD5哈希值
+            folder: 文件夹路径
+            
+        Returns:
+            如果文件存在，返回文件URL；否则返回None
+        """
+        try:
+            # 构造基于哈希的文件路径
+            file_extensions = ['.mp4', '.mov', '.avi', '.mp3', '.wav', '.flac', '.jpg', '.jpeg', '.png', '.gif']
+            
+            # 尝试不同的文件扩展名
+            for ext in file_extensions:
+                object_key = f"{folder}/hash_{file_hash}{ext}"
+                
+                try:
+                    # 使用head_object检查文件是否存在（更轻量级）
+                    self.bucket.head_object(object_key)
+                    # 如果没有抛出异常，说明文件存在
+                    file_url = f"https://{self.bucket_name}.{self.endpoint}/{object_key}"
+                    print(f"✅ 发现重复文件: {file_url}")
+                    return file_url
+                except oss2.exceptions.NoSuchKey:
+                    # 文件不存在，继续尝试下一个扩展名
+                    continue
+                except Exception as e:
+                    print(f"检查文件 {object_key} 时出错: {e}")
+                    continue
+            
+            print(f"🔍 未找到哈希为 {file_hash} 的重复文件")
+            return None
+            
+        except Exception as e:
+            print(f"检查文件存在时出错: {e}")
+            return None
     
     # 将文件上传至oss上 - 使用分片上传优化大文件
     async def upload_to_oss(self, file_buffer: bytes, original_filename: str, 
@@ -56,10 +129,36 @@ class OSSClient:
         """
         try:
             # 获取文件扩展名
-            file_extension = Path(original_filename).suffix
+            file_extension = Path(original_filename).suffix.lower()
             
-            # 生成唯一文件名
-            file_name = f"{folder}/{str(uuid.uuid4())}{file_extension}"
+            # 计算文件哈希值
+            file_hash = self._calculate_file_hash(file_buffer)
+            
+            # 构造预期的文件路径
+            expected_file_name = f"{folder}/hash_{file_hash}{file_extension}"
+            
+            # 检查是否已存在完全相同的文件（临时禁用，待OSS权限修复后启用）
+            try:
+                # 检查OSS权限，如果有权限才进行去重检查
+                if hasattr(self, '_oss_permission_checked') and self._oss_permission_checked:
+                    self.bucket.head_object(expected_file_name)
+                    # 如果没有抛出异常，说明文件已存在
+                    existing_url = f"https://{self.bucket_name}.{self.endpoint}/{expected_file_name}"
+                    print(f"🚀 文件已存在，跳过上传: {existing_url}")
+                    # 模拟进度回调（立即完成）
+                    if progress_callback:
+                        progress_callback(100.0, len(file_buffer), 0)
+                    return existing_url
+                else:
+                    print(f"⚠️ OSS去重功能已禁用（权限问题），直接上传: {expected_file_name}")
+            except oss2.exceptions.NoSuchKey:
+                # 文件不存在，需要上传
+                print(f"🔍 文件不存在，开始上传: {expected_file_name}")
+            except Exception as e:
+                print(f"检查文件存在时出错: {e}，继续上传")
+            
+            # 生成基于哈希的文件名（便于去重识别）
+            file_name = expected_file_name
             
             # 如果没有提供mimetype，则自动检测
             if not mimetype:

@@ -354,12 +354,14 @@ export const uploadPoster = async (file: File): Promise<PosterFile> => {
 // 带进度监控的海报上传
 export const uploadPosterWithProgress = async (
   file: File,
-  onProgress?: (progress: number, loaded: number, total: number, speed?: string) => void
+  onProgress?: (progress: number, loaded: number, total: number, speed?: string) => void,
+  creationMode: 'personal' | 'team' = 'personal'
 ): Promise<PosterFile> => {
   const formData = new FormData()
   formData.append('poster', file)
+  formData.append('creation_mode', creationMode)
 
-  console.log('开始上传海报文件:', file.name)
+  console.log('开始上传海报文件:', file.name, '创作模式:', creationMode)
 
   const response = await api.post<ApiResponse<PosterFile>>('/upload/poster', formData, {
     onUploadProgress: (progressEvent) => {

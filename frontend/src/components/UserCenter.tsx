@@ -204,6 +204,13 @@ const UserCenter: React.FC<UserCenterProps> = ({ onBack, projectHistory = [], on
               <Space direction="vertical" size="small">
                 <div>创建时间: {item.createdAt}</div>
                 {item.completedAt && <div>完成时间: {item.completedAt}</div>}
+                {item.task?.durationMinutes && (
+                  <div>
+                    <span style={{ color: '#1890ff', fontWeight: '500' }}>
+                      生成耗时: {item.task.durationMinutes} 分钟
+                    </span>
+                  </div>
+                )}
                 <div>
                   <Space>
                     <span>视频数量: {item.videoCount}</span>

@@ -83,7 +83,7 @@ const GenerationModal: React.FC<GenerationModalProps> = ({
       case 'failed':
         return {
           title: '生成失败',
-          description: '视频生成过程中出现错误，请重试',
+          description: task.error || '视频生成过程中出现错误，请重试',
           icon: <ExclamationCircleOutlined style={{ color: '#ff4d4f' }} />
         }
       default:

@@ -92,6 +92,21 @@ const GenerationResult: React.FC<GenerationResultProps> = ({ task, onReset, onNe
     message.success('开始下载')
   }
 
+  // 格式化耗时显示
+  const formatDuration = (durationMinutes?: number) => {
+    if (!durationMinutes) return null
+    
+    const totalSeconds = Math.round(durationMinutes * 60)
+    const minutes = Math.floor(totalSeconds / 60)
+    const seconds = totalSeconds % 60
+    
+    if (minutes > 0) {
+      return `${minutes}分钟${seconds}秒`
+    } else {
+      return `${seconds}秒`
+    }
+  }
+
   const getStatusText = (status: GenerationTask['status']) => {
     switch (status) {
       case 'pending':
@@ -202,6 +217,11 @@ const GenerationResult: React.FC<GenerationResultProps> = ({ task, onReset, onNe
                       <div className="result-meta">
                         生成时间: {new Date(task.updatedAt).toLocaleString()}
                       </div>
+                      {task.durationMinutes && (
+                        <div className="result-meta" style={{ color: '#1890ff', fontWeight: '500' }}>
+                          耗时: {formatDuration(task.durationMinutes)}
+                        </div>
+                      )}
                       <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
                         <Button
                           size="small"

@@ -5,9 +5,10 @@ from models.oss_client import OSSClient
 import asyncio
 from typing import Dict, Any
 
-UPLOAD_VIDEO_DIR = "uploads/videos"
-UPLOAD_AUDIO_DIR = "uploads/audios"
-UPLOAD_POSTER_DIR = "uploads/posters"
+# 团队协作模式：直接使用OSS存储目录
+OSS_VIDEO_DIR = "uploads/videos"
+OSS_AUDIO_DIR = "uploads/audios"
+OSS_POSTER_DIR = "uploads/posters"
 USE_OSS = True  # 团队协作模式强制使用OSS存储
 
 oss_client = OSSClient()
@@ -109,7 +110,7 @@ async def handle_upload_video(video, task_id: str = None):
             file_url = await oss_client.upload_to_oss_with_progress(
                 file_buffer=content,
                 original_filename=file_name,
-                folder=UPLOAD_VIDEO_DIR,
+                folder=OSS_VIDEO_DIR,
                 progress_callback=progress_callback
             )
             end_time = datetime.now()
@@ -242,7 +243,7 @@ async def handle_upload_audio(audio, task_id: str = None):
             file_url = await oss_client.upload_to_oss_with_progress(
                 file_buffer=content,
                 original_filename=file_name,
-                folder=UPLOAD_AUDIO_DIR,
+                folder=OSS_AUDIO_DIR,
                 progress_callback=progress_callback
             )
             end_time = datetime.now()
@@ -339,32 +340,17 @@ async def handle_upload_poster(poster, task_id: str = None):
             file_url = await oss_client.upload_to_oss_with_progress(
                 file_buffer=content,
                 original_filename=file_name,
-                folder=UPLOAD_POSTER_DIR,
+                folder=OSS_POSTER_DIR,
                 progress_callback=None  # 海报文件通常较小，不需要进度回调
             )
             end_time = datetime.now()
             t = end_time - start_time
             print(f'上传海报到阿里云oss成功，文件url为：{file_url}, 上传耗时： {t}')
         else:
-            # OSS未配置，使用本地存储作为备选
-            print(f"⚠️ OSS未配置，海报保存到本地")
-            os.makedirs(UPLOAD_POSTER_DIR, exist_ok=True)
-            
-            # 使用哈希文件名便于管理
-            import hashlib
-            file_hash = hashlib.md5(content).hexdigest()
-            file_extension = os.path.splitext(file_name)[1]
-            local_filename = f"local_{file_hash}{file_extension}"
-            save_path = os.path.join(UPLOAD_POSTER_DIR, local_filename)
-            
-            with open(save_path, "wb") as f:
-                f.write(content)
-            
-            # 返回本地文件的HTTP访问URL
-            relative_path = f"posters/{local_filename}"
-            file_url = f"http://127.0.0.1:8000/local-files/{relative_path}"
-            print(f"⚠️ 本地海报文件保存: {save_path}")
-            print(f"⚠️ 本地海报访问URL: {file_url}")
+            # 团队协作模式必须使用OSS，不允许本地存储
+            error_msg = "OSS未配置或上传失败，团队协作模式不支持本地存储"
+            print(f"❌ {error_msg}")
+            return {"success": False, "error": error_msg}
 
         # 简单的图片尺寸检测 (可以使用PIL库获取更精确的信息)
         width, height = None, None

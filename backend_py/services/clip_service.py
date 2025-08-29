@@ -30,17 +30,19 @@ from dotenv import load_dotenv
 # 加载.env文件中的环境变量
 load_dotenv()
 
+# 团队协作模式：保留必要的处理目录，移除uploads依赖
 DOWNLOAD_VIDEO_PATH = "outputs/download_videos"
 DOWNLOAD_AUDIO_PATH = "outputs/download_audios"
 OUTPUT_DIR = "outputs/clips"
-tts_temp_dir = "outputs/tts_audio"
 TTS_TEMP_DIR = "outputs/tts_audio"
 SUBTITLE_TEMP_DIR = "outputs/subtitle_images"
-OSS_UPLOAD_FINAL_VEDIO = "uploads/final/videos"
+OSS_UPLOAD_FINAL_VEDIO = "final/videos"  # OSS存储路径，无需本地uploads前缀
+
+# 确保处理所需的临时目录存在
 os.makedirs(DOWNLOAD_VIDEO_PATH, exist_ok=True)
 os.makedirs(DOWNLOAD_AUDIO_PATH, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-os.makedirs(tts_temp_dir, exist_ok=True)
+os.makedirs(TTS_TEMP_DIR, exist_ok=True)
 os.makedirs(SUBTITLE_TEMP_DIR, exist_ok=True)
 oss_client = OSSClient()
 

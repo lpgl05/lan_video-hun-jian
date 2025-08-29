@@ -13,12 +13,8 @@ def create_directories():
     # 获取脚本所在目录
     base_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # 需要创建的目录列表
+    # 团队协作模式：只保留必要的处理目录，移除uploads目录
     directories = [
-        "uploads",
-        "uploads/audios",
-        "uploads/videos", 
-        "uploads/posters",
         "cache",
         "cache/materials",
         "cache/metadata",
@@ -26,7 +22,6 @@ def create_directories():
         "outputs/clips",
         "outputs/download_audios",
         "outputs/download_videos",
-        "outputs/subtitle_ass",
         "outputs/subtitle_images",
         "outputs/tts_audio",
         "logs",

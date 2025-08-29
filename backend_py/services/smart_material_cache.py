@@ -45,27 +45,10 @@ class SmartMaterialCache:
         Returns:
             本地文件路径
         """
-        # 🎯 检查是否为本地文件路径（直接文件路径或本地URL）
-        if (url.startswith("cache/") or url.startswith("uploads/") or 
-            url.startswith("./") or not url.startswith("http")):
-            # 直接本地文件路径
-            if os.path.exists(url):
-                print(f"👤 直接使用本地文件: {url}")
-                return url
-            else:
-                raise FileNotFoundError(f"本地文件不存在: {url}")
-        
-        # 检查是否为本地服务器URL（个人创作模式）
-        if url.startswith("http://127.0.0.1:8000/local-files/"):
-            # 本地文件路径转换
-            relative_path = url.replace("http://127.0.0.1:8000/local-files/", "")
-            local_file_path = os.path.join("uploads", relative_path)
-            
-            if os.path.exists(local_file_path):
-                print(f"👤 个人创作模式，直接使用本地文件: {local_file_path}")
-                return local_file_path
-            else:
-                raise FileNotFoundError(f"本地文件不存在: {local_file_path}")
+        # 团队协作模式：只处理缓存中的文件和HTTP URL
+        if url.startswith("cache/") and os.path.exists(url):
+            print(f"📁 直接使用缓存文件: {url}")
+            return url
         
         # 1. 计算文件哈希（用于去重）
         file_hash = self._calculate_url_hash(url)

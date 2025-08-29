@@ -4,11 +4,7 @@ echo ==================================================
 
 cd /d "%~dp0"
 
-echo 📁 创建 uploads 目录...
-if not exist "uploads" mkdir uploads
-if not exist "uploads\audios" mkdir uploads\audios
-if not exist "uploads\videos" mkdir uploads\videos
-if not exist "uploads\posters" mkdir uploads\posters
+echo 📁 团队协作模式 - 跳过uploads目录（使用OSS存储）
 
 echo 📁 创建 cache 目录...
 if not exist "cache" mkdir cache

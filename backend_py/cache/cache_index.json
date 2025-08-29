@@ -286,5 +286,45 @@
     "cached_at": "2025-08-29T12:05:52.647024",
     "last_accessed": "2025-08-29T12:05:52.647032",
     "file_size": 462528
+  },
+  "3a49204fecf0186b1f61159c630732ea": {
+    "url": "https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_14a8012801ae8095f986ce438411415e.mp4",
+    "local_path": "cache/materials\\3a49204fecf0186b1f61159c630732ea.mp4",
+    "material_type": "video",
+    "cached_at": "2025-08-29T19:02:29.845329",
+    "last_accessed": "2025-08-29T19:02:29.845338",
+    "file_size": 168051716
+  },
+  "e9ff086738f87f4650d92b9231f059ee": {
+    "url": "https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_8c89f98791e3967e1ce6ec796c4110fc.mp4",
+    "local_path": "cache/materials\\e9ff086738f87f4650d92b9231f059ee.mp4",
+    "material_type": "video",
+    "cached_at": "2025-08-29T19:02:33.187627",
+    "last_accessed": "2025-08-29T19:02:35.435937",
+    "file_size": 4155281
+  },
+  "0ae627440f35574ed7362e18d04ddb6b": {
+    "url": "https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_6b7ccaf62a666ded85f854d36577b311.mp4",
+    "local_path": "cache/materials\\0ae627440f35574ed7362e18d04ddb6b.mp4",
+    "material_type": "video",
+    "cached_at": "2025-08-29T19:02:35.435008",
+    "last_accessed": "2025-08-29T19:02:35.435015",
+    "file_size": 2186213
+  },
+  "e00cce207d2699f0876a7b2d2eea5541": {
+    "url": "https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_78b6b4801dcd25e6579de6b246a4b3ee.mp3",
+    "local_path": "cache/materials\\e00cce207d2699f0876a7b2d2eea5541.mp3",
+    "material_type": "video",
+    "cached_at": "2025-08-29T19:02:39.347699",
+    "last_accessed": "2025-08-29T19:02:39.347709",
+    "file_size": 8545553
+  },
+  "78e1f063742bc2f556e124e3f28c5f19": {
+    "url": "https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/posters/hash_d389405e5af6e2f19de141698eca0c76.jpg",
+    "local_path": "cache/materials\\78e1f063742bc2f556e124e3f28c5f19.jpg",
+    "material_type": "video",
+    "cached_at": "2025-08-29T19:02:41.002344",
+    "last_accessed": "2025-08-29T19:02:41.002353",
+    "file_size": 462528
   }
 }

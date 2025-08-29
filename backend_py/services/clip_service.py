@@ -243,18 +243,7 @@ def rgba_to_ass_backcolour(rgba):
     return f"&H{aa}{bb}{gg}{rr}"
 
 async def download_video(url):
-    # 🎯 检查是否为本地文件URL（个人创作模式）
-    if url.startswith("http://127.0.0.1:8000/local-files/"):
-        # 本地文件路径转换
-        relative_path = url.replace("http://127.0.0.1:8000/local-files/", "")
-        local_file_path = os.path.join("uploads", relative_path)
-        
-        if os.path.exists(local_file_path):
-            print(f"👤 个人创作模式，直接使用本地视频文件: {local_file_path}")
-            return local_file_path
-        else:
-            raise FileNotFoundError(f"本地视频文件不存在: {local_file_path}")
-    
+    # 团队协作模式：统一从OSS下载视频文件
     filename = url.split("/")[-1]
     print('---------------------------------------')
     print(url)
@@ -266,18 +255,7 @@ async def download_video(url):
     return local_file
 
 async def download_audio(url):
-    # 🎯 检查是否为本地文件URL（个人创作模式）
-    if url.startswith("http://127.0.0.1:8000/local-files/"):
-        # 本地文件路径转换
-        relative_path = url.replace("http://127.0.0.1:8000/local-files/", "")
-        local_file_path = os.path.join("uploads", relative_path)
-        
-        if os.path.exists(local_file_path):
-            print(f"👤 个人创作模式，直接使用本地音频文件: {local_file_path}")
-            return local_file_path
-        else:
-            raise FileNotFoundError(f"本地音频文件不存在: {local_file_path}")
-    
+    # 团队协作模式：统一从OSS下载音频文件
     filename = url.split("/")[-1]
     print('---------------------------------------')
     print(f"下载音频: {url}")
@@ -290,18 +268,7 @@ async def download_audio(url):
 
 async def download_poster(url):
     """下载海报图片到本地"""
-    # 🎯 检查是否为本地文件URL（个人创作模式）
-    if url.startswith("http://127.0.0.1:8000/local-files/"):
-        # 本地文件路径转换
-        relative_path = url.replace("http://127.0.0.1:8000/local-files/", "")
-        local_file_path = os.path.join("uploads", relative_path)
-        
-        if os.path.exists(local_file_path):
-            print(f"👤 个人创作模式，直接使用本地海报文件: {local_file_path}")
-            return local_file_path
-        else:
-            raise FileNotFoundError(f"本地海报文件不存在: {local_file_path}")
-    
+    # 团队协作模式：统一从OSS下载海报文件
     filename = url.split("/")[-1]
     
     # 确保海报下载目录存在
@@ -646,11 +613,12 @@ async def process_clips(req):
                 
             except Exception as e:
                 print(f"OSS上传失败: {str(e)}")
-                # 如果OSS上传失败，使用本地路径
-                video_url = f"/outputs/clips/{clip_name}"
-                video_size = os.path.getsize(clip_path) if os.path.exists(clip_path) else 0
-                
+                # 团队协作模式：OSS上传失败时直接返回错误，不使用本地存储
                 checkpoint(f"视频{i+1}上传失败", f"错误: {str(e)}")
+                return {
+                    "success": False,
+                    "message": f"视频生成失败：OSS上传失败 - {str(e)}"
+                }
 
             result_videos.append({
                 "id": clip_id,

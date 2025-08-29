@@ -45,6 +45,9 @@ class SmartMaterialCache:
         Returns:
             本地文件路径
         """
+        # 定期清理缓存（每次访问时检查，避免缓存无限增长）
+        await self._auto_cleanup()
+        
         # 团队协作模式：只处理缓存中的文件和HTTP URL
         if url.startswith("cache/") and os.path.exists(url):
             print(f"📁 直接使用缓存文件: {url}")
@@ -409,6 +412,59 @@ class SmartMaterialCache:
             "max_size_gb": self.max_cache_size_gb,
             "expire_days": self.cache_expire_days
         }
+    
+    async def _auto_cleanup(self):
+        """自动清理缓存 - 智能触发机制"""
+        import time
+        
+        # 使用文件记录上次清理时间，避免频繁清理
+        cleanup_flag_file = os.path.join(self.metadata_dir, "last_cleanup.txt")
+        
+        try:
+            # 检查上次清理时间
+            if os.path.exists(cleanup_flag_file):
+                with open(cleanup_flag_file, 'r') as f:
+                    last_cleanup_str = f.read().strip()
+                last_cleanup = datetime.fromisoformat(last_cleanup_str)
+                
+                # 如果距离上次清理不到1小时，跳过
+                if datetime.now() - last_cleanup < timedelta(hours=1):
+                    return
+            
+            # 检查缓存状态
+            stats = self.get_cache_stats()
+            need_cleanup = False
+            
+            # 条件1：缓存超过5GB时触发
+            if stats["total_size_gb"] > 5:
+                print(f"🧹 缓存大小 {stats['total_size_gb']:.1f}GB > 5GB，触发清理")
+                need_cleanup = True
+            
+            # 条件2：文件数超过50个时触发
+            elif stats["total_files"] > 50:
+                print(f"🧹 缓存文件 {stats['total_files']} 个 > 50个，触发清理")
+                need_cleanup = True
+            
+            # 条件3：距离上次清理超过24小时时触发
+            elif not os.path.exists(cleanup_flag_file):
+                print("🧹 首次启动或超过24小时未清理，触发清理")
+                need_cleanup = True
+            else:
+                # 每24小时强制清理一次
+                if datetime.now() - last_cleanup > timedelta(hours=24):
+                    print("🧹 距离上次清理超过24小时，触发清理")
+                    need_cleanup = True
+            
+            if need_cleanup:
+                # 执行清理
+                self.cleanup_cache()
+                
+                # 记录清理时间
+                with open(cleanup_flag_file, 'w') as f:
+                    f.write(datetime.now().isoformat())
+                
+        except Exception as e:
+            print(f"⚠️ 自动清理检查失败: {e}")
 
 # 全局实例
 smart_cache = SmartMaterialCache()

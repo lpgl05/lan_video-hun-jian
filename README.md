@@ -32,6 +32,33 @@ npm run dev
 ### 后端服务部署
 
 另外打开一个终端，首先拷贝 `env.example` 为 `.env` 文件，并根据需要填写配置信息。
+
+#### 1. 初始化目录结构
+
+在启动后端服务之前，需要先初始化项目目录结构。根据你的操作系统选择对应的命令：
+
+**Windows用户：**
+```bash
+cd backend_py
+init_directories.bat
+```
+
+**Linux/Mac用户：**
+```bash
+cd backend_py
+chmod +x init_directories.sh
+./init_directories.sh
+```
+
+**或者使用Python脚本（通用）：**
+```bash
+cd backend_py
+python init_directories.py
+```
+
+这将创建项目运行所需的所有目录结构，避免启动时出现 `Directory 'uploads' does not exist` 等错误。
+
+#### 2. 配置环境变量
 ```bash
 # 阿里云OSS配置
 OSS_ACCESS_KEY_ID=你的AccessKeyId

@@ -148,30 +148,19 @@ async def process_video_generation(task_id: str, clip_req: ClipRequest):
         if hasattr(clip_req.style, 'subtitle'):
             print(f"字幕样式: {clip_req.style.subtitle}")
         print("==================")
-        # 🎯 智能选择处理模式：基于创作模式和功能需求
+        # 🎯 统一使用团队协作模式处理
         style_dict = clip_req.style.dict() if hasattr(clip_req.style, "dict") else clip_req.style
-        creation_mode = style_dict.get("creationMode", "personal")  # 默认个人创作模式
         has_poster = hasattr(clip_req, 'posters') and clip_req.posters and len(clip_req.posters) > 0
         
-        print(f"🎯 创作模式: {'👤 个人创作' if creation_mode == 'personal' else '👥 团队协作'}")
+        print(f"🎯 统一团队协作模式")
         
-        # 🚀 智能选择处理模式
-        if creation_mode == "personal":
-            # 个人创作模式：优先使用本地处理（未来实现）
-            if has_poster:
-                print("🎬 个人模式+海报：使用高级处理（PNG动态字幕）")
-                result = await process_clips001(clip_req)
-            else:
-                print("🚀 个人模式：使用优化处理（ASS字幕 + 智能缓存）")
-                result = await process_clips_optimized(clip_req)
+        # 🚀 根据功能需求选择处理模式
+        if has_poster:
+            print("🎬 团队模式+海报：使用高级处理（PNG动态字幕）")
+            result = await process_clips001(clip_req)
         else:
-            # 团队协作模式：使用OSS云端处理
-            if has_poster:
-                print("🎬 团队模式+海报：使用高级处理（PNG动态字幕）")
-                result = await process_clips001(clip_req)
-            else:
-                print("🚀 团队模式：使用优化处理（ASS字幕 + 智能缓存）")
-                result = await process_clips_optimized(clip_req)
+            print("🚀 团队模式：使用优化处理（ASS字幕 + 智能缓存）")
+            result = await process_clips_optimized(clip_req)
         
         # 4. 处理完成，上传中
         _task_storage[task_id]["progress"] = 90

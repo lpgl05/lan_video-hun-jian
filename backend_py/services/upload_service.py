@@ -18,7 +18,7 @@ upload_tasks: Dict[str, Dict[str, Any]] = {}
 # 文件存储映射 - 用于跟踪已上传的文件
 uploaded_files: Dict[str, Dict[str, str]] = {}
 
-async def handle_upload_video(video, task_id: str = None, creation_mode: str = "personal"):
+async def handle_upload_video(video, task_id: str = None):
     if video is None:
         return {"success": False, "error": "未收到文件"}
     try:
@@ -59,12 +59,12 @@ async def handle_upload_video(video, task_id: str = None, creation_mode: str = "
         })
         
         print(f"文件接收完成，大小: {len(content) / (1024*1024):.2f}MB")
-        print(f"创作模式: {creation_mode}")
+        print(f"统一团队协作模式")
         print(f"当前所有任务: {list(upload_tasks.keys())}")
         
-        # 根据创作模式决定是否使用OSS
-        use_oss = USE_OSS and (creation_mode == "team")
-        print(f"使用OSS: {'是' if use_oss else '否'} (创作模式: {creation_mode})")
+        # 统一使用OSS存储
+        use_oss = USE_OSS
+        print(f"使用OSS: {'是' if use_oss else '否'} (统一团队协作模式)")
         
         if use_oss:
             print(f'开始上传视频到阿里云oss, task_id: {task_id}')
@@ -123,11 +123,11 @@ async def handle_upload_video(video, task_id: str = None, creation_mode: str = "
                 "file_url": file_url
             })
         else:
-            # 个人创作模式：本地存储
-            print(f"👤 个人创作模式：保存到本地")
+            # OSS未配置，使用本地存储作为备选
+            print(f"⚠️ OSS未配置，使用本地存储作为备选")
             os.makedirs(UPLOAD_VIDEO_DIR, exist_ok=True)
             
-            # 使用哈希文件名便于管理（但保留在本地）
+            # 使用哈希文件名便于管理
             import hashlib
             file_hash = hashlib.md5(content).hexdigest()
             file_extension = os.path.splitext(file_name)[1]
@@ -140,8 +140,8 @@ async def handle_upload_video(video, task_id: str = None, creation_mode: str = "
             # 返回本地文件的HTTP访问URL
             relative_path = f"videos/{local_filename}"
             file_url = f"http://127.0.0.1:8000/local-files/{relative_path}"
-            print(f"👤 本地视频文件保存: {save_path}")
-            print(f"👤 本地视频访问URL: {file_url}")
+            print(f"⚠️ 本地视频文件保存: {save_path}")
+            print(f"⚠️ 本地视频访问URL: {file_url}")
             
             # 更新任务状态为完成
             upload_tasks[task_id].update({
@@ -185,7 +185,7 @@ async def handle_upload_video(video, task_id: str = None, creation_mode: str = "
     except Exception as e:
         return {"success": False, "error": f"上传失败: {str(e)}"}
 
-async def handle_upload_audio(audio, task_id: str = None, creation_mode: str = "personal"):
+async def handle_upload_audio(audio, task_id: str = None):
     if audio is None:
         return {"success": False, "error": "未收到文件"}
     try:
@@ -212,11 +212,11 @@ async def handle_upload_audio(audio, task_id: str = None, creation_mode: str = "
         }
         
         print(f"创建音频上传任务: {task_id}")
-        print(f"音频创作模式: {creation_mode}")
+        print(f"音频统一团队协作模式")
         
-        # 根据创作模式决定是否使用OSS
-        use_oss = USE_OSS and (creation_mode == "team")
-        print(f"音频使用OSS: {'是' if use_oss else '否'} (创作模式: {creation_mode})")
+        # 统一使用OSS存储
+        use_oss = USE_OSS
+        print(f"音频使用OSS: {'是' if use_oss else '否'} (统一团队协作模式)")
         
         if use_oss:
             print(f'开始上传音频到阿里云oss, task_id: {task_id}')
@@ -274,11 +274,11 @@ async def handle_upload_audio(audio, task_id: str = None, creation_mode: str = "
                 "file_url": file_url
             })
         else:
-            # 个人创作模式：音频本地存储
-            print(f"👤 个人创作模式：音频保存到本地")
+            # OSS未配置，使用本地存储作为备选
+            print(f"⚠️ OSS未配置，音频保存到本地")
             os.makedirs(UPLOAD_AUDIO_DIR, exist_ok=True)
             
-            # 使用哈希文件名便于管理（但保留在本地）
+            # 使用哈希文件名便于管理
             import hashlib
             file_hash = hashlib.md5(content).hexdigest()
             file_extension = os.path.splitext(file_name)[1]
@@ -291,8 +291,8 @@ async def handle_upload_audio(audio, task_id: str = None, creation_mode: str = "
             # 返回本地文件的HTTP访问URL
             relative_path = f"audios/{local_filename}"
             file_url = f"http://127.0.0.1:8000/local-files/{relative_path}"
-            print(f"👤 本地音频文件保存: {save_path}")
-            print(f"👤 本地音频访问URL: {file_url}")
+            print(f"⚠️ 本地音频文件保存: {save_path}")
+            print(f"⚠️ 本地音频访问URL: {file_url}")
             
             # 模拟进度更新
             upload_tasks[task_id].update({
@@ -342,7 +342,7 @@ async def handle_upload_audio(audio, task_id: str = None, creation_mode: str = "
             })
         return {"success": False, "error": f"上传失败: {str(e)}"}
 
-async def handle_upload_poster(poster, task_id: str = None, creation_mode: str = "personal"):
+async def handle_upload_poster(poster, task_id: str = None):
     if poster is None:
         return {"success": False, "error": "未收到文件"}
     try:
@@ -361,12 +361,12 @@ async def handle_upload_poster(poster, task_id: str = None, creation_mode: str =
             task_id = file_id
 
         print(f"创建海报上传任务: {task_id}")
-        print(f"海报创作模式: {creation_mode}")
+        print(f"海报统一团队协作模式")
 
-        # 根据创作模式决定是否使用OSS
-        use_oss = USE_OSS and (creation_mode == "team")
-        print(f"海报使用OSS: {'是' if use_oss else '否'} (创作模式: {creation_mode})")
-
+                # 统一使用OSS存储
+        use_oss = USE_OSS
+        print(f"海报使用OSS: {'是' if use_oss else '否'} (统一团队协作模式)")
+        
         if use_oss:
             print(f'开始上传海报到阿里云oss, task_id: {task_id}')
             start_time = datetime.now()
@@ -382,11 +382,11 @@ async def handle_upload_poster(poster, task_id: str = None, creation_mode: str =
             t = end_time - start_time
             print(f'上传海报到阿里云oss成功，文件url为：{file_url}, 上传耗时： {t}')
         else:
-            # 个人创作模式：海报本地存储
-            print(f"👤 个人创作模式：海报保存到本地")
+            # OSS未配置，使用本地存储作为备选
+            print(f"⚠️ OSS未配置，海报保存到本地")
             os.makedirs(UPLOAD_POSTER_DIR, exist_ok=True)
             
-            # 使用哈希文件名便于管理（但保留在本地）
+            # 使用哈希文件名便于管理
             import hashlib
             file_hash = hashlib.md5(content).hexdigest()
             file_extension = os.path.splitext(file_name)[1]
@@ -399,8 +399,8 @@ async def handle_upload_poster(poster, task_id: str = None, creation_mode: str =
             # 返回本地文件的HTTP访问URL
             relative_path = f"posters/{local_filename}"
             file_url = f"http://127.0.0.1:8000/local-files/{relative_path}"
-            print(f"👤 本地海报文件保存: {save_path}")
-            print(f"👤 本地海报访问URL: {file_url}")
+            print(f"⚠️ 本地海报文件保存: {save_path}")
+            print(f"⚠️ 本地海报访问URL: {file_url}")
 
         # 简单的图片尺寸检测 (可以使用PIL库获取更精确的信息)
         width, height = None, None

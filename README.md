@@ -58,6 +58,8 @@ python init_directories.py
 
 这将创建项目运行所需的所有目录结构，避免启动时出现 `Directory 'uploads' does not exist` 等错误。
 
+> **注意**：项目已统一使用团队协作模式，所有文件都会上传到OSS云存储，确保文件的安全性和可访问性。
+
 #### 2. 配置环境变量
 ```bash
 # 阿里云OSS配置

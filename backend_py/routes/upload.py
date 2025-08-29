@@ -4,19 +4,19 @@ from services.upload_service import handle_upload_video, handle_upload_audio, ha
 router = APIRouter()
 
 @router.post("/api/upload/video")
-async def upload_video(video: UploadFile = File(...), creation_mode: str = "personal"):
-    print(f'上传视频，创作模式: {creation_mode}')
-    return await handle_upload_video(video, creation_mode=creation_mode)
+async def upload_video(video: UploadFile = File(...)):
+    print(f'上传视频，统一团队协作模式')
+    return await handle_upload_video(video)
 
 @router.post("/api/upload/audio")
-async def upload_audio(audio: UploadFile = File(...), creation_mode: str = "personal"):
-    print(f'上传音频，创作模式: {creation_mode}')
-    return await handle_upload_audio(audio, creation_mode=creation_mode)
+async def upload_audio(audio: UploadFile = File(...)):
+    print(f'上传音频，统一团队协作模式')
+    return await handle_upload_audio(audio)
 
 @router.post("/api/upload/poster")
-async def upload_poster(poster: UploadFile = File(...), creation_mode: str = "personal"):
-    print(f'上传海报，创作模式: {creation_mode}')
-    return await handle_upload_poster(poster, creation_mode=creation_mode)
+async def upload_poster(poster: UploadFile = File(...)):
+    print(f'上传海报，统一团队协作模式')
+    return await handle_upload_poster(poster)
 
 @router.get("/api/upload/progress/{task_id}")
 async def get_upload_progress(task_id: str):

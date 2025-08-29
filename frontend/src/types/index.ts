@@ -118,7 +118,6 @@ export interface StyleConfig {
   title: TitleConfig;
   subtitle: FontStyle;
   advanced?: AdvancedConfig; // 高级功能配置
-  creationMode?: 'personal' | 'team'; // 创作模式：个人创作 vs 团队协作
 }
 
 // 项目配置

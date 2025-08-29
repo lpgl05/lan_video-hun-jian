@@ -681,38 +681,7 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
       {/* 基础配置 */}
       <Card title="基础设置" size="small">
         <Row gutter={[16, 12]}>
-          {/* 创作模式选择 */}
-          <Col span={24}>
-            <div>
-              <label style={{ display: 'block', marginBottom: 8 }}>创作模式</label>
-              <Select
-                value={style.creationMode || 'personal'}
-                onChange={(value) => {
-                  setStyle({
-                    ...style,
-                    creationMode: value,
-                    // 保持优化模式
-                    advanced: {
-                      ...style.advanced,
-                      enabled: true
-                    }
-                  })
-                }}
-                style={{ width: '100%' }}
-                options={[
-                  { 
-                    label: '👤 个人创作', 
-                    value: 'personal'
-                  },
-                  { 
-                    label: '👥 团队创作', 
-                    value: 'team'
-                  }
-                ]}
-              />
-
-            </div>
-          </Col>
+          {/* 创作模式已统一为团队协作模式 */}
 
           {/* 项目名称和视频生成数量 */}
           {(projectName !== undefined && setProjectName) && (
@@ -795,16 +764,15 @@ const ConfigSettings: React.FC<ConfigSettingsProps> = ({
         </Row>
       </Card>
 
-      {/* 海报背景设置 */}
-      {setPosters && (
-        <Card title="背景海报设置" size="small">
-          <PosterUpload 
-            posters={posters || []}
-            onPostersChange={setPosters}
-            creationMode={style.creationMode || 'personal'}
-          />
-        </Card>
-      )}
+             {/* 海报背景设置 */}
+       {setPosters && (
+         <Card title="背景海报设置" size="small">
+           <PosterUpload 
+             posters={posters || []}
+             onPostersChange={setPosters}
+           />
+         </Card>
+       )}
 
       {/* 样式预览 */}
       {(() => {

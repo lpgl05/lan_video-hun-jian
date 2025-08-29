@@ -8,10 +8,9 @@ import { uploadPoster, uploadPosterWithProgress, deletePoster } from '../service
 interface PosterUploadProps {
   posters: PosterFile[]
   onPostersChange: (posters: PosterFile[]) => void
-  creationMode?: 'personal' | 'team' // 创作模式
 }
 
-const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange, creationMode = 'personal' }) => {
+const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange }) => {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [uploadingFileName, setUploadingFileName] = useState('')
@@ -63,7 +62,7 @@ const PosterUpload: React.FC<PosterUploadProps> = ({ posters, onPostersChange, c
         } else if (speed) {
           setUploadSpeed(`${speed} MB/s`)
         }
-      }, creationMode)
+      })
 
       // 直接替换为新的海报（单张模式）
       onPostersChange([posterFile])

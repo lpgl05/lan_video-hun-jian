@@ -429,6 +429,8 @@ export const getProject = async (id: string): Promise<ProjectConfig> => {
 
 // 视频生成
 export const startGeneration = async (projectId: string): Promise<GenerationTask> => {
+  console.log('🚀 发起视频生成请求:', projectId)
+  
   const response = await api.post<ApiResponse<GenerationTask>>('/generation/start', {
     projectId,
   })
@@ -437,7 +439,13 @@ export const startGeneration = async (projectId: string): Promise<GenerationTask
     throw new Error(response.data.error || '启动失败')
   }
   
-  return response.data.data!
+  const task = response.data.data!
+  console.log('✅ 视频生成任务已创建:', task)
+  console.log('   任务状态:', task.status)
+  console.log('   队列位置:', task.queuePosition)
+  console.log('   预计等待:', task.estimatedWaitTime)
+  
+  return task
 }
 
 export const getGenerationStatus = async (taskId: string): Promise<GenerationTask> => {
@@ -445,6 +453,30 @@ export const getGenerationStatus = async (taskId: string): Promise<GenerationTas
   
   if (!response.data.success) {
     throw new Error(response.data.error || '获取状态失败')
+  }
+  
+  const task = response.data.data!
+  
+  // 🚀 调试日志 - 检查返回的状态
+  console.log('📊 获取任务状态:', {
+    taskId: task.id,
+    status: task.status,
+    progress: task.progress,
+    queuePosition: task.queuePosition,
+    queueSize: task.queueSize,
+    estimatedWaitTime: task.estimatedWaitTime,
+    message: task.message
+  })
+  
+  return task
+}
+
+// 🚀 新增：获取队列状态
+export const getQueueStatus = async () => {
+  const response = await api.get<ApiResponse<any>>('/generation/queue/status')
+  
+  if (!response.data.success) {
+    throw new Error(response.data.error || '获取队列状态失败')
   }
   
   return response.data.data!

@@ -93,3 +93,4 @@ generated/
 *.crt
 
 backend_py/outputs
+backend_py/cache

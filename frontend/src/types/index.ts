@@ -137,13 +137,13 @@ export interface ProjectConfig {
 }
 
 // 生成任务状态
-export type TaskStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type TaskStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'queued';
 
 // 生成任务
 export interface GenerationTask {
   id: string;
   projectId: string;
-  status: TaskStatus;
+  status: 'queued' | 'processing' | 'completed' | 'failed';  // 确保包含 queued 状态
   progress: number;
   result?: {
     videos: string[];
@@ -153,10 +153,33 @@ export interface GenerationTask {
   createdAt: string | Date; // 兼容后端返回的ISO字符串和前端Date对象
   updatedAt: string | Date; // 兼容后端返回的ISO字符串和前端Date对象
   generatedVideos?: VideoFile[]; // 添加详细视频信息
-  startTime?: string; // 开始时间
-  endTime?: string; // 结束时间
-  durationSeconds?: number; // 耗时（秒）
-  durationMinutes?: number; // 耗时（分钟）
+
+  // 🚀 新增：队列相关字段
+  queuePosition?: number;
+  queueSize?: number;
+  currentQueueSize?: number;
+  estimatedWaitTime?: string;
+  message?: string;
+  
+  // 性能统计相关字段
+  startTime?: string;
+  endTime?: string;
+  durationSeconds?: number;
+  durationMinutes?: number;
+}
+
+// 🚀 新增：队列状态接口
+export interface QueueStatus {
+  queueSize: number;
+  isProcessing: boolean;
+  statistics: {
+    queued: number;
+    processing: number;
+    completed: number;
+    failed: number;
+    total: number;
+  };
+  estimatedWaitTime: string;
 }
 
 // API响应格式

@@ -1069,12 +1069,14 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
             '-map', '[video_out]',   # 映射视频流
             '-map', '[audio_out]',   # 映射音频流
             '-t', str(duration),     # 设置时长（强制输出时长）
-            '-preset', 'medium',
             '-c:v', 'h264_amf',
-            '-crf', '23',
             '-c:a', 'aac',
             '-b:a', '192k',
-            '-threads', str(os.cpu_count()),
+            '-usage', 'transcoding',       # ✅ 使用场景
+            '-quality', 'balanced',        # ✅ 平衡质量和速度
+            '-b:v', '4M',                  # ✅ 平均码率
+            '-maxrate', '6M',              # ✅ 可选：最大码率
+            '-bufsize', '12M',             # ✅ 可选：缓冲区大小
             '-movflags', '+faststart',
             output_path
         ]
@@ -1106,12 +1108,14 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
             '-map', '[video_out]',   # 映射视频流
             '-map', '[audio_out]',   # 映射音频流
             '-t', str(duration),     # 设置时长（强制输出时长）
-            '-preset', 'medium',
             '-c:v', 'h264_amf',
-            '-crf', '23',
             '-c:a', 'aac',
             '-b:a', '192k',
-            '-threads', str(os.cpu_count()),
+            '-usage', 'transcoding',       # ✅ 使用场景
+            '-quality', 'balanced',        # ✅ 平衡质量和速度
+            '-b:v', '4M',                  # ✅ 平均码率
+            '-maxrate', '6M',              # ✅ 可选：最大码率
+            '-bufsize', '12M',             # ✅ 可选：缓冲区大小
             '-movflags', '+faststart',
             output_path
         ]
@@ -2266,12 +2270,14 @@ def create_9_16_video_with_dynamic_subtitles_ffmpeg(source_video, title_image, s
         '-map', '[video_out]',
         '-map', '[audio_out]',
         '-t', str(duration),
-        '-preset', 'medium',
         '-c:v', 'h264_amf',
-        '-crf', '23',
         '-c:a', 'aac',
         '-b:a', '192k',
-        '-threads', str(os.cpu_count()),
+        '-usage', 'transcoding',       # ✅ 使用场景
+        '-quality', 'balanced',        # ✅ 平衡质量和速度
+        '-b:v', '4M',                  # ✅ 平均码率
+        '-maxrate', '6M',              # ✅ 可选：最大码率
+        '-bufsize', '12M',             # ✅ 可选：缓冲区大小
         '-movflags', '+faststart',
         output_path
     ]

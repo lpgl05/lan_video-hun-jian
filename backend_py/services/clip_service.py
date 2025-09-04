@@ -491,157 +491,6 @@ def build_montage_clips(source_paths, target_duration, count):
 
     # 注意：sources 由调用方统一在写文件后关闭
     return outputs
-
-async def process_clips(req):
-    # 导入性能监控（如果可用）
-    try:
-        from tools.performance_monitor import start_video_generation_monitoring, checkpoint, finish_video_generation_monitoring
-        # 开始性能监控
-        start_video_generation_monitoring()
-        use_monitoring = True
-    except ImportError:
-        print("性能监控不可用，继续正常处理")
-        def checkpoint(name, info=None):
-            print(f"处理检查点: {name}")
-        def finish_video_generation_monitoring():
-            print("处理完成")
-        use_monitoring = False
-    
-    video_count = req.videoCount
-    duration_sec = parse_duration(req.duration)
-    min_duration = duration_sec
-    max_duration = duration_sec
-    video_files = req.videos
-    audio_files = req.audios
-    scripts = [s for s in req.scripts if s.selected]
-    style = req.style.dict() if hasattr(req.style, "dict") else req.style
-
-    checkpoint("参数解析完成", f"视频数量:{video_count}, 时长:{duration_sec}s")
-
-    # 下载所有视频和音频到本地
-    local_video_paths = [await download_video(v.url) for v in video_files]
-    local_audio_paths = [await download_audio(a.url) for a in audio_files]
-    
-    checkpoint("资源下载完成", f"视频:{len(local_video_paths)}个, 音频:{len(local_audio_paths)}个")
-
-    print("=======================================")
-    print(local_video_paths)
-    print(local_audio_paths)
-    print("=======================================")
-
-    # 构建每个成品短视频（尽量包含每个源视频的片段）
-    try:
-        composed_clips = build_montage_clips(local_video_paths, duration_sec, video_count)
-        if not composed_clips:
-            return {"success": False, "error": "无可用视频片段"}
-
-        result_videos = []
-        for i, clip in enumerate(composed_clips):
-            clip_id = str(uuid4())
-            clip_name = f"clip_{clip_id}.mp4"
-            clip_path = os.path.join(OUTPUT_DIR, clip_name)
-
-            # 随机字幕
-            script = random.choice(scripts).content if scripts else ""
-            clip = add_text(clip, script, style)  # 让函数内部自动选择字体
-            
-            checkpoint(f"视频{i+1}片段处理完成", f"时长:{clip.duration:.1f}s")
-
-            # 生成TTS语音文件
-            tts_filename = f"tts_{clip_id}.wav"
-            tts_path = os.path.join(tts_temp_dir, tts_filename)
-            await generate_tts_audio(script, tts_path)
-            
-            checkpoint(f"视频{i+1}TTS生成完成")
-
-            # 新增：确保视频时长至少与 TTS 时长一致，避免配音被截断
-            try:
-                tts_audio_clip = AudioFileClip(tts_path)
-                tts_dur = tts_audio_clip.duration
-                tts_audio_clip.close()
-                if tts_dur and tts_dur > clip.duration:
-                    extra = tts_dur - clip.duration
-                    # 取最后一帧作为静止画面延长视频
-                    try:
-                        last_t = max(0, clip.duration - 0.05)
-                        last_frame = clip.get_frame(last_t)
-                        last_frame_clip = ImageClip(np.array(last_frame)).set_duration(extra).set_fps(getattr(clip, "fps", 25)).resize((clip.w, clip.h))
-                        clip = concatenate_videoclips([clip, last_frame_clip], method="compose")
-                        print(f"延长视频 {clip_name} {extra:.2f}s 以匹配 TTS 时长 {tts_dur:.2f}s")
-                    except Exception as e:
-                        print(f"延长视频失败，仍将按原时长处理: {e}")
-            except Exception as e:
-                print(f"读取TTS时长失败: {e}")
-
-            # 随机BGM
-            bgm_path = random.choice(local_audio_paths) if local_audio_paths else None
-            if bgm_path and os.path.exists(bgm_path):
-                clip = add_bgm_with_tts(clip, bgm_path, tts_path)
-            elif bgm_path:
-                # 如果TTS失败，至少添加BGM
-                clip = add_bgm(clip, bgm_path)
-                
-            # 导出视频
-            try:
-                clip.write_videofile(clip_path, codec="libx264", audio_codec="aac", verbose=False, logger=None)
-                print(f"视频导出成功: {clip_path}")
-            except Exception as e:
-                print(f"视频导出失败: {e}")
-                raise e
-            
-            checkpoint(f"视频{i+1}导出完成", f"文件大小:{os.path.getsize(clip_path)/(1024*1024):.1f}MB")
-            
-            # 将导出的视频上传到oss上
-            try:
-                # 读取本地视频文件
-                with open(clip_path, 'rb') as f:
-                    video_content = f.read()
-                
-                # 上传到OSS
-                oss_url = await oss_client.upload_to_oss(
-                    file_buffer=video_content,
-                    original_filename=clip_name,
-                    folder=OSS_UPLOAD_FINAL_VEDIO
-                )
-                
-                # 删除本地临时文件
-                os.remove(clip_path)
-                
-                video_url = oss_url
-                video_size = len(video_content)
-                print(f"视频已上传到OSS: {oss_url}")
-                
-                checkpoint(f"视频{i+1}上传完成", f"OSS URL: {oss_url[:50]}...")
-                
-            except Exception as e:
-                print(f"OSS上传失败: {str(e)}")
-                # 团队协作模式：OSS上传失败时直接返回错误，不使用本地存储
-                checkpoint(f"视频{i+1}上传失败", f"错误: {str(e)}")
-                return {
-                    "success": False,
-                    "message": f"视频生成失败：OSS上传失败 - {str(e)}"
-                }
-
-            result_videos.append({
-                "id": clip_id,
-                "name": clip_name,
-                "url": video_url,
-                "size": video_size,
-                "duration": duration_sec,
-                "uploadedAt": None
-            })
-        # 完成性能监控
-        if use_monitoring:
-            finish_video_generation_monitoring()
-        
-        return {
-            "success": True,
-            "message": "视频剪辑处理完成",
-            "videos": result_videos
-        }
-    finally:
-        # 可在此处按需关闭、释放资源（如有必要）
-        pass
     
 def add_bgm_with_tts(clip, bgm_path, tts_audio_path):
     """
@@ -1221,7 +1070,7 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
             '-map', '[audio_out]',   # 映射音频流
             '-t', str(duration),     # 设置时长（强制输出时长）
             '-preset', 'medium',
-            '-c:v', 'libx264',
+            '-c:v', 'h264_amf',
             '-crf', '23',
             '-c:a', 'aac',
             '-b:a', '192k',
@@ -1258,7 +1107,7 @@ def create_9_16_video_with_title_ffmpeg(source_video, title_image, subtitle_imag
             '-map', '[audio_out]',   # 映射音频流
             '-t', str(duration),     # 设置时长（强制输出时长）
             '-preset', 'medium',
-            '-c:v', 'libx264',
+            '-c:v', 'h264_amf',
             '-crf', '23',
             '-c:a', 'aac',
             '-b:a', '192k',
@@ -2418,7 +2267,7 @@ def create_9_16_video_with_dynamic_subtitles_ffmpeg(source_video, title_image, s
         '-map', '[audio_out]',
         '-t', str(duration),
         '-preset', 'medium',
-        '-c:v', 'libx264',
+        '-c:v', 'h264_amf',
         '-crf', '23',
         '-c:a', 'aac',
         '-b:a', '192k',
@@ -2529,7 +2378,7 @@ def create_optimized_video_with_ass_subtitles(source_video, title_image, ass_sub
         '-map', '[audio_out]',
         '-t', str(duration),
         '-preset', 'veryfast',  # 使用veryfast预设最大化速度
-        '-c:v', 'libx264',
+        '-c:v', 'h264_amf',
         '-crf', '28',  # 稍微降低质量换取速度
         '-c:a', 'aac',
         '-b:a', '128k',  # 降低音频比特率
@@ -2707,3 +2556,26 @@ def split_text_into_sentences(text, max_words_per_sentence=8):
         sentences = [text]
     
     return sentences
+
+# 判断当前机器是否支持H.264 AMF编码
+def is_h264_amf_supported():
+    """检查当前机器是否支持H.264 AMF编码"""
+    try:
+        ffmpeg = find_ffmpeg()
+        cmd = [ffmpeg, '-hide_banner', '-encoders']
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        
+        if result.returncode != 0:
+            print(f"FFmpeg命令执行失败: {result.stderr}")
+            return False
+        
+        # 检查输出中是否包含h264_amf
+        if 'h264_amf' in result.stdout:
+            return True
+        else:
+            print("当前机器不支持H.264 AMF编码")
+            return False
+            
+    except Exception as e:
+        print(f"检查H.264 AMF支持失败: {e}")
+        return False

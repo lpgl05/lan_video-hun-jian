@@ -2,7 +2,7 @@ import asyncio
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
 from typing import List, Dict, Any
-from services.clip_service import process_clips, process_clips001, process_clips_optimized
+from services.clip_service import process_clips001, process_clips_optimized
 from uuid import uuid4
 from datetime import datetime
 

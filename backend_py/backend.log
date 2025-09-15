@@ -1,0 +1,556 @@
+nohup: ignoring input
+INFO:     Started server process [1923956]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+✅ OSS权限检查通过（文件不存在但可访问），去重功能已启用
+✅ OSS权限检查通过（文件不存在但可访问），去重功能已启用
+✅ OSS权限检查通过（文件不存在但可访问），去重功能已启用
+指定的字体路径是: fonts/msyh.ttc
+INFO:     223.88.21.8:1072 - "OPTIONS /api/upload/video HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1106 - "OPTIONS /api/upload/audio HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250328_Z0684.MP4
+创建上传任务: a9cff38d-c7a3-431a-82f8-6418be407d58
+开始接收文件: 20250328_Z0684.MP4
+文件接收完成，大小: 96.26MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: a9cff38d-c7a3-431a-82f8-6418be407d58
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_6e658e799f2f1fcec400dad545d32da4.mp4
+任务 a9cff38d-c7a3-431a-82f8-6418be407d58 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_6e658e799f2f1fcec400dad545d32da4.mp4, 上传耗时： 0:00:00.382858
+上传音频，统一团队协作模式
+音频文件名处理: 快闪宣传片紧张重鼓配乐.mp3
+创建音频上传任务: d1569af5-9a29-4f45-b180-5fb9de27367e
+音频统一团队协作模式
+音频使用OSS: 是 (统一团队协作模式)
+开始上传音频到阿里云oss, task_id: d1569af5-9a29-4f45-b180-5fb9de27367e
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_4db574d5c278df02b9deeb83f44db344.mp3
+音频任务 d1569af5-9a29-4f45-b180-5fb9de27367e 文件去重，瞬间完成
+上传音频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_4db574d5c278df02b9deeb83f44db344.mp3, 上传耗时： 0:00:00.049351
+INFO:     223.88.21.8:1072 - "POST /api/upload/video HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1106 - "POST /api/upload/audio HTTP/1.1" 200 OK
+上传音频，统一团队协作模式
+音频文件名处理: 快闪战争街头追逐紧张鼓节奏音效.mp3
+创建音频上传任务: a72b2902-de7a-44cb-8f82-30946da4a40d
+音频统一团队协作模式
+音频使用OSS: 是 (统一团队协作模式)
+开始上传音频到阿里云oss, task_id: a72b2902-de7a-44cb-8f82-30946da4a40d
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_23c58d544082615ede247e54828db81d.mp3
+音频任务 a72b2902-de7a-44cb-8f82-30946da4a40d 文件去重，瞬间完成
+上传音频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_23c58d544082615ede247e54828db81d.mp3, 上传耗时： 0:00:00.042331
+INFO:     223.88.21.8:1072 - "POST /api/upload/audio HTTP/1.1" 200 OK
+上传音频，统一团队协作模式
+音频文件名处理: 快闪重打击紧张振奋开场倒计时广告展示.mp3
+创建音频上传任务: dcf5917c-2377-4db6-b4bd-5435d33cfa19
+音频统一团队协作模式
+音频使用OSS: 是 (统一团队协作模式)
+开始上传音频到阿里云oss, task_id: dcf5917c-2377-4db6-b4bd-5435d33cfa19
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_4007a95366868e559b5280f57d972c6e.mp3
+音频任务 dcf5917c-2377-4db6-b4bd-5435d33cfa19 文件去重，瞬间完成
+上传音频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_4007a95366868e559b5280f57d972c6e.mp3, 上传耗时： 0:00:00.025723
+INFO:     223.88.21.8:1072 - "POST /api/upload/audio HTTP/1.1" 200 OK
+上传音频，统一团队协作模式
+音频文件名处理: 快闪转场预告片情绪推进鼓点.mp3
+创建音频上传任务: 9e73a10a-557f-4bc2-9b26-4d698d58379e
+音频统一团队协作模式
+音频使用OSS: 是 (统一团队协作模式)
+开始上传音频到阿里云oss, task_id: 9e73a10a-557f-4bc2-9b26-4d698d58379e
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_967e9d6c17df7580c8e5ca2d49495314.mp3
+音频任务 9e73a10a-557f-4bc2-9b26-4d698d58379e 文件去重，瞬间完成
+上传音频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_967e9d6c17df7580c8e5ca2d49495314.mp3, 上传耗时： 0:00:00.047008
+INFO:     223.88.21.8:1072 - "POST /api/upload/audio HTTP/1.1" 200 OK
+上传音频，统一团队协作模式
+音频文件名处理: 周杰伦-烟花易冷.mp3
+创建音频上传任务: eaf4364f-4807-477f-8f31-994535c7ce39
+音频统一团队协作模式
+音频使用OSS: 是 (统一团队协作模式)
+开始上传音频到阿里云oss, task_id: eaf4364f-4807-477f-8f31-994535c7ce39
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_9d7aaf9461fc20c5416b6c8719ed3c06.mp3
+音频任务 eaf4364f-4807-477f-8f31-994535c7ce39 文件去重，瞬间完成
+上传音频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_9d7aaf9461fc20c5416b6c8719ed3c06.mp3, 上传耗时： 0:00:00.074938
+INFO:     223.88.21.8:1072 - "POST /api/upload/audio HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250328_Z0698.MP4
+创建上传任务: b39f4d37-93a2-4b07-afea-0e3605521797
+开始接收文件: 20250328_Z0698.MP4
+文件接收完成，大小: 96.26MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: b39f4d37-93a2-4b07-afea-0e3605521797
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_c6ec1792115580ebb7970114b6492d68.mp4
+任务 b39f4d37-93a2-4b07-afea-0e3605521797 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_c6ec1792115580ebb7970114b6492d68.mp4, 上传耗时： 0:00:00.286218
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250328_Z0713.MP4
+创建上传任务: 867e20cd-3785-4acf-bb33-1889ab550f8a
+开始接收文件: 20250328_Z0713.MP4
+文件接收完成，大小: 64.26MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797', '867e20cd-3785-4acf-bb33-1889ab550f8a']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: 867e20cd-3785-4acf-bb33-1889ab550f8a
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_24ea7ebfedead5f9fcca0bd271e3db18.mp4
+任务 867e20cd-3785-4acf-bb33-1889ab550f8a 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_24ea7ebfedead5f9fcca0bd271e3db18.mp4, 上传耗时： 0:00:00.207667
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250328_Z0737.MP4
+创建上传任务: c64ce3f6-e97c-4bbd-a9e2-ed843def90ac
+开始接收文件: 20250328_Z0737.MP4
+文件接收完成，大小: 96.26MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797', '867e20cd-3785-4acf-bb33-1889ab550f8a', 'c64ce3f6-e97c-4bbd-a9e2-ed843def90ac']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: c64ce3f6-e97c-4bbd-a9e2-ed843def90ac
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_e30c3af58150ada6d7663b0a20ed892a.mp4
+任务 c64ce3f6-e97c-4bbd-a9e2-ed843def90ac 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_e30c3af58150ada6d7663b0a20ed892a.mp4, 上传耗时： 0:00:00.277651
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250328_Z0762.MP4
+创建上传任务: 091aebb1-44e1-48ca-a73e-edacab295648
+开始接收文件: 20250328_Z0762.MP4
+文件接收完成，大小: 128.26MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797', '867e20cd-3785-4acf-bb33-1889ab550f8a', 'c64ce3f6-e97c-4bbd-a9e2-ed843def90ac', '091aebb1-44e1-48ca-a73e-edacab295648']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: 091aebb1-44e1-48ca-a73e-edacab295648
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_efd2dacc9754f12c9434aac7fe5d7505.mp4
+任务 091aebb1-44e1-48ca-a73e-edacab295648 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_efd2dacc9754f12c9434aac7fe5d7505.mp4, 上传耗时： 0:00:00.353794
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250328_Z0765.MP4
+创建上传任务: af453ced-597c-4aea-9591-470ca476dbd4
+开始接收文件: 20250328_Z0765.MP4
+文件接收完成，大小: 160.27MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797', '867e20cd-3785-4acf-bb33-1889ab550f8a', 'c64ce3f6-e97c-4bbd-a9e2-ed843def90ac', '091aebb1-44e1-48ca-a73e-edacab295648', 'af453ced-597c-4aea-9591-470ca476dbd4']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: af453ced-597c-4aea-9591-470ca476dbd4
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_08a99ee9cae273404b38e62ab95e2a5d.mp4
+任务 af453ced-597c-4aea-9591-470ca476dbd4 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_08a99ee9cae273404b38e62ab95e2a5d.mp4, 上传耗时： 0:00:00.438459
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250328_Z0766.MP4
+创建上传任务: 68945839-3f02-4d66-961a-50c232b5365e
+开始接收文件: 20250328_Z0766.MP4
+文件接收完成，大小: 256.28MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797', '867e20cd-3785-4acf-bb33-1889ab550f8a', 'c64ce3f6-e97c-4bbd-a9e2-ed843def90ac', '091aebb1-44e1-48ca-a73e-edacab295648', 'af453ced-597c-4aea-9591-470ca476dbd4', '68945839-3f02-4d66-961a-50c232b5365e']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: 68945839-3f02-4d66-961a-50c232b5365e
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_e15c36e6400c703029fc060aaded2a6a.mp4
+任务 68945839-3f02-4d66-961a-50c232b5365e 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_e15c36e6400c703029fc060aaded2a6a.mp4, 上传耗时： 0:00:00.628387
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250328_Z0773.MP4
+创建上传任务: 12430109-0dad-4d86-a658-71d813cc7a4b
+开始接收文件: 20250328_Z0773.MP4
+文件接收完成，大小: 160.27MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797', '867e20cd-3785-4acf-bb33-1889ab550f8a', 'c64ce3f6-e97c-4bbd-a9e2-ed843def90ac', '091aebb1-44e1-48ca-a73e-edacab295648', 'af453ced-597c-4aea-9591-470ca476dbd4', '68945839-3f02-4d66-961a-50c232b5365e', '12430109-0dad-4d86-a658-71d813cc7a4b']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: 12430109-0dad-4d86-a658-71d813cc7a4b
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_14a8012801ae8095f986ce438411415e.mp4
+任务 12430109-0dad-4d86-a658-71d813cc7a4b 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_14a8012801ae8095f986ce438411415e.mp4, 上传耗时： 0:00:00.476227
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250328_Z0774.MP4
+创建上传任务: 2aff3ebb-ac99-4adf-93e1-d44b53404dcc
+开始接收文件: 20250328_Z0774.MP4
+文件接收完成，大小: 224.27MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797', '867e20cd-3785-4acf-bb33-1889ab550f8a', 'c64ce3f6-e97c-4bbd-a9e2-ed843def90ac', '091aebb1-44e1-48ca-a73e-edacab295648', 'af453ced-597c-4aea-9591-470ca476dbd4', '68945839-3f02-4d66-961a-50c232b5365e', '12430109-0dad-4d86-a658-71d813cc7a4b', '2aff3ebb-ac99-4adf-93e1-d44b53404dcc']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: 2aff3ebb-ac99-4adf-93e1-d44b53404dcc
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_af1daf18c1c93a87871171b4ff12cd8d.mp4
+任务 2aff3ebb-ac99-4adf-93e1-d44b53404dcc 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_af1daf18c1c93a87871171b4ff12cd8d.mp4, 上传耗时： 0:00:00.665209
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250329_Z0810.MP4
+创建上传任务: 2d51be6e-0866-4c6d-b115-99cd5de9ec15
+开始接收文件: 20250329_Z0810.MP4
+文件接收完成，大小: 192.27MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797', '867e20cd-3785-4acf-bb33-1889ab550f8a', 'c64ce3f6-e97c-4bbd-a9e2-ed843def90ac', '091aebb1-44e1-48ca-a73e-edacab295648', 'af453ced-597c-4aea-9591-470ca476dbd4', '68945839-3f02-4d66-961a-50c232b5365e', '12430109-0dad-4d86-a658-71d813cc7a4b', '2aff3ebb-ac99-4adf-93e1-d44b53404dcc', '2d51be6e-0866-4c6d-b115-99cd5de9ec15']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: 2d51be6e-0866-4c6d-b115-99cd5de9ec15
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_ed91d02203765a5cf58a14c2613103c8.mp4
+任务 2d51be6e-0866-4c6d-b115-99cd5de9ec15 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_ed91d02203765a5cf58a14c2613103c8.mp4, 上传耗时： 0:00:00.491644
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250329_Z0823.MP4
+创建上传任务: 4c1a91dd-f7c2-4313-95e3-3cb508e9e308
+开始接收文件: 20250329_Z0823.MP4
+文件接收完成，大小: 128.26MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797', '867e20cd-3785-4acf-bb33-1889ab550f8a', 'c64ce3f6-e97c-4bbd-a9e2-ed843def90ac', '091aebb1-44e1-48ca-a73e-edacab295648', 'af453ced-597c-4aea-9591-470ca476dbd4', '68945839-3f02-4d66-961a-50c232b5365e', '12430109-0dad-4d86-a658-71d813cc7a4b', '2aff3ebb-ac99-4adf-93e1-d44b53404dcc', '2d51be6e-0866-4c6d-b115-99cd5de9ec15', '4c1a91dd-f7c2-4313-95e3-3cb508e9e308']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: 4c1a91dd-f7c2-4313-95e3-3cb508e9e308
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_ae594c9d68dbdab59b8822e75b3e69a4.mp4
+任务 4c1a91dd-f7c2-4313-95e3-3cb508e9e308 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_ae594c9d68dbdab59b8822e75b3e69a4.mp4, 上传耗时： 0:00:00.411472
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 20250329_Z0847.MP4
+创建上传任务: 74cc11d3-8d77-44ad-889f-9a41c2de8a3d
+开始接收文件: 20250329_Z0847.MP4
+文件接收完成，大小: 64.26MB
+统一团队协作模式
+当前所有任务: ['a9cff38d-c7a3-431a-82f8-6418be407d58', 'd1569af5-9a29-4f45-b180-5fb9de27367e', 'a72b2902-de7a-44cb-8f82-30946da4a40d', 'dcf5917c-2377-4db6-b4bd-5435d33cfa19', '9e73a10a-557f-4bc2-9b26-4d698d58379e', 'eaf4364f-4807-477f-8f31-994535c7ce39', 'b39f4d37-93a2-4b07-afea-0e3605521797', '867e20cd-3785-4acf-bb33-1889ab550f8a', 'c64ce3f6-e97c-4bbd-a9e2-ed843def90ac', '091aebb1-44e1-48ca-a73e-edacab295648', 'af453ced-597c-4aea-9591-470ca476dbd4', '68945839-3f02-4d66-961a-50c232b5365e', '12430109-0dad-4d86-a658-71d813cc7a4b', '2aff3ebb-ac99-4adf-93e1-d44b53404dcc', '2d51be6e-0866-4c6d-b115-99cd5de9ec15', '4c1a91dd-f7c2-4313-95e3-3cb508e9e308', '74cc11d3-8d77-44ad-889f-9a41c2de8a3d']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: 74cc11d3-8d77-44ad-889f-9a41c2de8a3d
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_63ae371334934dd4aecb3e76953725d7.mp4
+任务 74cc11d3-8d77-44ad-889f-9a41c2de8a3d 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_63ae371334934dd4aecb3e76953725d7.mp4, 上传耗时： 0:00:00.187951
+INFO:     223.88.21.8:1106 - "POST /api/upload/video HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1349 - "OPTIONS /api/ai/generate-scripts HTTP/1.1" 200 OK
+调用FastGPT文案改写插件...
+尝试方案1 - 简化插件调用: {'chatId': 'script_rewrite_618', 'stream': False, 'detail': True, 'messages': [{'content': '郑州展会AI机器人', 'role': 'user'}], 'variables': {'video_duration': 30, 'original_text': '郑州展会AI机器人', 'rewrite_count': 3}}
+方案1响应: {'responseData': [{'id': 'oLGVvlnIdYiOUPOZ', 'nodeId': 'pluginInput', 'moduleName': 'workflow:template.plugin_start', 'moduleType': 'pluginInput', 'runningTime': 0}, {'customInputs': {'video_duration': 30}, 'customOutputs': {'result': '根据视频时长30秒，按照190字/分钟的语速计算：\n推荐文案字数：149字\n字数范围：134-164字\n（已预留15%缓冲时间，确保播放流畅）', 'recommendedWordCount': 149, 'minWordCount': 134, 'maxWordCount': 164, 'videoDuration': 30, 'wordsPerMinute': 350}, 'codeLog': '', 'id': 'z5DBIwy3oFUOGsju', 'nodeId': 'rtA7KbK7R2RyOVc4', 'moduleName': '代码运行#2', 'moduleType': 'code', 'runningTime': 0.01}, {'totalPoints': 3.3732499999999996, 'model': 'doubao-seed-1-6-250615', 'inputTokens': 383, 'outputTokens': 1311, 'query': '郑州展会AI机器人303', 'maxToken': 4000, 'reasoningText': '\n我现在需要处理用户的请求。首先，用户的任务是将“郑州展会AI机器人303”改写成3个不同风格、长度适中的口播稿，字数要求在134到149字之间。首先，我需要明确用户提供的变量是“郑州展会AI机器人303”，看起来“303”可能是型号或展位号，需要自然融入文案中。\n\n首先，我得确定三个不同的风格。考虑到是展会口播，可能的风格有：亲切互动型、科技亮点型、实用功能型。每个风格需要突出不同的重点，同时保持口语化，自然流畅。\n\n第一个版本，亲切互动型。需要用友好的语气，吸引观众注意，比如用“来啦来啦！”开头，介绍机器人在郑州展会的位置（303展位），然后提到互动体验，比如聊天、咨询，让观众觉得亲切，愿意过来看看。字数要控制在134-149字。\n\n第二个版本，科技亮点型。强调AI技术，突出机器人的智能功能，比如语音识别、信息查询，可能提到“最酷的AI伙伴”，吸引对科技感兴趣的观众，说明在303展位可以体验前沿科技。\n\n第三个版本，实用功能型。侧重机器人能为观众解决什么问题，比如展会信息导览、展位指引、产品介绍，让观众觉得实用，有帮助，鼓励他们去303展位找机器人帮忙。\n\n接下来，需要确保每个版本都包含“郑州展会”、“AI机器人303”这些关键信息，并且口语化，没有生硬的词汇。然后检查字数，每个版本都要在134-149字之间。\n\n现在开始构思第一个版本：亲切互动型。开头用“小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！”然后说它特别会聊天，不管是想问展会信息还是随便唠唠，都能陪你聊，还能带你逛展，语气活泼一点，最后邀请大家“快来303展位找它玩呀，保证让你逛展不无聊！”这样大概字数够吗？试写一下：“小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！”数一下字数：大概140字左右，符合要求。\n\n第二个版本：科技亮点型。开头“科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！”然后说它搭载最新语音识别技术，不管问啥都能秒答，展会动态、产品详情全知道，是“最懂你的智能小助手”，邀请大家来体验“未来感互动”。试写：“科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新的语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个‘最懂你的智能小助手’面对面，保证让你大开眼界，体验一把未来感十足的互动！”字数大概145字，符合。\n\n第三个版本：实用功能型。开头“逛郑州展会怕迷路？303展位的AI机器人来帮你！”然后说它能导览、指引展位、介绍产品，有问题随时问，比地图还好用，最后说“有它帮忙，逛展效率翻倍，快来303展位找这位‘智能小向导’吧！”试写：“逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的‘活地图’，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！”字数检查，大概145字左右。\n\n现在检查每个版本是否符合要求：包含关键信息，口语化，字数在范围内，没有emoji，格式正确。然后确保三个版本风格不同，各有侧重。最后整理成JSON数组，每个元素是一个字符串，没有其他内容。', 'historyPreview': [{'obj': 'System', 'value': '# 角色\n你是一个创意文案大师和数据格式化专家。\n\n# 任务\n请根据文案字数要求，将以下郑州展会AI机器人改写 3个不同风格长度适中的口播稿，改写后的文案应自然流畅，文案字数不大于149个字，不少于134个字。\n\n# 约束\n1.  **严格按照**用户指定的数量（3个）进行生成。\n2. 严格按照字数限制生成文案，文案字数不能在限制区间之外。\n3.  **输出格式要求**：必须返回一个标准的JSON数组（JSON Array），数组中的每一个元素都是一个字符串，代表一个改写版本。不要在JSON数组前后添加任何解释性文字、代码块标记（如```json）或其他任何非JSON内容。\n4.  每个版本都必须是高质量、可直接使用的口播文案。\n5. 保持口语化风格。\n6. 严禁出现emoji表情等无法进行口播的标签符号\n7. 严禁以markdown格式输出内容\n8. 若134、134郑州展会AI机器人变量中没有值，则按照3条文案改写、每条文案160个字符长度进行输出\n\n# 正确的输出格式示例\n["这是第一个改写版本...","这是第二个改写版本..."]'}, {'obj': 'Human', 'value': '郑州展会AI机器人303'}, {'obj': 'AI', 'value': '["小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！","科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个“最懂你的智能小助手”面对面，保证让你大开眼界，体验一把未来感十足的互动！","逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的“活地图”，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！"]'}], 'contextTotalLen': 3, 'finishReason': 'stop', 'id': 'zZ8GA33QFUmC9c9L', 'nodeId': 'uI6M6W0OSo2buNvd', 'moduleName': '文案改写', 'moduleType': 'chatNode', 'runningTime': 30.46}, {'customInputs': {'data1': '["小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！","科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个“最懂你的智能小助手”面对面，保证让你大开眼界，体验一把未来感十足的互动！","逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的“活地图”，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！"]'}, 'customOutputs': {'result': ['小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！', '科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个“最懂你的智能小助手”面对面，保证让你大开眼界，体验一把未来感十足的互动！', '逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的“活地图”，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！']}, 'codeLog': '', 'id': 'oKp063mTzZZ6Q2wd', 'nodeId': 'wn6A84E52sdY3R6T', 'moduleName': '代码运行', 'moduleType': 'code', 'runningTime': 0.03}, {'pluginOutput': {'result': ['小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！', '科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个“最懂你的智能小助手”面对面，保证让你大开眼界，体验一把未来感十足的互动！', '逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的“活地图”，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！']}, 'id': 'sUVpQ2KveZZMY9fC', 'nodeId': 'pluginOutput', 'moduleName': 'common:core.module.template.self_output', 'moduleType': 'pluginOutput', 'runningTime': 0}], 'newVariables': {}, 'id': 'script_rewrite_618', 'model': '', 'usage': {'prompt_tokens': 1, 'completion_tokens': 1, 'total_tokens': 1}, 'choices': [{'message': {'role': 'assistant', 'content': [{'type': 'text', 'text': {'content': ''}}]}, 'finish_reason': 'stop', 'index': 0}]}
+最终FastGPT请求完成，状态码: 200
+最终FastGPT响应: {'responseData': [{'id': 'oLGVvlnIdYiOUPOZ', 'nodeId': 'pluginInput', 'moduleName': 'workflow:template.plugin_start', 'moduleType': 'pluginInput', 'runningTime': 0}, {'customInputs': {'video_duration': 30}, 'customOutputs': {'result': '根据视频时长30秒，按照190字/分钟的语速计算：\n推荐文案字数：149字\n字数范围：134-164字\n（已预留15%缓冲时间，确保播放流畅）', 'recommendedWordCount': 149, 'minWordCount': 134, 'maxWordCount': 164, 'videoDuration': 30, 'wordsPerMinute': 350}, 'codeLog': '', 'id': 'z5DBIwy3oFUOGsju', 'nodeId': 'rtA7KbK7R2RyOVc4', 'moduleName': '代码运行#2', 'moduleType': 'code', 'runningTime': 0.01}, {'totalPoints': 3.3732499999999996, 'model': 'doubao-seed-1-6-250615', 'inputTokens': 383, 'outputTokens': 1311, 'query': '郑州展会AI机器人303', 'maxToken': 4000, 'reasoningText': '\n我现在需要处理用户的请求。首先，用户的任务是将“郑州展会AI机器人303”改写成3个不同风格、长度适中的口播稿，字数要求在134到149字之间。首先，我需要明确用户提供的变量是“郑州展会AI机器人303”，看起来“303”可能是型号或展位号，需要自然融入文案中。\n\n首先，我得确定三个不同的风格。考虑到是展会口播，可能的风格有：亲切互动型、科技亮点型、实用功能型。每个风格需要突出不同的重点，同时保持口语化，自然流畅。\n\n第一个版本，亲切互动型。需要用友好的语气，吸引观众注意，比如用“来啦来啦！”开头，介绍机器人在郑州展会的位置（303展位），然后提到互动体验，比如聊天、咨询，让观众觉得亲切，愿意过来看看。字数要控制在134-149字。\n\n第二个版本，科技亮点型。强调AI技术，突出机器人的智能功能，比如语音识别、信息查询，可能提到“最酷的AI伙伴”，吸引对科技感兴趣的观众，说明在303展位可以体验前沿科技。\n\n第三个版本，实用功能型。侧重机器人能为观众解决什么问题，比如展会信息导览、展位指引、产品介绍，让观众觉得实用，有帮助，鼓励他们去303展位找机器人帮忙。\n\n接下来，需要确保每个版本都包含“郑州展会”、“AI机器人303”这些关键信息，并且口语化，没有生硬的词汇。然后检查字数，每个版本都要在134-149字之间。\n\n现在开始构思第一个版本：亲切互动型。开头用“小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！”然后说它特别会聊天，不管是想问展会信息还是随便唠唠，都能陪你聊，还能带你逛展，语气活泼一点，最后邀请大家“快来303展位找它玩呀，保证让你逛展不无聊！”这样大概字数够吗？试写一下：“小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！”数一下字数：大概140字左右，符合要求。\n\n第二个版本：科技亮点型。开头“科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！”然后说它搭载最新语音识别技术，不管问啥都能秒答，展会动态、产品详情全知道，是“最懂你的智能小助手”，邀请大家来体验“未来感互动”。试写：“科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新的语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个‘最懂你的智能小助手’面对面，保证让你大开眼界，体验一把未来感十足的互动！”字数大概145字，符合。\n\n第三个版本：实用功能型。开头“逛郑州展会怕迷路？303展位的AI机器人来帮你！”然后说它能导览、指引展位、介绍产品，有问题随时问，比地图还好用，最后说“有它帮忙，逛展效率翻倍，快来303展位找这位‘智能小向导’吧！”试写：“逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的‘活地图’，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！”字数检查，大概145字左右。\n\n现在检查每个版本是否符合要求：包含关键信息，口语化，字数在范围内，没有emoji，格式正确。然后确保三个版本风格不同，各有侧重。最后整理成JSON数组，每个元素是一个字符串，没有其他内容。', 'historyPreview': [{'obj': 'System', 'value': '# 角色\n你是一个创意文案大师和数据格式化专家。\n\n# 任务\n请根据文案字数要求，将以下郑州展会AI机器人改写 3个不同风格长度适中的口播稿，改写后的文案应自然流畅，文案字数不大于149个字，不少于134个字。\n\n# 约束\n1.  **严格按照**用户指定的数量（3个）进行生成。\n2. 严格按照字数限制生成文案，文案字数不能在限制区间之外。\n3.  **输出格式要求**：必须返回一个标准的JSON数组（JSON Array），数组中的每一个元素都是一个字符串，代表一个改写版本。不要在JSON数组前后添加任何解释性文字、代码块标记（如```json）或其他任何非JSON内容。\n4.  每个版本都必须是高质量、可直接使用的口播文案。\n5. 保持口语化风格。\n6. 严禁出现emoji表情等无法进行口播的标签符号\n7. 严禁以markdown格式输出内容\n8. 若134、134郑州展会AI机器人变量中没有值，则按照3条文案改写、每条文案160个字符长度进行输出\n\n# 正确的输出格式示例\n["这是第一个改写版本...","这是第二个改写版本..."]'}, {'obj': 'Human', 'value': '郑州展会AI机器人303'}, {'obj': 'AI', 'value': '["小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！","科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个“最懂你的智能小助手”面对面，保证让你大开眼界，体验一把未来感十足的互动！","逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的“活地图”，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！"]'}], 'contextTotalLen': 3, 'finishReason': 'stop', 'id': 'zZ8GA33QFUmC9c9L', 'nodeId': 'uI6M6W0OSo2buNvd', 'moduleName': '文案改写', 'moduleType': 'chatNode', 'runningTime': 30.46}, {'customInputs': {'data1': '["小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！","科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个“最懂你的智能小助手”面对面，保证让你大开眼界，体验一把未来感十足的互动！","逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的“活地图”，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！"]'}, 'customOutputs': {'result': ['小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！', '科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个“最懂你的智能小助手”面对面，保证让你大开眼界，体验一把未来感十足的互动！', '逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的“活地图”，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！']}, 'codeLog': '', 'id': 'oKp063mTzZZ6Q2wd', 'nodeId': 'wn6A84E52sdY3R6T', 'moduleName': '代码运行', 'moduleType': 'code', 'runningTime': 0.03}, {'pluginOutput': {'result': ['小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！', '科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个“最懂你的智能小助手”面对面，保证让你大开眼界，体验一把未来感十足的互动！', '逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的“活地图”，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！']}, 'id': 'sUVpQ2KveZZMY9fC', 'nodeId': 'pluginOutput', 'moduleName': 'common:core.module.template.self_output', 'moduleType': 'pluginOutput', 'runningTime': 0}], 'newVariables': {}, 'id': 'script_rewrite_618', 'model': '', 'usage': {'prompt_tokens': 1, 'completion_tokens': 1, 'total_tokens': 1}, 'choices': [{'message': {'role': 'assistant', 'content': [{'type': 'text', 'text': {'content': ''}}]}, 'finish_reason': 'stop', 'index': 0}]}
+找到插件输出结果: ['小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！', '科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个“最懂你的智能小助手”面对面，保证让你大开眼界，体验一把未来感十足的互动！', '逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的“活地图”，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！']
+插件返回的文案: ['小伙伴们注意啦！郑州展会303展位的AI机器人来跟大家打招呼啦！这家伙可聪明了，不管你是想问展会信息、找展位，还是就想随便唠唠嗑，它都能陪你聊得乐呵呵。现场还能跟它互动玩游戏，反应快得很！想体验的朋友别错过，快来303展位找它玩呀，保证让你逛展不无聊，还能收获满满！', '科技迷看过来！郑州展会303展位藏着个超厉害的AI机器人！它可是搭载了最新语音交互技术，不管你问展会动态、产品详情还是展位位置，张口就来，秒答不卡顿。想感受最前沿的AI黑科技？那就来303展位，和这个“最懂你的智能小助手”面对面，保证让你大开眼界，体验一把未来感十足的互动！', '逛郑州展会怕迷路、找不着展位？303展位的AI机器人来帮你啦！它可是展会里的“活地图”，不管你想去哪个展区、找什么产品，跟它说一声，立马给你规划路线。还能详细介绍参展品牌，有啥问题尽管问，回答又快又准！来郑州展会逛累了？就到303展位找AI机器人当你的贴心小助手，保准逛展不费劲！']
+INFO:     223.88.21.8:1349 - "POST /api/ai/generate-scripts HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "OPTIONS /api/projects HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "POST /api/projects HTTP/1.1" 200 OK
+🚀 启动并发队列处理器 (支持3个并发任务)...
+🔧 Worker-1 已启动
+🔧 Worker-2 已启动
+🔧 Worker-3 已启动
+INFO:     223.88.21.8:1480 - "OPTIONS /api/generation/start HTTP/1.1" 200 OK
+📝 新任务 6d0d1afa-3442-4248-82a5-b31f1992296d: 开始处理
+   队列状态: 队列中1个任务, 排队位置#1
+   正在处理: 0/3 个任务
+INFO:     223.88.21.8:1480 - "POST /api/generation/start HTTP/1.1" 200 OK
+📋 Worker-1 开始处理任务: 6d0d1afa-3442-4248-82a5-b31f1992296d
+🔄 当前处理中任务数: 1
+使用标题: 20250915项目
+标题配置: {'color': '#ffffff', 'position': 'top', 'fontSize': 0, 'fontFamily': 'SourceHanSansCN-Heavy', 'strokeColor': '#000000', 'strokeWidth': 0, 'shadow': False, 'shadowColor': '#000000', 'bold': False, 'italic': False, 'background_opacity': 0, 'mainTitle': {'text': '', 'fontSize': 0, 'color': '#ffffff', 'fontFamily': 'SourceHanSansCN-Heavy'}, 'subTitle': {'text': '', 'fontSize': 0, 'color': '#ffff00', 'fontFamily': 'SourceHanSansCN-Heavy'}, 'spacing': 20, 'alignment': 'center', 'background': {'background_opacity': 0, 'background_color': '#CEC970'}, 'background_color': '#CEC970'}
+📥 使用智能缓存下载素材...
+🚀 开始批量预加载 17 个素材...
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/561a88e6d961400981b4bde814204f16.mp4
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/03e4de63e5dba72dd409482c8a4466c5.mp4
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/1ad7a510f94b80244de3bd177005b444.mp4
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/644717cc4964db37e5051796d80646ea.mp4
+📥 下载素材: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com...
+✅ 下载完成: cache/materials/89855a4b733d6ad554d8273b4620b295.mp4 (128.3MB)
+📥 下载素材: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com...
+✅ 下载完成: cache/materials/74c904856ecc122acf5a47f425cfa2ed.mp4 (160.3MB)
+📥 下载素材: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com...
+✅ 下载完成: cache/materials/be7d67749405c407e4c6dfbebcec493e.mp4 (256.3MB)
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/3a49204fecf0186b1f61159c630732ea.mp4
+📥 下载素材: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com...
+✅ 下载完成: cache/materials/242f362d160ed977d1f0ffdd0889ad55.mp4 (224.3MB)
+📥 下载素材: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com...
+✅ 下载完成: cache/materials/27039d796f516bc032eee6e89c925494.mp4 (192.3MB)
+📥 下载素材: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com...
+✅ 下载完成: cache/materials/6c2943aea61fbe32295b24b354930037.mp4 (128.3MB)
+📥 下载素材: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com...
+✅ 下载完成: cache/materials/2a67b496a081ecbb46b0b79df2fb588e.mp4 (64.3MB)
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/0d6d6d4ac0ad0d39cc7294560053cd5f.mp3
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3
+📥 下载素材: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com...
+✅ 下载完成: cache/materials/a3166e019699183b099cc3c82cf4ad41.mp3 (1.5MB)
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/045d238f4e4e1ae09fc9f8b493319126.mp3
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/88008864a3aa793378516d136c230996.mp3
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/561a88e6d961400981b4bde814204f16.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/03e4de63e5dba72dd409482c8a4466c5.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/1ad7a510f94b80244de3bd177005b444.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/644717cc4964db37e5051796d80646ea.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/89855a4b733d6ad554d8273b4620b295.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/74c904856ecc122acf5a47f425cfa2ed.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/be7d67749405c407e4c6dfbebcec493e.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/3a49204fecf0186b1f61159c630732ea.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/242f362d160ed977d1f0ffdd0889ad55.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/27039d796f516bc032eee6e89c925494.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/6c2943aea61fbe32295b24b354930037.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/2a67b496a081ecbb46b0b79df2fb588e.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/0d6d6d4ac0ad0d39cc7294560053cd5f.mp3
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/a3166e019699183b099cc3c82cf4ad41.mp3
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/045d238f4e4e1ae09fc9f8b493319126.mp3
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/88008864a3aa793378516d136c230996.mp3
+📊 预加载统计: 成功 17/17
+✅ 智能缓存下载完成，耗时: 96.8秒
+=======================================
+包含：Title + 动态字幕(智能分屏显示) + TTS语音 + 背景音乐 + 海报背景
+项目标题: 20250915项目
+Title位置: top
+动态字幕位置: template1
+=======================================
+成功拼接12个片段
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1628 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1480 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1608 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1555 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1570 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1662 - "GET /api/generation/status/6d0d1afa-3442-4248-82a5-b31f1992296d HTTP/1.1" 200 OK
+TTS音频生成完成: outputs/tts_audio/tts_135af979.wav, zh-CN-XiaoxiaoNeural
+TTS 时长 28.13s，目标时长保持 30s
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+文本分割结果：原文 -> 5个句子 -> 11个显示片段
+  片段1: '小伙伴们注意啦！'
+  片段2: '郑州展会303展位的AI机器人来跟大'
+  片段3: '家打招呼啦！'
+  片段4: '这家伙可聪明了，不管你是想问展会'
+  片段5: '信息、找展位，还是就想随便唠唠嗑'
+  片段6: '，它都能陪你聊得乐呵呵。'
+  片段7: '现场还能跟它互动玩游戏，反应快得'
+  片段8: '很！'
+  片段9: '想体验的朋友别错过，快来303展位'
+  片段10: '找它玩呀，保证让你逛展不无聊，还'
+  片段11: '能收获满满！'
+智能分屏字幕分割成11个片段
+TTS音频实际时长: 28.13秒
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'小伙伴们注意啦！...', 宽度480px
+字幕片段1: 0.0s-1.7s (时长1.7s) '小伙伴们注意啦！...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'郑州展会303展位的AI机器人来跟大...', 宽度952px
+字幕片段2: 1.7s-5.5s (时长3.8s) '郑州展会303展位的AI机器人来跟大...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'家打招呼啦！...', 宽度360px
+字幕片段3: 5.5s-6.8s (时长1.3s) '家打招呼啦！...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'这家伙可聪明了，不管你是想问展会...', 宽度960px
+字幕片段4: 6.8s-10.2s (时长3.4s) '这家伙可聪明了，不管你是想问展会...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'信息、找展位，还是就想随便唠唠嗑...', 宽度960px
+字幕片段5: 10.2s-13.5s (时长3.4s) '信息、找展位，还是就想随便唠唠嗑...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'，它都能陪你聊得乐呵呵。...', 宽度720px
+字幕片段6: 13.5s-16.1s (时长2.5s) '，它都能陪你聊得乐呵呵。...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'现场还能跟它互动玩游戏，反应快得...', 宽度960px
+字幕片段7: 16.1s-19.5s (时长3.4s) '现场还能跟它互动玩游戏，反应快得...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'很！...', 宽度120px
+字幕片段8: 19.5s-20.7s (时长1.2s) '很！...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'想体验的朋友别错过，快来303展位...', 宽度951px
+字幕片段9: 20.7s-24.3s (时长3.6s) '想体验的朋友别错过，快来303展位...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'找它玩呀，保证让你逛展不无聊，还...', 宽度960px
+字幕片段10: 24.3s-27.6s (时长3.4s) '找它玩呀，保证让你逛展不无聊，还...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'能收获满满！...', 宽度360px
+字幕片段11: 27.6s-28.1s (时长0.5s) '能收获满满！...'
+创建了11个动态字幕片段，总时长28.13秒
+字幕1: 0.0s-1.7s 添加到滤镜链
+字幕2: 1.7s-5.5s 添加到滤镜链
+字幕3: 5.5s-6.8s 添加到滤镜链
+字幕4: 6.8s-10.2s 添加到滤镜链
+字幕5: 10.2s-13.5s 添加到滤镜链
+字幕6: 13.5s-16.1s 添加到滤镜链
+字幕7: 16.1s-19.5s 添加到滤镜链
+字幕8: 19.5s-20.7s 添加到滤镜链
+字幕9: 20.7s-24.3s 添加到滤镜链
+字幕10: 24.3s-27.6s 添加到滤镜链
+字幕11: 27.6s-28.1s 添加到滤镜链
+修复后的FFmpeg滤镜链:
+[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg];[bg]boxblur=luma_radius=50:chroma_radius=50:luma_power=3[bg_blur];[0:v]scale=1080:-1[fg_scale];[fg_scale]scale=1080:607[fg];[bg_blur][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];[bg_with_fg][1:v]overlay=0:200[with_title];[with_title][2:v]overlay=0:1312.4:enable='between(t,0,1.6920300751879698)'[with_subtitle_0];[with_subtitle_0][3:v]overlay=0:1312.4:enable='between(t,1.6920300751879698,5.499097744360902)'[with_subtitle_1];[with_subtitle_1][4:v]overlay=0:1312.4:enable='between(t,5.499097744360902,6.768120300751879)'[with_subtitle_2];[with_subtitle_2][5:v]overlay=0:1312.4:enable='between(t,6.768120300751879,10.152180451127819)'[with_subtitle_3];[with_subtitle_3][6:v]overlay=0:1312.4:enable='between(t,10.152180451127819,13.536240601503758)'[with_subtitle_4];[with_subtitle_4][7:v]overlay=0:1312.4:enable='between(t,13.536240601503758,16.074285714285715)'[with_subtitle_5];[with_subtitle_5][8:v]overlay=0:1312.4:enable='between(t,16.074285714285715,19.458345864661656)'[with_subtitle_6];[with_subtitle_6][9:v]overlay=0:1312.4:enable='between(t,19.458345864661656,20.658345864661655)'[with_subtitle_7];[with_subtitle_7][10:v]overlay=0:1312.4:enable='between(t,20.658345864661655,24.25390977443609)'[with_subtitle_8];[with_subtitle_8][11:v]overlay=0:1312.4:enable='between(t,24.25390977443609,27.63796992481203)'[with_subtitle_9];[with_subtitle_9][12:v]overlay=0:1312.4:enable='between(t,27.63796992481203,28.13)'[final_video];[final_video]format=yuv420p[video_out];[13:a]volume=0.8,atrim=0:30[tts];[14:a]volume=0.15,atrim=0:30[bgm];[tts][bgm]amix=inputs=2:duration=shortest:dropout_transition=0,atrim=0:30[audio_out]

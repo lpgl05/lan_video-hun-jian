@@ -1425,53 +1425,33 @@ def split_text_into_screen_friendly_sentences(text, video_width=1080, style=None
     """
     if not text:
         return []
-    
     import re
-    
-    # 中文句子分割符
-    chinese_punctuation = '。！？；'
-    # 英文句子分割符  
-    english_punctuation = '.!?;'
-    
-    # 首先按标点符号分割
-    sentences = []
-    current_sentence = ""
-    
-    for char in text:
-        current_sentence += char
-        if char in chinese_punctuation or char in english_punctuation:
-            if current_sentence.strip():
-                sentences.append(current_sentence.strip())
-            current_sentence = ""
-    
-    # 处理最后一部分
-    if current_sentence.strip():
-        sentences.append(current_sentence.strip())
-    
-    # 如果没有标点符号，按长度分割
-    if not sentences:
-        max_words_per_sentence = 12
-        words = text.split() if ' ' in text else list(text)
-        for i in range(0, len(words), max_words_per_sentence):
-            sentence = ''.join(words[i:i+max_words_per_sentence]) if ' ' not in text else ' '.join(words[i:i+max_words_per_sentence])
-            if sentence:
-                sentences.append(sentence)
-    
-    # 确保至少有一句
-    if not sentences:
-        sentences = [text]
-    
-    # 对每个句子检查是否需要按屏幕宽度再次分割
+
+    # 按中英文常用标点拆分并去掉这些标点
+    split_re = re.compile(r"[，。！？；：,\.!\?;:]+")
+
+    parts = [p.strip() for p in split_re.split(text) if p and p.strip()]
+
+    # 回退：如果没有分割出内容，保留原文本
+    if not parts:
+        parts = [text.strip()]
+
+    # 对每个分段，使用按屏宽再细分的函数（保持兼容性）
     final_segments = []
-    for sentence in sentences:
-        # 检查单句是否能在一屏显示
-        screen_segments = split_long_sentence_by_screen(sentence, video_width, style)
-        final_segments.extend(screen_segments)
-    
-    print(f"文本分割结果：原文 -> {len(sentences)}个句子 -> {len(final_segments)}个显示片段")
+    for part in parts:
+        segments = split_long_sentence_by_screen(part, video_width, style)
+        if segments:
+            final_segments.extend(segments)
+        else:
+            final_segments.append(part)
+
+    if not final_segments:
+        final_segments = [text.strip()]
+
+    print(f"文本分割结果：原文 -> {len(parts)}个句子 -> {len(final_segments)}个显示片段")
     for i, segment in enumerate(final_segments):
         print(f"  片段{i+1}: '{segment[:30]}{'...' if len(segment) > 30 else ''}'")
-    
+
     return final_segments
 
 def create_single_line_subtitle_image(text, video_width=1080, style=None):

@@ -1,9 +1,0 @@
-
-> @video-mixer/frontend@1.0.0 dev
-> vite --host 0.0.0.0
-
-
-  VITE v5.4.20  ready in 307 ms
-
-  ➜  Local:   http://localhost:3000/
-  ➜  Network: http://10.0.1.7:3000/

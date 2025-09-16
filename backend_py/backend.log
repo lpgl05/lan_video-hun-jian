@@ -1,0 +1,294 @@
+nohup: ignoring input
+/opt/01-vedio-hunjian/backend_py/.venv/lib/python3.13/site-packages/oss2/api.py:703: SyntaxWarning: invalid escape sequence '\&'
+  r'http://your-bucket.oss-cn-hangzhou.aliyuncs.com/logo.jpg?OSSAccessKeyId=YourAccessKeyId\&Expires=1447178011&Signature=UJfeJgvcypWq6Q%2Bm3IJcSHbvSak%3D'
+/opt/01-vedio-hunjian/backend_py/.venv/lib/python3.13/site-packages/moviepy/config_defaults.py:47: SyntaxWarning: invalid escape sequence '\P'
+  IMAGEMAGICK_BINARY = r"C:\Program Files\ImageMagick-6.8.8-Q16\magick.exe"
+/opt/01-vedio-hunjian/backend_py/.venv/lib/python3.13/site-packages/moviepy/video/io/ffmpeg_reader.py:294: SyntaxWarning: invalid escape sequence '\d'
+  lines_video = [l for l in lines if ' Video: ' in l and re.search('\d+x\d+', l)]
+/opt/01-vedio-hunjian/backend_py/.venv/lib/python3.13/site-packages/moviepy/video/io/ffmpeg_reader.py:367: SyntaxWarning: invalid escape sequence '\d'
+  rotation_lines = [l for l in lines if 'rotate          :' in l and re.search('\d+$', l)]
+/opt/01-vedio-hunjian/backend_py/.venv/lib/python3.13/site-packages/moviepy/video/io/ffmpeg_reader.py:370: SyntaxWarning: invalid escape sequence '\d'
+  match = re.search('\d+$', rotation_line)
+INFO:     Started server process [2358059]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+✅ OSS权限检查通过（文件不存在但可访问），去重功能已启用
+✅ OSS权限检查通过（文件不存在但可访问），去重功能已启用
+✅ OSS权限检查通过（文件不存在但可访问），去重功能已启用
+指定的字体路径是: fonts/msyh.ttc
+INFO:     223.88.21.8:1399 - "OPTIONS /api/upload/video HTTP/1.1" 200 OK
+上传视频，统一团队协作模式
+视频文件名处理: 6c9a018d1c1c51cdf7fcced1d086be57.mp4
+创建上传任务: 62ffc0dc-c4de-4e01-857a-fd9927a12db2
+开始接收文件: 6c9a018d1c1c51cdf7fcced1d086be57.mp4
+文件接收完成，大小: 31.24MB
+统一团队协作模式
+当前所有任务: ['62ffc0dc-c4de-4e01-857a-fd9927a12db2']
+使用OSS: 是 (统一团队协作模式)
+开始上传视频到阿里云oss, task_id: 62ffc0dc-c4de-4e01-857a-fd9927a12db2
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_dbdf3f2268b311fe23c714b13ee9f746.mp4
+任务 62ffc0dc-c4de-4e01-857a-fd9927a12db2 文件去重，瞬间完成
+上传视频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/videos/hash_dbdf3f2268b311fe23c714b13ee9f746.mp4, 上传耗时： 0:00:00.230320
+INFO:     223.88.21.8:1399 - "POST /api/upload/video HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1399 - "OPTIONS /api/upload/audio HTTP/1.1" 200 OK
+上传音频，统一团队协作模式
+音频文件名处理: 快闪战争街头追逐紧张鼓节奏音效.mp3
+创建音频上传任务: 730f15a2-d5c6-469e-96e7-bdf3fd08ab3e
+音频统一团队协作模式
+音频使用OSS: 是 (统一团队协作模式)
+开始上传音频到阿里云oss, task_id: 730f15a2-d5c6-469e-96e7-bdf3fd08ab3e
+🚀 文件已存在，跳过上传: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_23c58d544082615ede247e54828db81d.mp3
+音频任务 730f15a2-d5c6-469e-96e7-bdf3fd08ab3e 文件去重，瞬间完成
+上传音频到阿里云oss成功，文件url为：https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/uploads/audios/hash_23c58d544082615ede247e54828db81d.mp3, 上传耗时： 0:00:00.038027
+INFO:     223.88.21.8:1399 - "POST /api/upload/audio HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1399 - "OPTIONS /api/ai/generate-scripts HTTP/1.1" 200 OK
+调用FastGPT文案改写插件...
+尝试方案1 - 简化插件调用: {'chatId': 'script_rewrite_3690', 'stream': False, 'detail': True, 'messages': [{'content': '飞得更高发的', 'role': 'user'}], 'variables': {'video_duration': 30, 'original_text': '飞得更高发的', 'rewrite_count': 3}}
+方案1响应: {'responseData': [{'id': 'wBdxUtbMDoUmnWaP', 'nodeId': 'pluginInput', 'moduleName': 'workflow:template.plugin_start', 'moduleType': 'pluginInput', 'runningTime': 0}, {'customInputs': {'video_duration': 30}, 'customOutputs': {'result': '根据视频时长30秒，按照190字/分钟的语速计算：\n推荐文案字数：149字\n字数范围：134-164字\n（已预留15%缓冲时间，确保播放流畅）', 'recommendedWordCount': 149, 'minWordCount': 134, 'maxWordCount': 164, 'videoDuration': 30, 'wordsPerMinute': 350}, 'codeLog': '', 'id': 'uRLJYmt7nnkFdbNJ', 'nodeId': 'rtA7KbK7R2RyOVc4', 'moduleName': '代码运行#2', 'moduleType': 'code', 'runningTime': 0.03}, {'totalPoints': 4.1732499999999995, 'model': 'doubao-seed-1-6-250615', 'inputTokens': 383, 'outputTokens': 1631, 'query': '飞得更高发的303', 'maxToken': 4000, 'reasoningText': '\n我现在需要处理用户的请求。首先，用户让我根据“飞得更高发的303”改写3个不同风格、长度适中的口播稿，字数要求在134到149字之间。首先，我需要理解“飞得更高发的303”具体指什么。看起来可能是一个产品名称，比如“飞得更高”可能是品牌或主题，“303”可能是型号或系列。不过用户没有提供更多背景，所以我需要假设这是一个积极向上、鼓励进步的主题，可能是某种产品（比如飞行器、励志课程、运动装备等），需要口语化，适合口播。\n\n首先，确定3个不同风格。可能的风格有：励志热血型、亲切对话型、实用推荐型。然后每个风格控制字数在134-149字之间。\n\n第一个版本：励志热血型。需要用有力量的词汇，激发听众的斗志。比如“冲破云层”“极限挑战”“每一次振翅都向着新高度”这样的表达。\n\n第二个版本：亲切对话型。用更贴近生活的语言，像朋友聊天一样，比如“你是不是也常觉得现状像层玻璃天花板？”“303就像给梦想加了助推器”。\n\n第三个版本：实用推荐型。强调产品的实际好处，比如“续航升级”“稳定性提升”“无论是新手还是老手都能轻松驾驭”，让听众觉得实用。\n\n接下来，开始撰写每个版本，同时注意字数。写完后检查每个版本的字数是否在范围内，是否口语化，有没有emoji或markdown，格式是否正确（JSON数组）。\n\n第一个版本草稿：“想不想挣脱地心引力的束缚？飞得更高发的303就是你的翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点！” 检查字数，可能不够，需要扩展。调整：“想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！” 字数统计：大概140字左右。\n\n第二个版本草稿：“你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！” 检查字数，调整：“你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！” 字数可能差不多，145字左右。\n\n第三个版本草稿：“还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计方便携带。无论是新手入门还是老手挑战极限，303都能满足你。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐不打折！” 检查字数，调整：“还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！” 字数大概142字。\n\n现在检查每个版本的字数：\n\n第一个版本：“想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！” 数一下字数：大概145字（含标点）。\n\n第二个版本：“你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！” 字数：140字左右。\n\n第三个版本：“还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！” 字数：143字左右。\n\n都在134-149字之间。然后确保没有emoji，口语化，格式正确。最后整理成JSON数组：["...","...","..."]。\n\n最终输出应该是这样的。', 'historyPreview': [{'obj': 'System', 'value': '# 角色\n你是一个创意文案大师和数据格式化专家。\n\n# 任务\n请根据文案字数要求，将以下飞得更高发的改写 3个不同风格长度适中的口播稿，改写后的文案应自然流畅，文案字数不大于149个字，不少于134个字。\n\n# 约束\n1.  **严格按照**用户指定的数量（3个）进行生成。\n2. 严格按照字数限制生成文案，文案字数不能在限制区间之外。\n3.  **输出格式要求**：必须返回一个标准的JSON数组（JSON Array），数组中的每一个元素都是一个字符串，代表一个改写版本。不要在JSON数组前后添加任何解释性文字、代码块标记（如```json）或其他任何非JSON内容。\n4.  每个版本都必须是高质量、可直接使用的口播文案。\n5. 保持口语化风格。\n6. 严禁出现emoji表情等无法进行口播的标签符号\n7. 严禁以markdown格式输出内容\n8. 若134、134飞得更高发的变量中没有值，则按照3条文案改写、每条文案160个字符长度进行输出\n\n# 正确的输出格式示例\n["这是第一个改写版本...","这是第二个改写版本..."]'}, {'obj': 'Human', 'value': '飞得更高发的303'}, {'obj': 'AI', 'value': '["想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！","你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！","还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！"]'}], 'contextTotalLen': 3, 'finishReason': 'stop', 'id': 't3Alfrm4iPHeqTTC', 'nodeId': 'uI6M6W0OSo2buNvd', 'moduleName': '文案改写', 'moduleType': 'chatNode', 'runningTime': 36.49}, {'customInputs': {'data1': '["想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！","你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！","还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！"]'}, 'customOutputs': {'result': ['想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！', '你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！', '还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！']}, 'codeLog': '', 'id': 'pJoSij7uM3obpwR2', 'nodeId': 'wn6A84E52sdY3R6T', 'moduleName': '代码运行', 'moduleType': 'code', 'runningTime': 0.03}, {'pluginOutput': {'result': ['想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！', '你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！', '还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！']}, 'id': 'cAgB8eM5qxi9JxdX', 'nodeId': 'pluginOutput', 'moduleName': 'common:core.module.template.self_output', 'moduleType': 'pluginOutput', 'runningTime': 0}], 'newVariables': {}, 'id': 'script_rewrite_3690', 'model': '', 'usage': {'prompt_tokens': 1, 'completion_tokens': 1, 'total_tokens': 1}, 'choices': [{'message': {'role': 'assistant', 'content': [{'type': 'text', 'text': {'content': ''}}]}, 'finish_reason': 'stop', 'index': 0}]}
+最终FastGPT请求完成，状态码: 200
+最终FastGPT响应: {'responseData': [{'id': 'wBdxUtbMDoUmnWaP', 'nodeId': 'pluginInput', 'moduleName': 'workflow:template.plugin_start', 'moduleType': 'pluginInput', 'runningTime': 0}, {'customInputs': {'video_duration': 30}, 'customOutputs': {'result': '根据视频时长30秒，按照190字/分钟的语速计算：\n推荐文案字数：149字\n字数范围：134-164字\n（已预留15%缓冲时间，确保播放流畅）', 'recommendedWordCount': 149, 'minWordCount': 134, 'maxWordCount': 164, 'videoDuration': 30, 'wordsPerMinute': 350}, 'codeLog': '', 'id': 'uRLJYmt7nnkFdbNJ', 'nodeId': 'rtA7KbK7R2RyOVc4', 'moduleName': '代码运行#2', 'moduleType': 'code', 'runningTime': 0.03}, {'totalPoints': 4.1732499999999995, 'model': 'doubao-seed-1-6-250615', 'inputTokens': 383, 'outputTokens': 1631, 'query': '飞得更高发的303', 'maxToken': 4000, 'reasoningText': '\n我现在需要处理用户的请求。首先，用户让我根据“飞得更高发的303”改写3个不同风格、长度适中的口播稿，字数要求在134到149字之间。首先，我需要理解“飞得更高发的303”具体指什么。看起来可能是一个产品名称，比如“飞得更高”可能是品牌或主题，“303”可能是型号或系列。不过用户没有提供更多背景，所以我需要假设这是一个积极向上、鼓励进步的主题，可能是某种产品（比如飞行器、励志课程、运动装备等），需要口语化，适合口播。\n\n首先，确定3个不同风格。可能的风格有：励志热血型、亲切对话型、实用推荐型。然后每个风格控制字数在134-149字之间。\n\n第一个版本：励志热血型。需要用有力量的词汇，激发听众的斗志。比如“冲破云层”“极限挑战”“每一次振翅都向着新高度”这样的表达。\n\n第二个版本：亲切对话型。用更贴近生活的语言，像朋友聊天一样，比如“你是不是也常觉得现状像层玻璃天花板？”“303就像给梦想加了助推器”。\n\n第三个版本：实用推荐型。强调产品的实际好处，比如“续航升级”“稳定性提升”“无论是新手还是老手都能轻松驾驭”，让听众觉得实用。\n\n接下来，开始撰写每个版本，同时注意字数。写完后检查每个版本的字数是否在范围内，是否口语化，有没有emoji或markdown，格式是否正确（JSON数组）。\n\n第一个版本草稿：“想不想挣脱地心引力的束缚？飞得更高发的303就是你的翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点！” 检查字数，可能不够，需要扩展。调整：“想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！” 字数统计：大概140字左右。\n\n第二个版本草稿：“你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！” 检查字数，调整：“你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！” 字数可能差不多，145字左右。\n\n第三个版本草稿：“还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计方便携带。无论是新手入门还是老手挑战极限，303都能满足你。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐不打折！” 检查字数，调整：“还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！” 字数大概142字。\n\n现在检查每个版本的字数：\n\n第一个版本：“想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！” 数一下字数：大概145字（含标点）。\n\n第二个版本：“你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！” 字数：140字左右。\n\n第三个版本：“还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！” 字数：143字左右。\n\n都在134-149字之间。然后确保没有emoji，口语化，格式正确。最后整理成JSON数组：["...","...","..."]。\n\n最终输出应该是这样的。', 'historyPreview': [{'obj': 'System', 'value': '# 角色\n你是一个创意文案大师和数据格式化专家。\n\n# 任务\n请根据文案字数要求，将以下飞得更高发的改写 3个不同风格长度适中的口播稿，改写后的文案应自然流畅，文案字数不大于149个字，不少于134个字。\n\n# 约束\n1.  **严格按照**用户指定的数量（3个）进行生成。\n2. 严格按照字数限制生成文案，文案字数不能在限制区间之外。\n3.  **输出格式要求**：必须返回一个标准的JSON数组（JSON Array），数组中的每一个元素都是一个字符串，代表一个改写版本。不要在JSON数组前后添加任何解释性文字、代码块标记（如```json）或其他任何非JSON内容。\n4.  每个版本都必须是高质量、可直接使用的口播文案。\n5. 保持口语化风格。\n6. 严禁出现emoji表情等无法进行口播的标签符号\n7. 严禁以markdown格式输出内容\n8. 若134、134飞得更高发的变量中没有值，则按照3条文案改写、每条文案160个字符长度进行输出\n\n# 正确的输出格式示例\n["这是第一个改写版本...","这是第二个改写版本..."]'}, {'obj': 'Human', 'value': '飞得更高发的303'}, {'obj': 'AI', 'value': '["想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！","你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！","还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！"]'}], 'contextTotalLen': 3, 'finishReason': 'stop', 'id': 't3Alfrm4iPHeqTTC', 'nodeId': 'uI6M6W0OSo2buNvd', 'moduleName': '文案改写', 'moduleType': 'chatNode', 'runningTime': 36.49}, {'customInputs': {'data1': '["想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！","你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！","还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！"]'}, 'customOutputs': {'result': ['想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！', '你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！', '还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！']}, 'codeLog': '', 'id': 'pJoSij7uM3obpwR2', 'nodeId': 'wn6A84E52sdY3R6T', 'moduleName': '代码运行', 'moduleType': 'code', 'runningTime': 0.03}, {'pluginOutput': {'result': ['想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！', '你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！', '还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！']}, 'id': 'cAgB8eM5qxi9JxdX', 'nodeId': 'pluginOutput', 'moduleName': 'common:core.module.template.self_output', 'moduleType': 'pluginOutput', 'runningTime': 0}], 'newVariables': {}, 'id': 'script_rewrite_3690', 'model': '', 'usage': {'prompt_tokens': 1, 'completion_tokens': 1, 'total_tokens': 1}, 'choices': [{'message': {'role': 'assistant', 'content': [{'type': 'text', 'text': {'content': ''}}]}, 'finish_reason': 'stop', 'index': 0}]}
+找到插件输出结果: ['想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！', '你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！', '还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！']
+插件返回的文案: ['想不想挣脱地心引力的束缚？飞得更高发的303就是你的超级翅膀！强劲动力带你冲破云层，智能系统精准把控每一次攀升，从百米低空到千米高空，每一次振翅都向着新高度发起冲击。别让犹豫成为上限，现在就启动引擎，让303带你触摸曾经不敢想的天际线——这一次，天空才是起点，更高处见！', '你是不是也常觉得现状像层玻璃天花板？别愁！飞得更高发的303来啦！轻量化设计拿在手里超轻便，续航持久让你尽情翱翔，智能防抖让操控更稳，连新手都能快速上手。就像给梦想加了助推器，以前不敢想的高度，现在轻松抵达。别等了，带上303，让每一次飞行都成为突破自我的证明！', '还在为飞行装备不给力发愁？试试飞得更高发的303！续航升级让你飞足两小时不落地，稳定性提升30%不怕气流干扰，折叠设计随身带超方便。无论是新手入门练手，还是老手挑战极限高度，303都能稳稳hold住。别让装备拖后腿，选303，让每一次起飞都充满底气，飞得更高更稳，快乐根本停不下来！']
+INFO:     223.88.21.8:1399 - "POST /api/ai/generate-scripts HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "OPTIONS /api/projects HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "POST /api/projects HTTP/1.1" 200 OK
+🚀 启动并发队列处理器 (支持3个并发任务)...
+🔧 Worker-1 已启动
+🔧 Worker-2 已启动
+🔧 Worker-3 已启动
+INFO:     223.88.21.8:1804 - "OPTIONS /api/generation/start HTTP/1.1" 200 OK
+📝 新任务 eec5428b-c436-4eec-8fe0-3818db37a394: 开始处理
+   队列状态: 队列中1个任务, 排队位置#1
+   正在处理: 0/3 个任务
+INFO:     223.88.21.8:1804 - "POST /api/generation/start HTTP/1.1" 200 OK
+📋 Worker-1 开始处理任务: eec5428b-c436-4eec-8fe0-3818db37a394
+🔄 当前处理中任务数: 1
+使用标题: 给梵蒂冈
+标题配置: {'color': '#ffffff', 'position': 'top', 'fontSize': 0, 'fontFamily': 'SourceHanSansCN-Heavy', 'strokeColor': '#000000', 'strokeWidth': 0, 'shadow': False, 'shadowColor': '#000000', 'bold': False, 'italic': False, 'background_opacity': 0, 'mainTitle': {'text': '给梵蒂冈', 'fontSize': 64, 'color': '#ffffff', 'fontFamily': 'SourceHanSansCN-Heavy'}, 'subTitle': {'text': '共度过', 'fontSize': 40, 'color': '#ffff00', 'fontFamily': 'SourceHanSansCN-Heavy'}, 'spacing': 20, 'alignment': 'center', 'background': {'background_opacity': 0, 'background_color': '#CEC970'}, 'background_color': '#CEC970'}
+📥 使用智能缓存下载素材...
+🚀 开始批量预加载 2 个素材...
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/f32320677eb92dd1ba1691693c2b1301.mp4
+📥 下载素材: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com...
+✅ 下载完成: cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3 (0.5MB)
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/f32320677eb92dd1ba1691693c2b1301.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3
+📊 预加载统计: 成功 2/2
+✅ 智能缓存下载完成，耗时: 0.1秒
+=======================================
+包含：Title + 动态字幕(智能分屏显示) + TTS语音 + 背景音乐 + 海报背景
+项目标题: 给梵蒂冈
+Title位置: top
+动态字幕位置: template2
+=======================================
+查找字体: SourceHanSansCN-Heavy (类型: title)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+标题使用字体文件: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: title)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+标题使用字体文件: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+主副标题计算: 主标题高度=84, 副标题高度=60, 间距=20, 总高度=224
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+TTS音频生成完成: outputs/tts_audio/tts_e4fc80e4.wav, zh-CN-XiaoxiaoNeural
+TTS 时长 29.52s，目标时长保持 30s
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+文本分割结果：原文 -> 4个句子 -> 11个显示片段
+  片段1: '想不想挣脱地心引力的束缚？'
+  片段2: '飞得更高发的303就是你的超级翅膀'
+  片段3: '！'
+  片段4: '强劲动力带你冲破云层，智能系统精'
+  片段5: '准把控每一次攀升，从百米低空到千'
+  片段6: '米高空，每一次振翅都向着新高度发'
+  片段7: '起冲击。'
+  片段8: '别让犹豫成为上限，现在就启动引擎'
+  片段9: '，让303带你触摸曾经不敢想的天际'
+  片段10: '线——这一次，天空才是起点，更高'
+  片段11: '处见！'
+智能分屏字幕分割成11个片段
+TTS音频实际时长: 29.52秒
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'想不想挣脱地心引力的束缚？...', 宽度780px
+字幕片段1: 0.0s-2.8s (时长2.8s) '想不想挣脱地心引力的束缚？...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'飞得更高发的303就是你的超级翅膀...', 宽度951px
+字幕片段2: 2.8s-6.6s (时长3.7s) '飞得更高发的303就是你的超级翅膀...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'！...', 宽度60px
+字幕片段3: 6.6s-7.8s (时长1.2s) '！...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'强劲动力带你冲破云层，智能系统精...', 宽度960px
+字幕片段4: 7.8s-11.3s (时长3.5s) '强劲动力带你冲破云层，智能系统精...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'准把控每一次攀升，从百米低空到千...', 宽度960px
+字幕片段5: 11.3s-14.8s (时长3.5s) '准把控每一次攀升，从百米低空到千...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'米高空，每一次振翅都向着新高度发...', 宽度960px
+字幕片段6: 14.8s-18.3s (时长3.5s) '米高空，每一次振翅都向着新高度发...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'起冲击。...', 宽度240px
+字幕片段7: 18.3s-19.5s (时长1.2s) '起冲击。...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'别让犹豫成为上限，现在就启动引擎...', 宽度960px
+字幕片段8: 19.5s-23.0s (时长3.5s) '别让犹豫成为上限，现在就启动引擎...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'，让303带你触摸曾经不敢想的天际...', 宽度951px
+字幕片段9: 23.0s-26.7s (时长3.7s) '，让303带你触摸曾经不敢想的天际...'
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+单行字幕: 字体60px, 文本'线——这一次，天空才是起点，更高...', 宽度950px
+字幕片段10: 26.7s-30.2s (时长3.5s) '线——这一次，天空才是起点，更高...'
+创建了10个动态字幕片段，总时长29.52秒
+字幕1: 0.0s-2.8s 添加到滤镜链
+字幕2: 2.8s-6.6s 添加到滤镜链
+字幕3: 6.6s-7.8s 添加到滤镜链
+字幕4: 7.8s-11.3s 添加到滤镜链
+字幕5: 11.3s-14.8s 添加到滤镜链
+字幕6: 14.8s-18.3s 添加到滤镜链
+字幕7: 18.3s-19.5s 添加到滤镜链
+字幕8: 19.5s-23.0s 添加到滤镜链
+字幕9: 23.0s-26.7s 添加到滤镜链
+字幕10: 26.7s-30.2s 添加到滤镜链
+修复后的FFmpeg滤镜链:
+[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg];[bg]boxblur=luma_radius=50:chroma_radius=50:luma_power=3[bg_blur];[0:v]scale=1080:-1[fg_scale];[fg_scale]scale=1080:607[fg];[bg_blur][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];[bg_with_fg][1:v]overlay=0:200[with_title];[with_title][2:v]overlay=0:H-h-250:enable='between(t,0,2.8426666666666667)'[with_subtitle_0];[with_subtitle_0][3:v]overlay=0:H-h-250:enable='between(t,2.8426666666666667,6.56)'[with_subtitle_1];[with_subtitle_1][4:v]overlay=0:H-h-250:enable='between(t,6.56,7.76)'[with_subtitle_2];[with_subtitle_2][5:v]overlay=0:H-h-250:enable='between(t,7.76,11.258666666666667)'[with_subtitle_3];[with_subtitle_3][6:v]overlay=0:H-h-250:enable='between(t,11.258666666666667,14.757333333333333)'[with_subtitle_4];[with_subtitle_4][7:v]overlay=0:H-h-250:enable='between(t,14.757333333333333,18.256)'[with_subtitle_5];[with_subtitle_5][8:v]overlay=0:H-h-250:enable='between(t,18.256,19.456)'[with_subtitle_6];[with_subtitle_6][9:v]overlay=0:H-h-250:enable='between(t,19.456,22.954666666666668)'[with_subtitle_7];[with_subtitle_7][10:v]overlay=0:H-h-250:enable='between(t,22.954666666666668,26.672)'[with_subtitle_8];[with_subtitle_8][11:v]overlay=0:H-h-250:enable='between(t,26.672,30.17066666666667)'[final_video];[final_video]format=yuv420p[video_out];[12:a]volume=0.8,atrim=0:30[tts];[13:a]volume=0.15,atrim=0:30[bgm];[tts][bgm]amix=inputs=2:duration=shortest:dropout_transition=0,atrim=0:30[audio_out]
+==================================================
+🔍 GPU内存使用: 324MB / 15360MB (2.1%)
+🧪 测试NVENC编码器: lavfi -i testsrc=duration=1:size=320x240:rate=1 -c:v h264_nvenc...
+✅ NVENC编码器测试成功
+🚀 尝试使用NVIDIA GPU硬件加速编码
+🔧 使用极简NVENC参数 (避免访问违规错误)
+开始FFmpeg动态字幕处理...
+总共10个字幕片段
+  字幕1: 0.0s-2.8s '想不想挣脱地心引力的束缚？...'
+  字幕2: 2.8s-6.6s '飞得更高发的303就是你的超级翅膀...'
+  字幕3: 6.6s-7.8s '！...'
+  字幕4: 7.8s-11.3s '强劲动力带你冲破云层，智能系统精...'
+  字幕5: 11.3s-14.8s '准把控每一次攀升，从百米低空到千...'
+  字幕6: 14.8s-18.3s '米高空，每一次振翅都向着新高度发...'
+  字幕7: 18.3s-19.5s '起冲击。...'
+  字幕8: 19.5s-23.0s '别让犹豫成为上限，现在就启动引擎...'
+  字幕9: 23.0s-26.7s '，让303带你触摸曾经不敢想的天际...'
+  字幕10: 26.7s-30.2s '线——这一次，天空才是起点，更高...'
+FFmpeg动态字幕处理完成
+🔍 文件不存在，开始上传: final/videos/hash_8238ecf13dcc7b368e17003186f1a0a4.mp4
+最终上传文件名: final/videos/hash_8238ecf13dcc7b368e17003186f1a0a4.mp4
+文件大小: 10.75MB
+使用分片上传...
+开始分片上传: 文件大小10.75MB, 每片10.0MB, 并发数1
+分片上传对象名: final/videos/hash_8238ecf13dcc7b368e17003186f1a0a4.mp4
+总共 2 个分片，开始并发上传...
+上传分片 1: 0.0MB - 10.0MB (尝试 1/3)
+分片 1 上传成功
+上传分片 2: 10.0MB - 10.8MB (尝试 1/3)
+OSS上传进度: 100.0%, 速度: 1.55MB/s
+分片 2 上传成功
+合并分片...
+分片上传完成! 总耗时: 6.98秒, 平均速度: 1.54MB/s
+智能分屏动态字幕视频1完成
+✅ Worker-1 完成任务: eec5428b-c436-4eec-8fe0-3818db37a394
+🔄 当前处理中任务数: 0
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:2047 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1049 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1059 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:2047 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1049 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1059 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:2047 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1049 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1059 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:2047 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1049 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1059 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:2047 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1059 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1049 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:2047 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1059 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1049 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1049 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:2047 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1059 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1804 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1876 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/generation/status/eec5428b-c436-4eec-8fe0-3818db37a394 HTTP/1.1" 200 OK
+INFO:     223.88.21.8:1065 - "GET /api/videos/oss-proxy?url=https://tian-jiu-video.oss-cn-beijing.aliyuncs.com/final/videos/hash_8238ecf13dcc7b368e17003186f1a0a4.mp4 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for background tasks to complete. (CTRL+C to force quit)

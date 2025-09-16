@@ -1,0 +1,20 @@
+nohup: ignoring input
+
+> @video-mixer/frontend@1.0.0 dev
+> vite --port 4000 --host 0.0.0.0
+
+
+  VITE v5.4.20  ready in 480 ms
+
+  ➜  Local:   http://localhost:4000/
+  ➜  Network: http://10.0.1.7:4000/
+11:20:46 PM [vite] warning: Duplicate key "position" in object literal
+329|          color: '#ffffff', // 字幕默认白色
+330|          position: 'template1', // 默认模板位置1（横屏视频）; 可切换 template2 为竖屏
+331|          position: 'template1', // 默认模板位置1（横屏视频）; 可切换 template2 为竖屏
+   |          ^
+332|          fontSize: 60, // 默认60px
+333|          fontFamily: 'SourceHanSansCN-Heavy', // 默认思源黑体Heavy
+
+  Plugin: vite:esbuild
+  File: /opt/01-vedio-hunjian/frontend/src/pages/VideoMixer.tsx

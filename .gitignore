@@ -1,0 +1,8 @@
+backend_py/cache/
+backend_py/downloads/
+backend_py/.env
+backend_py/outputs/
+backend_py/*/__pycache__/
+backend_py/*.pyc
+
+frontend/node_modules/

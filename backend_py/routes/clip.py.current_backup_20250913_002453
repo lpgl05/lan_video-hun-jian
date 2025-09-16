@@ -1,0 +1,387 @@
+import asyncio
+from fastapi import APIRouter, BackgroundTasks
+from pydantic import BaseModel
+from typing import List, Dict, Any, Set
+from services.clip_service import process_clips, process_clips001, process_clips_optimized
+from uuid import uuid4
+from datetime import datetime
+
+router = APIRouter()
+
+class VideoFile(BaseModel):
+    id: str
+    name: str
+    url: str
+    size: int
+    duration: int
+    uploadedAt: str
+
+class AudioFile(BaseModel):
+    id: str
+    name: str
+    url: str
+    size: int
+    duration: int
+    uploadedAt: str
+
+class PosterFile(BaseModel):
+    id: str
+    name: str
+    url: str
+    size: int
+    width: int
+    height: int
+    uploadedAt: str
+
+class Script(BaseModel):
+    id: str
+    content: str
+    selected: bool
+    generatedAt: str
+
+class StyleConfig(BaseModel):
+    title: Dict[str, Any]
+    subtitle: Dict[str, Any]
+
+class ClipRequest(BaseModel):
+    name: str
+    videos: List[VideoFile]
+    audios: List[AudioFile]
+    posters: List[PosterFile]
+    scripts: List[Script]
+    duration: str
+    videoCount: int
+    voice: str
+    style: StyleConfig
+
+class StartGenerationRequest(BaseModel):
+    projectId: str
+    # 移除 clipRequest 字段，改为从项目存储中获取
+
+# 添加全局变量存储最新生成的视频
+_latest_generated_videos = []
+
+# 任务状态存储（生产环境建议用Redis）
+_task_storage = {}
+
+# 添加项目存储
+_project_storage = {}
+
+# 🚀 优化：支持3个并发任务的任务队列控制
+_task_queue = asyncio.Queue()  # 任务队列
+_processing_tasks: Set[str] = set()  # 正在处理的任务ID集合
+_max_concurrent_tasks = 3  # 最大并发任务数
+_queue_processor_started = False  # 队列处理器是否已启动
+
+async def start_optimized_queue_processor():
+    """启动优化后的队列处理器 - 支持最多3个任务同时处理"""
+    global _processing_tasks, _queue_processor_started
+    
+    if _queue_processor_started:
+        return
+    
+    _queue_processor_started = True
+    print("🚀 启动优化队列处理器 (支持3个并发任务)...")
+    
+    # 创建3个并发工作协程
+    workers = []
+    for i in range(_max_concurrent_tasks):
+        worker = asyncio.create_task(worker_coroutine(f"Worker-{i+1}"))
+        workers.append(worker)
+    
+    # 等待所有工作协程完成
+    await asyncio.gather(*workers)
+
+async def worker_coroutine(worker_name: str):
+    """单个工作协程 - 处理队列中的任务"""
+    print(f"🔧 {worker_name} 已启动")
+    
+    while True:
+        try:
+            # 从队列中获取任务
+            task_data = await _task_queue.get()
+            task_id = task_data['task_id']
+            clip_req = task_data['clip_req']
+            
+            # 将任务添加到处理集合
+            _processing_tasks.add(task_id)
+            
+            print(f"📋 {worker_name} 开始处理任务: {task_id}")
+            print(f"🔄 当前处理中任务数: {len(_processing_tasks)}")
+            
+            # 更新任务状态为处理中
+            if task_id in _task_storage:
+                _task_storage[task_id]["status"] = "processing"
+                _task_storage[task_id]["progress"] = 10
+                _task_storage[task_id]["updatedAt"] = datetime.now().isoformat()
+                _task_storage[task_id]["worker"] = worker_name
+            
+            # 执行实际的视频生成任务
+            await process_video_generation(task_id, clip_req)
+            
+            print(f"✅ {worker_name} 完成任务: {task_id}")
+            
+        except Exception as e:
+            print(f"❌ {worker_name} 处理任务异常: {e}")
+            if task_id in _task_storage:
+                _task_storage[task_id]["status"] = "failed"
+                _task_storage[task_id]["error"] = f"队列处理异常: {str(e)}"
+                _task_storage[task_id]["updatedAt"] = datetime.now().isoformat()
+        finally:
+            # 从处理集合中移除任务
+            if task_id in _processing_tasks:
+                _processing_tasks.remove(task_id)
+            _task_queue.task_done()
+            print(f"🔄 当前处理中任务数: {len(_processing_tasks)}")
+
+def get_queue_status():
+    """获取队列状态信息"""
+    queue_size = _task_queue.qsize()
+    processing_count = len(_processing_tasks)
+    
+    # 计算等待时间
+    if processing_count < _max_concurrent_tasks:
+        estimated_wait = "可立即处理"
+    else:
+        # 如果所有工作协程都在忙，计算等待时间
+        wait_position = max(0, queue_size - (_max_concurrent_tasks - processing_count))
+        estimated_wait = f"预计等待 {wait_position * 3} 分钟"
+    
+    return {
+        "queueSize": queue_size,
+        "processingCount": processing_count,
+        "maxConcurrentTasks": _max_concurrent_tasks,
+        "availableWorkers": _max_concurrent_tasks - processing_count,
+        "estimatedWaitTime": estimated_wait,
+        "isProcessing": processing_count > 0
+    }
+
+# 保存项目配置
+@router.post("/api/projects")
+async def save_project_and_generate(req: ClipRequest, background_tasks: BackgroundTasks):
+    # 保存项目配置到内存存储
+    project_id = str(uuid4())
+    _project_storage[project_id] = req
+    
+    return {
+        "success": True,
+        "data": {
+            "projectId": project_id,
+            "id": project_id,
+            "name": req.name,
+            "videos": [v.dict() for v in req.videos],
+            "audios": [a.dict() for a in req.audios],
+            "scripts": [s.dict() for s in req.scripts],
+            "duration": req.duration,
+            "videoCount": req.videoCount,
+            "voice": req.voice,
+            "style": req.style.dict() if hasattr(req.style, "dict") else req.style
+        }
+    }
+
+# 开始生成
+@router.post("/api/generation/start")
+async def start_generation(req: StartGenerationRequest, background_tasks: BackgroundTasks):
+    # 启动队列处理器（如果尚未启动）
+    if not _queue_processor_started:
+        background_tasks.add_task(start_optimized_queue_processor)
+    
+    # 创建任务ID
+    task_id = str(uuid4())
+    
+    # 从项目存储中获取配置
+    if req.projectId not in _project_storage:
+        return {
+            "success": False,
+            "error": "项目不存在"
+        }
+    
+    clip_req = _project_storage[req.projectId]
+    
+    # 检查是否可以立即开始处理
+    can_start_immediately = len(_processing_tasks) < _max_concurrent_tasks
+    
+    # 初始化任务状态
+    _task_storage[task_id] = {
+        "status": "processing" if can_start_immediately else "queued",
+        "progress": 0,
+        "createdAt": datetime.now().isoformat(),
+        "updatedAt": datetime.now().isoformat(),
+        "projectId": None
+    }
+    
+    # 根据状态决定处理方式
+    if can_start_immediately:
+        # 直接开始处理
+        _processing_tasks.add(task_id)
+        asyncio.create_task(process_video_generation(task_id, clip_req))
+    else:
+        # 添加到队列等待处理
+        await _task_queue.put({
+            "task_id": task_id,
+            "clip_req": clip_req
+        })
+    
+    # 获取队列状态
+    queue_status = get_queue_status()
+    
+    # 计算等待时间
+    if queue_status["availableWorkers"] > 0:
+        estimated_wait = "即将开始处理"
+    else:
+        queue_position = queue_status["queueSize"]
+        estimated_wait = f"预计等待 {queue_position * 3} 分钟"
+    
+    return {
+        "success": True,
+        "data": {
+            "projectId": None,
+            "id": task_id,
+            "status": _task_storage[task_id]["status"],
+            "progress": 0,
+            "queuePosition": queue_status["queueSize"],
+            "processingCount": queue_status["processingCount"],
+            "availableWorkers": queue_status["availableWorkers"],
+            "estimatedWaitTime": estimated_wait,
+            "createdAt": _task_storage[task_id]["createdAt"]
+        }
+    }
+
+# 获取任务状态
+@router.get("/api/generation/status/{task_id}")
+async def get_generation_status(task_id: str):
+    if task_id == "undefined":
+        return {"success": False, "message": "Invalid task ID"}
+
+    # 从存储中获取任务状态
+    if task_id not in _task_storage:
+        return {
+            "success": False,
+            "error": "任务不存在"
+        }
+    
+    task_data = _task_storage[task_id].copy()
+    queue_status = get_queue_status()
+    
+    # 添加队列相关信息
+    if task_data["status"] == "queued":
+        # 计算在队列中的位置
+        queue_position = _task_queue.qsize()
+        task_data["queuePosition"] = queue_position
+        task_data["currentQueueSize"] = queue_position
+        task_data["processingCount"] = queue_status["processingCount"]
+        task_data["availableWorkers"] = queue_status["availableWorkers"]
+        
+        if queue_status["availableWorkers"] > 0:
+            task_data["estimatedWaitTime"] = "即将开始处理"
+        else:
+            task_data["estimatedWaitTime"] = f"预计等待 {queue_position * 3} 分钟"
+    
+    elif task_data["status"] == "processing":
+        task_data["processingCount"] = queue_status["processingCount"]
+        task_data["worker"] = task_data.get("worker", "未知")
+        task_data["estimatedWaitTime"] = "正在处理中"
+    
+    return {
+        "success": True,
+        "data": task_data,
+        "queueInfo": queue_status
+    }
+
+# 获取队列状态
+@router.get("/api/generation/queue/status")
+async def get_queue_status_api():
+    """获取队列状态统计信息"""
+    queue_status = get_queue_status()
+    
+    # 统计各状态的任务数量
+    queued_tasks = [t for t in _task_storage.values() if t.get("status") == "queued"]
+    processing_tasks = [t for t in _task_storage.values() if t.get("status") == "processing"]
+    completed_tasks = [t for t in _task_storage.values() if t.get("status") == "completed"]
+    failed_tasks = [t for t in _task_storage.values() if t.get("status") == "failed"]
+    
+    return {
+        "success": True,
+        "data": {
+            "projectId": None,
+            **queue_status,
+            "statistics": {
+                "queued": len(queued_tasks),
+                "processing": len(processing_tasks),
+                "completed": len(completed_tasks),
+                "failed": len(failed_tasks),
+                "total": len(_task_storage)
+            }
+        }
+    }
+
+async def process_video_generation(task_id: str, clip_req: ClipRequest):
+    """后台异步处理视频生成"""
+    start_time = datetime.now()
+    try:
+        # 1. 初始化任务
+        _task_storage[task_id]["progress"] = 5
+        _task_storage[task_id]["updatedAt"] = datetime.now().isoformat()
+        _task_storage[task_id]["startTime"] = start_time.isoformat()
+        
+        # 2. 开始处理视频
+        _task_storage[task_id]["progress"] = 20
+        _task_storage[task_id]["updatedAt"] = datetime.now().isoformat()
+        
+        # 3. 执行视频剪辑处理
+        _task_storage[task_id]["progress"] = 30
+        
+        # 调试：打印样式配置
+        print("=== 调试字体配置 ===")
+        print(f"收到的样式配置: {clip_req.style}")
+        if hasattr(clip_req.style, 'title'):
+            print(f"标题样式: {clip_req.style.title}")
+        if hasattr(clip_req.style, 'subtitle'):
+            print(f"字幕样式: {clip_req.style.subtitle}")
+        print("==================")
+        
+        # 🎯 统一使用团队协作模式处理
+        style_dict = clip_req.style.dict() if hasattr(clip_req.style, "dict") else clip_req.style
+        has_poster = hasattr(clip_req, 'posters') and clip_req.posters and len(clip_req.posters) > 0
+        
+        print(f"🎯 统一团队协作模式")
+        
+        # 4. 执行视频生成
+        _task_storage[task_id]["progress"] = 50
+        _task_storage[task_id]["updatedAt"] = datetime.now().isoformat()
+        
+        # 调用视频生成服务
+        # 调用视频生成服务
+        result = await process_clips_optimized(clip_req)
+        
+        # 5. 完成处理
+        _task_storage[task_id]["progress"] = 100
+        _task_storage[task_id]["status"] = "completed"
+        _task_storage[task_id]["result"] = result
+        _task_storage[task_id]["completedAt"] = datetime.now().isoformat()
+        _task_storage[task_id]["updatedAt"] = datetime.now().isoformat()
+        
+        # 计算处理时间
+        end_time = datetime.now()
+        duration = (end_time - start_time).total_seconds()
+        _task_storage[task_id]["durationSeconds"] = round(duration, 1)
+        _task_storage[task_id]["durationMinutes"] = round(duration / 60, 1)
+        
+        # 更新任务状态为完成
+        _task_storage[task_id]["status"] = "completed"
+        _task_storage[task_id]["progress"] = 100
+        _task_storage[task_id]["completedAt"] = datetime.now().isoformat()
+        _task_storage[task_id]["updatedAt"] = datetime.now().isoformat()
+        print(f"✅ 任务 {task_id} 成功完成，耗时 {duration:.1f} 秒")
+        # 从处理集合中移除任务
+        if task_id in _processing_tasks:
+            _processing_tasks.remove(task_id)
+        print(f"🔄 当前处理中任务数: {len(_processing_tasks)}")
+        
+    except Exception as e:
+        print(f"❌ 任务 {task_id} 处理失败: {e}")
+        _task_storage[task_id]["status"] = "failed"
+        _task_storage[task_id]["error"] = str(e)
+        _task_storage[task_id]["failedAt"] = datetime.now().isoformat()
+        _task_storage[task_id]["updatedAt"] = datetime.now().isoformat()
+        raise

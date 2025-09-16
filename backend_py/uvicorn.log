@@ -1,0 +1,872 @@
+INFO:     Started server process [2869579]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+✅ OSS权限检查通过（文件不存在但可访问），去重功能已启用
+✅ OSS权限检查通过（文件不存在但可访问），去重功能已启用
+✅ OSS权限检查通过（文件不存在但可访问），去重功能已启用
+指定的字体路径是: fonts/msyh.ttc
+INFO:     127.0.0.1:41344 - "GET /api/generation/queue/status HTTP/1.1" 200 OK
+INFO:     123.13.202.29:16028 - "POST /api/projects HTTP/1.1" 200 OK
+🚀 启动并发队列处理器 (支持3个并发任务)...
+🔧 Worker-1 已启动
+🔧 Worker-2 已启动
+🔧 Worker-3 已启动
+INFO:     123.13.202.29:16028 - "OPTIONS /api/generation/start HTTP/1.1" 200 OK
+📝 新任务 f72d9217-8907-41e0-a54b-321f293cb765: 开始处理
+   队列状态: 队列中1个任务, 排队位置#1
+   正在处理: 0/3 个任务
+INFO:     123.13.202.29:16028 - "POST /api/generation/start HTTP/1.1" 200 OK
+📋 Worker-1 开始处理任务: f72d9217-8907-41e0-a54b-321f293cb765
+🔄 当前处理中任务数: 1
+🚀 开始优化版本视频生成...
+   项目标题: 20250913项目
+   视频数量: 3
+   目标时长: 30秒
+   脚本数量: 3
+==================================================
+📥 第一步：智能预加载素材...
+🚀 开始批量预加载 5 个素材...
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/dfdee7f243f6a2ae82dbb3a539461b20.mp4
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/879003f4719f807bfde60f0afeaf6680.mp4
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/0d6d6d4ac0ad0d39cc7294560053cd5f.mp3
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/ef55810965ae4373c8f2e0fbb6f1c97f.png
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/dfdee7f243f6a2ae82dbb3a539461b20.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/879003f4719f807bfde60f0afeaf6680.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/0d6d6d4ac0ad0d39cc7294560053cd5f.mp3
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/ef55810965ae4373c8f2e0fbb6f1c97f.png
+📊 预加载统计: 成功 5/5
+✅ 素材预加载完成，耗时: 0.0秒
+   成功加载: 5/5 个素材
+🖼️  海报加载完成: cache/materials/ef55810965ae4373c8f2e0fbb6f1c97f.png
+📊 第二步：分析视频信息...
+✅ 视频信息分析完成，耗时: 5.9秒
+🎬 第三步：开始批量生成视频...
+
+🎞️  处理视频 1/3 (ID: 9e29eacb)
+成功拼接2个片段
+   ✅ 蒙太奇拼接完成，耗时: 0.7秒
+   ✅ 标题图片生成完成，耗时: 0.0秒
+INFO:     123.13.202.29:16028 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:16173 - "OPTIONS /api/projects HTTP/1.1" 200 OK
+INFO:     123.13.202.29:16177 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:43214 - "POST /api/projects HTTP/1.1" 200 OK
+INFO:     123.13.202.29:16028 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:16178 - "OPTIONS /api/generation/start HTTP/1.1" 200 OK
+📝 新任务 ecac63c0-7311-4a43-8e47-76a1039df16b: 开始处理
+   队列状态: 队列中1个任务, 排队位置#1
+   正在处理: 1/3 个任务
+INFO:     123.13.202.29:43212 - "POST /api/generation/start HTTP/1.1" 200 OK
+📋 Worker-2 开始处理任务: ecac63c0-7311-4a43-8e47-76a1039df16b
+🔄 当前处理中任务数: 2
+🚀 开始优化版本视频生成...
+   项目标题: 20250913项目
+   视频数量: 3
+   目标时长: 30秒
+   脚本数量: 3
+==================================================
+📥 第一步：智能预加载素材...
+🚀 开始批量预加载 5 个素材...
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/dfdee7f243f6a2ae82dbb3a539461b20.mp4
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/879003f4719f807bfde60f0afeaf6680.mp4
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/0d6d6d4ac0ad0d39cc7294560053cd5f.mp3
+✅ 缓存命中: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/ef55810965ae4373c8f2e0fbb6f1c97f.png
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/dfdee7f243f6a2ae82dbb3a539461b20.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/879003f4719f807bfde60f0afeaf6680.mp4
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/0d6d6d4ac0ad0d39cc7294560053cd5f.mp3
+✅ 预加载完成: https://tian-jiu-video.oss-cn-beijing.aliyuncs.com... -> cache/materials/ef55810965ae4373c8f2e0fbb6f1c97f.png
+📊 预加载统计: 成功 5/5
+✅ 素材预加载完成，耗时: 0.0秒
+   成功加载: 5/5 个素材
+🖼️  海报加载完成: cache/materials/ef55810965ae4373c8f2e0fbb6f1c97f.png
+📊 第二步：分析视频信息...
+✅ 视频信息分析完成，耗时: 5.8秒
+🎬 第三步：开始批量生成视频...
+
+🎞️  处理视频 1/3 (ID: ee2e5e8e)
+成功拼接2个片段
+   ✅ 蒙太奇拼接完成，耗时: 0.7秒
+   ✅ 标题图片生成完成，耗时: 0.0秒
+INFO:     123.13.202.29:16225 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:16230 - "GET /api/generation/status/ecac63c0-7311-4a43-8e47-76a1039df16b HTTP/1.1" 200 OK
+INFO:     123.13.202.29:43082 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:16225 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+TTS音频生成完成: outputs/tts_audio/tts_ee2e5e8e.wav, zh-CN-XiaoxiaoNeural
+   ✅ TTS语音生成完成，耗时: 1.7秒
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+文本分割结果：原文 -> 9个句子 -> 14个显示片段
+  片段1: '老板们注意啦！'
+  片段2: '还在为找好赛道发愁？'
+  片段3: '怕项目投错打水漂？'
+  片段4: '手里人脉变不了现？'
+  片段5: '别犯难！'
+  片段6: '咱们大会全国多城轮着办，北上广新'
+  片段7: '一线都能就近参会，场次根本不用等'
+  片段8: '！'
+  片段9: '当下火的AI教育、智能硬件、新消'
+  片段10: '费赛道全涵盖，上百个经市场验证的'
+  片段11: '优质项目任您选，不用熬夜试错！'
+  片段12: '想搞定项目投资、盘活人脉？'
+  片段13: '点击下方链接，免费参会资格直接领'
+  片段14: '，名额有限先到先得！'
+   📝 智能分屏分割成14个片段
+   🎵 TTS时长: 36.2s，目标时长: 36.2s
+   字幕1: 0.0s-1.6s '老板们注意啦！...'
+   字幕2: 1.6s-3.9s '还在为找好赛道发愁？...'
+   字幕3: 3.9s-6.0s '怕项目投错打水漂？...'
+   字幕4: 6.0s-8.0s '手里人脉变不了现？...'
+   字幕5: 8.0s-9.5s '别犯难！...'
+   字幕6: 9.5s-13.2s '咱们大会全国多城轮着办，北上广新...'
+   字幕7: 13.2s-16.9s '一线都能就近参会，场次根本不用等...'
+   字幕8: 16.9s-18.4s '！...'
+   字幕9: 18.4s-22.0s '当下火的AI教育、智能硬件、新消...'
+   字幕10: 22.0s-25.7s '费赛道全涵盖，上百个经市场验证的...'
+   字幕11: 25.7s-29.1s '优质项目任您选，不用熬夜试错！...'
+   字幕12: 29.1s-32.1s '想搞定项目投资、盘活人脉？...'
+   字幕13: 32.1s-35.8s '点击下方链接，免费参会资格直接领...'
+   字幕14: 35.8s-36.2s '，名额有限先到先得！...'
+✅ ASS字幕文件生成: outputs/subtitle_images/subtitle_ee2e5e8e.ass
+   字幕数量: 14
+   总时长: 36.2秒
+   ✅ ASS字幕生成完成，耗时: 0.1秒
+🎬 ASS字幕视频合成:
+   源视频: outputs/clips/montage_clip_ee2e5e8e.mp4
+   ASS字幕: outputs/subtitle_images/subtitle_ee2e5e8e.ass
+   Title位置: top
+   海报背景: 是
+   🔧 修复后的ASS路径: outputs/subtitle_images/subtitle_ee2e5e8e.ass
+🔍 GPU内存使用: 0MB / 15360MB (0.0%)
+🧪 测试NVENC编码器: lavfi -i testsrc=duration=1:size=320x240:rate=1 -c:v h264_nvenc...
+✅ NVENC编码器测试成功
+🚀 尝试使用NVIDIA GPU硬件加速编码
+🔧 使用极简NVENC参数 (避免访问违规错误)
+   🔧 使用编码参数: ['-c:v', 'h264_nvenc', '-preset', 'fast', '-cq', '30']
+   ⚡ 开始ASS字幕FFmpeg处理...
+   🔧 滤镜链: [4:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg];[0:v]scale=1080:607[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];[bg_with_fg]subtitles='outputs/subtitle_images/subtitle_ee2e5e8e.ass'[with_subtitles];[with_subtitles][1:v]overlay=0:200[video_out];[2:a]volume=0.8,atrim=0:36.22[tts];[3:a]volume=0.15,atrim=0:36.22[bgm];[tts][bgm]amix=inputs=2:duration=shortest,atrim=0:36.22[audio_out]
+   🔧 FFmpeg命令: ffmpeg -y -stream_loop -1 -i outputs/clips/montage_clip_ee2e5e8e.mp4 -loop 1 -i outputs/subtitle_images/title_ee2e5e8e.png -i outputs/tts_audio/tts_ee2e5e8e.wav -i cache/materials/0d6d6d4ac0ad0d39cc7294560053cd5f.mp3 -loop...
+   ✅ ASS字幕FFmpeg处理完成
+   ✅ 视频合成完成，耗时: 21.3秒
+🔍 文件不存在，开始上传: final/videos/hash_e1d6c49d28f2788eca3952632bf3f964.mp4
+最终上传文件名: final/videos/hash_e1d6c49d28f2788eca3952632bf3f964.mp4
+文件大小: 14.95MB
+使用分片上传...
+开始分片上传: 文件大小14.95MB, 每片10.0MB, 并发数1
+分片上传对象名: final/videos/hash_e1d6c49d28f2788eca3952632bf3f964.mp4
+总共 2 个分片，开始并发上传...
+上传分片 1: 0.0MB - 10.0MB (尝试 1/3)
+分片 1 上传成功
+上传分片 2: 10.0MB - 14.9MB (尝试 1/3)
+OSS上传进度: 100.0%, 速度: 1.48MB/s
+分片 2 上传成功
+合并分片...
+分片上传完成! 总耗时: 10.13秒, 平均速度: 1.48MB/s
+   ✅ OSS上传完成，耗时: 10.2秒
+   🗑️ 清理: temp_segment_ee2e5e8e_0.mp4
+   🗑️ 清理: temp_segment_ee2e5e8e_1.mp4
+   🗑️ 清理: montage_clip_ee2e5e8e.mp4
+   🗑️ 清理: title_ee2e5e8e.png
+   🗑️ 清理: tts_ee2e5e8e.wav
+   🗑️ 清理: subtitle_ee2e5e8e.ass
+   🎉 视频1完成，总耗时: 34.0秒
+
+🎞️  处理视频 2/3 (ID: 9ccf6ec9)
+成功拼接2个片段
+   ✅ 蒙太奇拼接完成，耗时: 0.7秒
+   ✅ 标题图片生成完成，耗时: 0.0秒
+INFO:     123.13.202.29:16225 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:16342 - "GET /api/generation/status/ecac63c0-7311-4a43-8e47-76a1039df16b HTTP/1.1" 200 OK
+INFO:     123.13.202.29:16948 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17030 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:42293 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17154 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17258 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17258 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:16225 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+TTS音频生成完成: outputs/tts_audio/tts_9e29eacb.wav, zh-CN-XiaoxiaoNeural
+   ✅ TTS语音生成完成，耗时: 41.0秒
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+文本分割结果：原文 -> 8个句子 -> 12个显示片段
+  片段1: '各位企业家朋友，还在愁好赛道难寻'
+  片段2: '？'
+  片段3: '怕投错项目亏本钱？'
+  片段4: '手里有人脉变不了现？'
+  片段5: '机会来了！'
+  片段6: '全国多城巡回大会，北上广新一线就'
+  片段7: '近参会，场次不用等；'
+  片段8: '热门赛道全涵盖，上百个市场验证优'
+  片段9: '质项目任你挑，不用熬夜踩坑试错！'
+  片段10: '想解决投资、盘活人脉？'
+  片段11: '点击链接领免费参会资格，名额有限'
+  片段12: '先到先得！'
+   📝 智能分屏分割成12个片段
+   🎵 TTS时长: 30.5s，目标时长: 30.5s
+   字幕1: 0.0s-3.7s '各位企业家朋友，还在愁好赛道难寻...'
+   字幕2: 3.7s-5.2s '？...'
+   字幕3: 5.2s-7.3s '怕投错项目亏本钱？...'
+   字幕4: 7.3s-9.6s '手里有人脉变不了现？...'
+   字幕5: 9.6s-11.1s '机会来了！...'
+   字幕6: 11.1s-14.9s '全国多城巡回大会，北上广新一线就...'
+   字幕7: 14.9s-17.2s '近参会，场次不用等；...'
+   字幕8: 17.2s-20.9s '热门赛道全涵盖，上百个市场验证优...'
+   字幕9: 20.9s-24.6s '质项目任你挑，不用熬夜踩坑试错！...'
+   字幕10: 24.6s-27.2s '想解决投资、盘活人脉？...'
+   字幕11: 27.2s-30.9s '点击链接领免费参会资格，名额有限...'
+✅ ASS字幕文件生成: outputs/subtitle_images/subtitle_9e29eacb.ass
+   字幕数量: 12
+   总时长: 30.5秒
+   ✅ ASS字幕生成完成，耗时: 0.1秒
+🎬 ASS字幕视频合成:
+   源视频: outputs/clips/montage_clip_9e29eacb.mp4
+   ASS字幕: outputs/subtitle_images/subtitle_9e29eacb.ass
+   Title位置: top
+   海报背景: 是
+   🔧 修复后的ASS路径: outputs/subtitle_images/subtitle_9e29eacb.ass
+🔍 GPU内存使用: 0MB / 15360MB (0.0%)
+🧪 测试NVENC编码器: lavfi -i testsrc=duration=1:size=320x240:rate=1 -c:v h264_nvenc...
+✅ NVENC编码器测试成功
+🚀 尝试使用NVIDIA GPU硬件加速编码
+🔧 使用极简NVENC参数 (避免访问违规错误)
+   🔧 使用编码参数: ['-c:v', 'h264_nvenc', '-preset', 'fast', '-cq', '30']
+   ⚡ 开始ASS字幕FFmpeg处理...
+   🔧 滤镜链: [4:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg];[0:v]scale=1080:607[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];[bg_with_fg]subtitles='outputs/subtitle_images/subtitle_9e29eacb.ass'[with_subtitles];[with_subtitles][1:v]overlay=0:200[video_out];[2:a]volume=0.8,atrim=0:30.46[tts];[3:a]volume=0.15,atrim=0:30.46[bgm];[tts][bgm]amix=inputs=2:duration=shortest,atrim=0:30.46[audio_out]
+   🔧 FFmpeg命令: ffmpeg -y -stream_loop -1 -i outputs/clips/montage_clip_9e29eacb.mp4 -loop 1 -i outputs/subtitle_images/title_9e29eacb.png -i outputs/tts_audio/tts_9e29eacb.wav -i cache/materials/0d6d6d4ac0ad0d39cc7294560053cd5f.mp3 -loop...
+   ✅ ASS字幕FFmpeg处理完成
+   ✅ 视频合成完成，耗时: 18.3秒
+🔍 文件不存在，开始上传: final/videos/hash_15e75c52b12338eaf0e9b95cce187ced.mp4
+最终上传文件名: final/videos/hash_15e75c52b12338eaf0e9b95cce187ced.mp4
+文件大小: 12.20MB
+使用分片上传...
+开始分片上传: 文件大小12.20MB, 每片10.0MB, 并发数1
+分片上传对象名: final/videos/hash_15e75c52b12338eaf0e9b95cce187ced.mp4
+总共 2 个分片，开始并发上传...
+上传分片 1: 0.0MB - 10.0MB (尝试 1/3)
+分片 1 上传成功
+上传分片 2: 10.0MB - 12.2MB (尝试 1/3)
+OSS上传进度: 100.0%, 速度: 1.55MB/s
+分片 2 上传成功
+合并分片...
+分片上传完成! 总耗时: 7.91秒, 平均速度: 1.54MB/s
+   ✅ OSS上传完成，耗时: 8.0秒
+   🗑️ 清理: temp_segment_9e29eacb_0.mp4
+   🗑️ 清理: temp_segment_9e29eacb_1.mp4
+   🗑️ 清理: montage_clip_9e29eacb.mp4
+   🗑️ 清理: title_9e29eacb.png
+   🗑️ 清理: tts_9e29eacb.wav
+   🗑️ 清理: subtitle_9e29eacb.ass
+   🎉 视频1完成，总耗时: 68.1秒
+
+🎞️  处理视频 2/3 (ID: 63b43538)
+成功拼接2个片段
+   ✅ 蒙太奇拼接完成，耗时: 0.7秒
+   ✅ 标题图片生成完成，耗时: 0.0秒
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41997 - "GET /api/generation/status/ecac63c0-7311-4a43-8e47-76a1039df16b HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17574 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41758 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41714 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17718 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41644 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17574 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41758 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41644 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17718 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41714 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41644 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41644 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41644 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:41644 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+TTS音频生成完成: outputs/tts_audio/tts_63b43538.wav, zh-CN-XiaoxiaoNeural
+   ✅ TTS语音生成完成，耗时: 1.5秒
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+文本分割结果：原文 -> 8个句子 -> 12个显示片段
+  片段1: '各位企业家朋友，还在愁好赛道难寻'
+  片段2: '？'
+  片段3: '怕投错项目亏本钱？'
+  片段4: '手里有人脉变不了现？'
+  片段5: '机会来了！'
+  片段6: '全国多城巡回大会，北上广新一线就'
+  片段7: '近参会，场次不用等；'
+  片段8: '热门赛道全涵盖，上百个市场验证优'
+  片段9: '质项目任你挑，不用熬夜踩坑试错！'
+  片段10: '想解决投资、盘活人脉？'
+  片段11: '点击链接领免费参会资格，名额有限'
+  片段12: '先到先得！'
+   📝 智能分屏分割成12个片段
+   🎵 TTS时长: 30.5s，目标时长: 30.5s
+   字幕1: 0.0s-3.7s '各位企业家朋友，还在愁好赛道难寻...'
+   字幕2: 3.7s-5.2s '？...'
+   字幕3: 5.2s-7.3s '怕投错项目亏本钱？...'
+   字幕4: 7.3s-9.6s '手里有人脉变不了现？...'
+   字幕5: 9.6s-11.1s '机会来了！...'
+   字幕6: 11.1s-14.9s '全国多城巡回大会，北上广新一线就...'
+   字幕7: 14.9s-17.2s '近参会，场次不用等；...'
+   字幕8: 17.2s-20.9s '热门赛道全涵盖，上百个市场验证优...'
+   字幕9: 20.9s-24.6s '质项目任你挑，不用熬夜踩坑试错！...'
+   字幕10: 24.6s-27.2s '想解决投资、盘活人脉？...'
+   字幕11: 27.2s-30.9s '点击链接领免费参会资格，名额有限...'
+✅ ASS字幕文件生成: outputs/subtitle_images/subtitle_63b43538.ass
+   字幕数量: 12
+   总时长: 30.5秒
+   ✅ ASS字幕生成完成，耗时: 0.1秒
+🎬 ASS字幕视频合成:
+   源视频: outputs/clips/montage_clip_63b43538.mp4
+   ASS字幕: outputs/subtitle_images/subtitle_63b43538.ass
+   Title位置: top
+   海报背景: 是
+   🔧 修复后的ASS路径: outputs/subtitle_images/subtitle_63b43538.ass
+🔍 GPU内存使用: 0MB / 15360MB (0.0%)
+🧪 测试NVENC编码器: lavfi -i testsrc=duration=1:size=320x240:rate=1 -c:v h264_nvenc...
+✅ NVENC编码器测试成功
+🚀 尝试使用NVIDIA GPU硬件加速编码
+🔧 使用极简NVENC参数 (避免访问违规错误)
+   🔧 使用编码参数: ['-c:v', 'h264_nvenc', '-preset', 'fast', '-cq', '30']
+   ⚡ 开始ASS字幕FFmpeg处理...
+   🔧 滤镜链: [4:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg];[0:v]scale=1080:607[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];[bg_with_fg]subtitles='outputs/subtitle_images/subtitle_63b43538.ass'[with_subtitles];[with_subtitles][1:v]overlay=0:200[video_out];[2:a]volume=0.8,atrim=0:30.46[tts];[3:a]volume=0.15,atrim=0:30.46[bgm];[tts][bgm]amix=inputs=2:duration=shortest,atrim=0:30.46[audio_out]
+   🔧 FFmpeg命令: ffmpeg -y -stream_loop -1 -i outputs/clips/montage_clip_63b43538.mp4 -loop 1 -i outputs/subtitle_images/title_63b43538.png -i outputs/tts_audio/tts_63b43538.wav -i cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3 -loop...
+   ✅ ASS字幕FFmpeg处理完成
+   ✅ 视频合成完成，耗时: 18.3秒
+🔍 文件不存在，开始上传: final/videos/hash_8c10804c3194f46d12eebc07bdecdb9d.mp4
+最终上传文件名: final/videos/hash_8c10804c3194f46d12eebc07bdecdb9d.mp4
+文件大小: 12.18MB
+使用分片上传...
+开始分片上传: 文件大小12.18MB, 每片10.0MB, 并发数1
+分片上传对象名: final/videos/hash_8c10804c3194f46d12eebc07bdecdb9d.mp4
+总共 2 个分片，开始并发上传...
+上传分片 1: 0.0MB - 10.0MB (尝试 1/3)
+分片 1 上传成功
+上传分片 2: 10.0MB - 12.2MB (尝试 1/3)
+OSS上传进度: 100.0%, 速度: 1.52MB/s
+分片 2 上传成功
+合并分片...
+分片上传完成! 总耗时: 8.02秒, 平均速度: 1.52MB/s
+   ✅ OSS上传完成，耗时: 8.1秒
+   🗑️ 清理: temp_segment_63b43538_0.mp4
+   🗑️ 清理: temp_segment_63b43538_1.mp4
+   🗑️ 清理: montage_clip_63b43538.mp4
+   🗑️ 清理: title_63b43538.png
+   🗑️ 清理: tts_63b43538.wav
+   🗑️ 清理: subtitle_63b43538.ass
+   🎉 视频2完成，总耗时: 28.7秒
+
+🎞️  处理视频 3/3 (ID: 29c03da9)
+成功拼接2个片段
+   ✅ 蒙太奇拼接完成，耗时: 0.7秒
+   ✅ 标题图片生成完成，耗时: 0.0秒
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+TTS音频生成完成: outputs/tts_audio/tts_9ccf6ec9.wav, zh-CN-XiaoxiaoNeural
+   ✅ TTS语音生成完成，耗时: 56.1秒
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+文本分割结果：原文 -> 9个句子 -> 14个显示片段
+  片段1: '老板们注意啦！'
+  片段2: '还在为找好赛道发愁？'
+  片段3: '怕项目投错打水漂？'
+  片段4: '手里人脉变不了现？'
+  片段5: '别犯难！'
+  片段6: '咱们大会全国多城轮着办，北上广新'
+  片段7: '一线都能就近参会，场次根本不用等'
+  片段8: '！'
+  片段9: '当下火的AI教育、智能硬件、新消'
+  片段10: '费赛道全涵盖，上百个经市场验证的'
+  片段11: '优质项目任您选，不用熬夜试错！'
+  片段12: '想搞定项目投资、盘活人脉？'
+  片段13: '点击下方链接，免费参会资格直接领'
+  片段14: '，名额有限先到先得！'
+   📝 智能分屏分割成14个片段
+   🎵 TTS时长: 36.2s，目标时长: 36.2s
+   字幕1: 0.0s-1.6s '老板们注意啦！...'
+   字幕2: 1.6s-3.9s '还在为找好赛道发愁？...'
+   字幕3: 3.9s-6.0s '怕项目投错打水漂？...'
+   字幕4: 6.0s-8.0s '手里人脉变不了现？...'
+   字幕5: 8.0s-9.5s '别犯难！...'
+   字幕6: 9.5s-13.2s '咱们大会全国多城轮着办，北上广新...'
+   字幕7: 13.2s-16.9s '一线都能就近参会，场次根本不用等...'
+   字幕8: 16.9s-18.4s '！...'
+   字幕9: 18.4s-22.0s '当下火的AI教育、智能硬件、新消...'
+   字幕10: 22.0s-25.7s '费赛道全涵盖，上百个经市场验证的...'
+   字幕11: 25.7s-29.1s '优质项目任您选，不用熬夜试错！...'
+   字幕12: 29.1s-32.1s '想搞定项目投资、盘活人脉？...'
+   字幕13: 32.1s-35.8s '点击下方链接，免费参会资格直接领...'
+   字幕14: 35.8s-36.2s '，名额有限先到先得！...'
+✅ ASS字幕文件生成: outputs/subtitle_images/subtitle_9ccf6ec9.ass
+   字幕数量: 14
+   总时长: 36.2秒
+   ✅ ASS字幕生成完成，耗时: 0.1秒
+🎬 ASS字幕视频合成:
+   源视频: outputs/clips/montage_clip_9ccf6ec9.mp4
+   ASS字幕: outputs/subtitle_images/subtitle_9ccf6ec9.ass
+   Title位置: top
+   海报背景: 是
+   🔧 修复后的ASS路径: outputs/subtitle_images/subtitle_9ccf6ec9.ass
+🔍 GPU内存使用: 0MB / 15360MB (0.0%)
+🧪 测试NVENC编码器: lavfi -i testsrc=duration=1:size=320x240:rate=1 -c:v h264_nvenc...
+✅ NVENC编码器测试成功
+🚀 尝试使用NVIDIA GPU硬件加速编码
+🔧 使用极简NVENC参数 (避免访问违规错误)
+   🔧 使用编码参数: ['-c:v', 'h264_nvenc', '-preset', 'fast', '-cq', '30']
+   ⚡ 开始ASS字幕FFmpeg处理...
+   🔧 滤镜链: [4:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg];[0:v]scale=1080:607[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];[bg_with_fg]subtitles='outputs/subtitle_images/subtitle_9ccf6ec9.ass'[with_subtitles];[with_subtitles][1:v]overlay=0:200[video_out];[2:a]volume=0.8,atrim=0:36.22[tts];[3:a]volume=0.15,atrim=0:36.22[bgm];[tts][bgm]amix=inputs=2:duration=shortest,atrim=0:36.22[audio_out]
+   🔧 FFmpeg命令: ffmpeg -y -stream_loop -1 -i outputs/clips/montage_clip_9ccf6ec9.mp4 -loop 1 -i outputs/subtitle_images/title_9ccf6ec9.png -i outputs/tts_audio/tts_9ccf6ec9.wav -i cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3 -loop...
+   ✅ ASS字幕FFmpeg处理完成
+   ✅ 视频合成完成，耗时: 21.3秒
+🔍 文件不存在，开始上传: final/videos/hash_3e75333f190a5ea1efc886ff48ac5c2b.mp4
+最终上传文件名: final/videos/hash_3e75333f190a5ea1efc886ff48ac5c2b.mp4
+文件大小: 14.79MB
+使用分片上传...
+开始分片上传: 文件大小14.79MB, 每片10.0MB, 并发数1
+分片上传对象名: final/videos/hash_3e75333f190a5ea1efc886ff48ac5c2b.mp4
+总共 2 个分片，开始并发上传...
+上传分片 1: 0.0MB - 10.0MB (尝试 1/3)
+分片 1 上传成功
+上传分片 2: 10.0MB - 14.8MB (尝试 1/3)
+OSS上传进度: 100.0%, 速度: 1.46MB/s
+分片 2 上传成功
+合并分片...
+分片上传完成! 总耗时: 10.17秒, 平均速度: 1.45MB/s
+   ✅ OSS上传完成，耗时: 10.2秒
+   🗑️ 清理: temp_segment_9ccf6ec9_0.mp4
+   🗑️ 清理: temp_segment_9ccf6ec9_1.mp4
+   🗑️ 清理: montage_clip_9ccf6ec9.mp4
+   🗑️ 清理: title_9ccf6ec9.png
+   🗑️ 清理: tts_9ccf6ec9.wav
+   🗑️ 清理: subtitle_9ccf6ec9.ass
+   🎉 视频2完成，总耗时: 88.5秒
+
+🎞️  处理视频 3/3 (ID: 58885dd4)
+成功拼接2个片段
+   ✅ 蒙太奇拼接完成，耗时: 0.6秒
+   ✅ 标题图片生成完成，耗时: 0.0秒
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:18560 - "GET /api/generation/status/ecac63c0-7311-4a43-8e47-76a1039df16b HTTP/1.1" 200 OK
+INFO:     123.13.202.29:19073 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:40267 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:40210 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39981 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39841 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:40267 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39841 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:19073 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39981 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:40210 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39841 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:40267 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:19073 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:17325 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39981 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:40210 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39841 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:19073 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39841 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:19073 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39841 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:19073 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39841 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:19073 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39841 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:19073 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:39841 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+TTS音频生成完成: outputs/tts_audio/tts_58885dd4.wav, zh-CN-XiaoxiaoNeural
+   ✅ TTS语音生成完成，耗时: 1.5秒
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+文本分割结果：原文 -> 8个句子 -> 13个显示片段
+  片段1: '各位企业家老板，是不是愁好赛道难'
+  片段2: '寻？'
+  片段3: '怕投错项目白费功夫？'
+  片段4: '有人脉却没法变现？'
+  片段5: '别纠结！'
+  片段6: '咱大会全国多城开不停，不管您在哪'
+  片段7: '儿，就近就能参会，场次不用等！'
+  片段8: '热门赛道AI教育、智能硬件、新消'
+  片段9: '费全包括，上百个市场验证过的优质'
+  片段10: '项目任您挑，不用踩坑试错！'
+  片段11: '想解决投资、盘活人脉？'
+  片段12: '点下方链接领免费参会资格，名额有'
+  片段13: '限抢完即止！'
+   📝 智能分屏分割成13个片段
+   🎵 TTS时长: 34.3s，目标时长: 34.3s
+   字幕1: 0.0s-3.7s '各位企业家老板，是不是愁好赛道难...'
+   字幕2: 3.7s-5.2s '寻？...'
+   字幕3: 5.2s-7.5s '怕投错项目白费功夫？...'
+   字幕4: 7.5s-9.5s '有人脉却没法变现？...'
+   字幕5: 9.5s-11.0s '别纠结！...'
+   字幕6: 11.0s-14.7s '咱大会全国多城开不停，不管您在哪...'
+   字幕7: 14.7s-18.1s '儿，就近就能参会，场次不用等！...'
+   字幕8: 18.1s-21.8s '热门赛道AI教育、智能硬件、新消...'
+   字幕9: 21.8s-25.4s '费全包括，上百个市场验证过的优质...'
+   字幕10: 25.4s-28.4s '项目任您挑，不用踩坑试错！...'
+   字幕11: 28.4s-30.9s '想解决投资、盘活人脉？...'
+   字幕12: 30.9s-34.6s '点下方链接领免费参会资格，名额有...'
+✅ ASS字幕文件生成: outputs/subtitle_images/subtitle_58885dd4.ass
+   字幕数量: 13
+   总时长: 34.3秒
+   ✅ ASS字幕生成完成，耗时: 0.1秒
+🎬 ASS字幕视频合成:
+   源视频: outputs/clips/montage_clip_58885dd4.mp4
+   ASS字幕: outputs/subtitle_images/subtitle_58885dd4.ass
+   Title位置: top
+   海报背景: 是
+   🔧 修复后的ASS路径: outputs/subtitle_images/subtitle_58885dd4.ass
+🔍 GPU内存使用: 0MB / 15360MB (0.0%)
+🧪 测试NVENC编码器: lavfi -i testsrc=duration=1:size=320x240:rate=1 -c:v h264_nvenc...
+✅ NVENC编码器测试成功
+🚀 尝试使用NVIDIA GPU硬件加速编码
+🔧 使用极简NVENC参数 (避免访问违规错误)
+   🔧 使用编码参数: ['-c:v', 'h264_nvenc', '-preset', 'fast', '-cq', '30']
+   ⚡ 开始ASS字幕FFmpeg处理...
+   🔧 滤镜链: [4:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg];[0:v]scale=1080:607[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];[bg_with_fg]subtitles='outputs/subtitle_images/subtitle_58885dd4.ass'[with_subtitles];[with_subtitles][1:v]overlay=0:200[video_out];[2:a]volume=0.8,atrim=0:34.34[tts];[3:a]volume=0.15,atrim=0:34.34[bgm];[tts][bgm]amix=inputs=2:duration=shortest,atrim=0:34.34[audio_out]
+   🔧 FFmpeg命令: ffmpeg -y -stream_loop -1 -i outputs/clips/montage_clip_58885dd4.mp4 -loop 1 -i outputs/subtitle_images/title_58885dd4.png -i outputs/tts_audio/tts_58885dd4.wav -i cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3 -loop...
+   ✅ ASS字幕FFmpeg处理完成
+   ✅ 视频合成完成，耗时: 20.3秒
+🔍 文件不存在，开始上传: final/videos/hash_d1153436b747737b07f03a3b188392da.mp4
+最终上传文件名: final/videos/hash_d1153436b747737b07f03a3b188392da.mp4
+文件大小: 13.71MB
+使用分片上传...
+开始分片上传: 文件大小13.71MB, 每片10.0MB, 并发数1
+分片上传对象名: final/videos/hash_d1153436b747737b07f03a3b188392da.mp4
+总共 2 个分片，开始并发上传...
+上传分片 1: 0.0MB - 10.0MB (尝试 1/3)
+分片 1 上传成功
+上传分片 2: 10.0MB - 13.7MB (尝试 1/3)
+OSS上传进度: 100.0%, 速度: 1.51MB/s
+分片 2 上传成功
+合并分片...
+分片上传完成! 总耗时: 9.14秒, 平均速度: 1.50MB/s
+   ✅ OSS上传完成，耗时: 9.3秒
+   🗑️ 清理: temp_segment_58885dd4_0.mp4
+   🗑️ 清理: temp_segment_58885dd4_1.mp4
+   🗑️ 清理: montage_clip_58885dd4.mp4
+   🗑️ 清理: title_58885dd4.png
+   🗑️ 清理: tts_58885dd4.wav
+   🗑️ 清理: subtitle_58885dd4.ass
+   🎉 视频3完成，总耗时: 31.8秒
+
+==================================================
+🎊 优化版本生成完成！
+📊 性能统计:
+   素材预加载: 0.0秒
+   视频信息分析: 5.8秒
+   视频生成: 154.4秒
+   总耗时: 1757730787.2秒
+   平均每个视频: 51.5秒
+   成功生成: 3/3 个视频
+✅ Worker-2 完成任务: ecac63c0-7311-4a43-8e47-76a1039df16b
+🔄 当前处理中任务数: 1
+TTS音频生成完成: outputs/tts_audio/tts_29c03da9.wav, zh-CN-XiaoxiaoNeural
+   ✅ TTS语音生成完成，耗时: 63.6秒
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+查找字体: SourceHanSansCN-Heavy (类型: subtitle)
+字体映射找到: SourceHanSansCN-Heavy.otf
+✅ 使用前端字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+分屏字幕使用字体: /opt/01-vedio-hunjian/frontend/public/fonts/SourceHanSansCN-Heavy.otf
+文本分割结果：原文 -> 8个句子 -> 12个显示片段
+  片段1: '企业家老板们，好赛道难寻？'
+  片段2: '投错项目打水漂？'
+  片段3: '人脉变不了现？'
+  片段4: '别犯难！'
+  片段5: '全国多城轮开大会，北上广新一线就'
+  片段6: '近参会，场次不用等；'
+  片段7: 'AI教育、智能硬件、新消费等热门'
+  片段8: '赛道全覆盖，上百个市场验证优质项'
+  片段9: '目任你挑，不用熬夜踩坑试错！'
+  片段10: '想解决投资、盘活人脉？'
+  片段11: '点击下方链接领免费参会资格，名额'
+  片段12: '有限先到先得！'
+   📝 智能分屏分割成12个片段
+   🎵 TTS时长: 32.4s，目标时长: 32.4s
+   字幕1: 0.0s-3.1s '企业家老板们，好赛道难寻？...'
+   字幕2: 3.1s-4.9s '投错项目打水漂？...'
+   字幕3: 4.9s-6.6s '人脉变不了现？...'
+   字幕4: 6.6s-8.1s '别犯难！...'
+   字幕5: 8.1s-11.8s '全国多城轮开大会，北上广新一线就...'
+   字幕6: 11.8s-14.2s '近参会，场次不用等；...'
+   字幕7: 14.2s-17.9s 'AI教育、智能硬件、新消费等热门...'
+   字幕8: 17.9s-21.7s '赛道全覆盖，上百个市场验证优质项...'
+   字幕9: 21.7s-25.0s '目任你挑，不用熬夜踩坑试错！...'
+   字幕10: 25.0s-27.5s '想解决投资、盘活人脉？...'
+   字幕11: 27.5s-31.3s '点击下方链接领免费参会资格，名额...'
+   字幕12: 31.3s-32.4s '有限先到先得！...'
+✅ ASS字幕文件生成: outputs/subtitle_images/subtitle_29c03da9.ass
+   字幕数量: 12
+   总时长: 32.4秒
+   ✅ ASS字幕生成完成，耗时: 0.1秒
+🎬 ASS字幕视频合成:
+   源视频: outputs/clips/montage_clip_29c03da9.mp4
+   ASS字幕: outputs/subtitle_images/subtitle_29c03da9.ass
+   Title位置: top
+   海报背景: 是
+   🔧 修复后的ASS路径: outputs/subtitle_images/subtitle_29c03da9.ass
+🔍 GPU内存使用: 0MB / 15360MB (0.0%)
+🧪 测试NVENC编码器: lavfi -i testsrc=duration=1:size=320x240:rate=1 -c:v h264_nvenc...
+✅ NVENC编码器测试成功
+🚀 尝试使用NVIDIA GPU硬件加速编码
+🔧 使用极简NVENC参数 (避免访问违规错误)
+   🔧 使用编码参数: ['-c:v', 'h264_nvenc', '-preset', 'fast', '-cq', '30']
+   ⚡ 开始ASS字幕FFmpeg处理...
+   🔧 滤镜链: [4:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg];[0:v]scale=1080:607[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[bg_with_fg];[bg_with_fg]subtitles='outputs/subtitle_images/subtitle_29c03da9.ass'[with_subtitles];[with_subtitles][1:v]overlay=0:200[video_out];[2:a]volume=0.8,atrim=0:32.38[tts];[3:a]volume=0.15,atrim=0:32.38[bgm];[tts][bgm]amix=inputs=2:duration=shortest,atrim=0:32.38[audio_out]
+   🔧 FFmpeg命令: ffmpeg -y -stream_loop -1 -i outputs/clips/montage_clip_29c03da9.mp4 -loop 1 -i outputs/subtitle_images/title_29c03da9.png -i outputs/tts_audio/tts_29c03da9.wav -i cache/materials/9e999f9ad91375fd5aa0c5c736510d40.mp3 -loop...
+   ✅ ASS字幕FFmpeg处理完成
+   ✅ 视频合成完成，耗时: 19.4秒
+🔍 文件不存在，开始上传: final/videos/hash_9c930a120f115075e5f17992d7f9afbf.mp4
+最终上传文件名: final/videos/hash_9c930a120f115075e5f17992d7f9afbf.mp4
+文件大小: 13.22MB
+使用分片上传...
+开始分片上传: 文件大小13.22MB, 每片10.0MB, 并发数1
+分片上传对象名: final/videos/hash_9c930a120f115075e5f17992d7f9afbf.mp4
+总共 2 个分片，开始并发上传...
+上传分片 1: 0.0MB - 10.0MB (尝试 1/3)
+分片 1 上传成功
+上传分片 2: 10.0MB - 13.2MB (尝试 1/3)
+OSS上传进度: 100.0%, 速度: 1.48MB/s
+分片 2 上传成功
+合并分片...
+分片上传完成! 总耗时: 8.96秒, 平均速度: 1.48MB/s
+   ✅ OSS上传完成，耗时: 9.1秒
+   🗑️ 清理: temp_segment_29c03da9_0.mp4
+   🗑️ 清理: temp_segment_29c03da9_1.mp4
+   🗑️ 清理: montage_clip_29c03da9.mp4
+   🗑️ 清理: title_29c03da9.png
+   🗑️ 清理: tts_29c03da9.wav
+   🗑️ 清理: subtitle_29c03da9.ass
+   🎉 视频3完成，总耗时: 92.8秒
+
+==================================================
+🎊 优化版本生成完成！
+📊 性能统计:
+   素材预加载: 0.0秒
+   视频信息分析: 5.9秒
+   视频生成: 189.7秒
+   总耗时: 1757730815.3秒
+   平均每个视频: 63.2秒
+   成功生成: 3/3 个视频
+✅ Worker-1 完成任务: f72d9217-8907-41e0-a54b-321f293cb765
+🔄 当前处理中任务数: 0
+INFO:     123.13.202.29:20465 - "GET /api/generation/status/ecac63c0-7311-4a43-8e47-76a1039df16b HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38919 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38353 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21078 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21175 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38159 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38067 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38919 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21078 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38067 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21175 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38159 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38353 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38919 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21078 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38353 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38067 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21078 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38919 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38159 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21175 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38353 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21175 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38353 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21175 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38353 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21175 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38353 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:21175 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
+INFO:     123.13.202.29:38353 - "GET /api/generation/status/f72d9217-8907-41e0-a54b-321f293cb765 HTTP/1.1" 200 OK
